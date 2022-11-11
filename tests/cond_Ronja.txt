@@ -1,0 +1,2 @@
+Healthy 127C 128C 131C 132C
+Inflammed 129C 130C 133C 134C

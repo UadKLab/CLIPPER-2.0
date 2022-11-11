@@ -1,0 +1,5 @@
+graft data
+graft results
+graft log
+graft tests
+global-exclude *.pyc
