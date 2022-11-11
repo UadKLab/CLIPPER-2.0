@@ -1,0 +1,1413 @@
+INFO:root:Annotator started, Monday August 08 2022, 17:27:43
+INFO:root:Arguments added
+INFO:root:Arguments parsed
+INFO:root:Arguments returned with values:{'infile': '../tests/Maria_TAILS_Nterm.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'singlecpu': False, 'conditionfile': '../tests/cond_Maria.txt', 'stat': True, 'stat_pairwise': False, 'significance': 'all', 'visualize': True, 'logo': 'all', 'pseudocounts': True, 'output_name': None, 'outfile_type': 'xlsx', 'separate': False, 'timestamp': '080822172743', 'logfile': 'C:\\Users\\konka\\Documents\\Python_Scripts\\Annotator\\annotator-4.1.0\\log/Annotator_080822172743.log'}
+INFO:root:Initialization successful
+INFO:root:Input is excel
+INFO:root:Read dataframe
+INFO:root:Read input with 3080 peptides
+INFO:root:Input software is pd
+INFO:root:Successfully generated indexing patterns
+INFO:root:Format check complete
+INFO:root:Sanitizing
+INFO:root:Sanitized dataframe, 3080 peptides remaining
+INFO:root:Reading MEROPS data..
+INFO:root:Read MEROPS data
+INFO:root:Initialized annotation dataframe..
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for P08113
+INFO:root:HTTP error for P97443
+INFO:root:HTTP error for P68369
+INFO:root:HTTP error for Q3V1D3
+INFO:root:HTTP error for Q8C1A5
+INFO:root:HTTP error for O35134
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P21981
+INFO:root:HTTP error for Q8R429
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q61576
+INFO:root:HTTP error for Q9D6J6
+INFO:root:HTTP error for P57780
+INFO:root:HTTP error for P06745
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q9ET01
+INFO:root:HTTP error for P63017
+INFO:root:HTTP error for Q04447
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P07310
+INFO:root:HTTP error for Q01853
+INFO:root:HTTP error for P20029
+INFO:root:HTTP error for Q8VEK3
+INFO:root:HTTP error for Q91WQ3
+INFO:root:HTTP error for Q60680
+INFO:root:HTTP error for P01942
+INFO:root:HTTP error for O55239
+INFO:root:HTTP error for P97311
+INFO:root:HTTP error for Q99KI0
+INFO:root:HTTP error for Q8VEK3
+INFO:root:HTTP error for O09110
+INFO:root:HTTP error for Q9D0F3
+INFO:root:HTTP error for Q08288
+INFO:root:HTTP error for P01942
+INFO:root:HTTP error for Q64674
+INFO:root:HTTP error for P16858
+INFO:root:HTTP error for P68369
+INFO:root:HTTP error for Q91ZX7
+INFO:root:HTTP error for P39749
+INFO:root:HTTP error for Q60953
+INFO:root:HTTP error for Q9R1J0
+INFO:root:HTTP error for P16015
+INFO:root:HTTP error for P01942
+INFO:root:HTTP error for Q8BGB5
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for Q9Z0N1
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for P08775
+INFO:root:HTTP error for Q8BVL3
+INFO:root:HTTP error for P08775
+INFO:root:HTTP error for P01942
+INFO:root:HTTP error for Q99JY3
+INFO:root:HTTP error for P68369
+INFO:root:HTTP error for P63017
+INFO:root:HTTP error for P31786
+INFO:root:HTTP error for Q3V1D3
+INFO:root:HTTP error for Q03265
+INFO:root:HTTP error for Q8VEK3
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for P50544
+INFO:root:HTTP error for Q8QZS1
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P62631
+INFO:root:HTTP error for Q8VCM7
+INFO:root:HTTP error for Q9CXJ4
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for O88990
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for P17182
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for P58252
+INFO:root:HTTP error for Q61696
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P17182
+INFO:root:HTTP error for P63017
+INFO:root:HTTP error for P52480
+INFO:root:HTTP error for P32261
+INFO:root:HTTP error for P63001
+INFO:root:HTTP error for Q61233
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q9JI91
+INFO:root:HTTP error for Q8VEK3
+INFO:root:HTTP error for Q8BIJ6
+INFO:root:HTTP error for P46664
+INFO:root:HTTP error for P09411
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P09411
+INFO:root:HTTP error for Q7TPR4
+INFO:root:HTTP error for Q61696
+INFO:root:HTTP error for P21981
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q3V384
+INFO:root:HTTP error for Q60932
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P01942
+INFO:root:HTTP error for Q9JLJ2
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P68369
+INFO:root:HTTP error for Q7TMM9
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for O70274
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P10107
+INFO:root:HTTP error for Q8CG70
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for P07310
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for P05063
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for O88456
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q8BP92
+INFO:root:HTTP error for P63017
+INFO:root:HTTP error for P99024
+INFO:root:HTTP error for Q9DCS3
+INFO:root:HTTP error for P08226
+INFO:root:HTTP error for Q99JW2
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P47809
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for O35350
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P97443
+INFO:root:HTTP error for Q91WS0
+INFO:root:HTTP error for P62192
+INFO:root:HTTP error for Q63871
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q14CH7
+INFO:root:HTTP error for Q9JLJ2
+INFO:root:HTTP error for Q9WUB3
+INFO:root:HTTP error for Q01768
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for Q8VEK3
+INFO:root:HTTP error for P56395
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q61496
+INFO:root:HTTP error for P07310
+INFO:root:HTTP error for P21981
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for P08113
+INFO:root:HTTP error for Q7TPR4
+INFO:root:HTTP error for Q7TPR4
+INFO:root:HTTP error for Q9CQN1
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for P97311
+INFO:root:HTTP error for P23927
+INFO:root:HTTP error for P23927
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q8BMS4
+INFO:root:HTTP error for Q8BH97
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q3TZZ7
+INFO:root:HTTP error for P08113
+INFO:root:HTTP error for Q5SWU9
+INFO:root:HTTP error for Q03265
+INFO:root:HTTP error for Q9D0I9
+INFO:root:HTTP error for P10107
+INFO:root:HTTP error for O55143
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for A2AAJ9
+INFO:root:HTTP error for P63017
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for P21550
+INFO:root:HTTP error for P63017
+INFO:root:HTTP error for Q8BSY0
+INFO:root:HTTP error for Q3V3R1
+INFO:root:HTTP error for Q05793
+INFO:root:HTTP error for P52480
+INFO:root:HTTP error for Q61233
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for P52480
+INFO:root:HTTP error for P62631
+INFO:root:HTTP error for Q3V1D3
+INFO:root:HTTP error for P02088
+INFO:root:HTTP error for P11499
+INFO:root:HTTP error for Q921G7
+INFO:root:HTTP error for Q8BGC4
+INFO:root:HTTP error for O89023
+INFO:root:HTTP error for P08074
+INFO:root:HTTP error for P25206
+INFO:root:HTTP error for Q8BSY0
+INFO:root:HTTP error for Q9CZB0
+INFO:root:HTTP error for P01942
+INFO:root:HTTP error for Q8R050
+INFO:root:HTTP error for Q9WUB3
+INFO:root:HTTP error for Q9WUB3
+INFO:root:HTTP error for Q3V3R1
+INFO:root:HTTP error for Q9CQ62
+INFO:root:HTTP error for P08113
+INFO:root:HTTP error for Q99MN1
+INFO:root:HTTP error for P17182
+INFO:root:HTTP error for O35286
+INFO:root:HTTP error for Q9D0L8
+INFO:root:HTTP error for Q8R429
+INFO:root:HTTP error for P40142
+INFO:root:HTTP error for Q6P8X1
+INFO:root:HTTP error for P07310
+INFO:root:HTTP error for P63087
+INFO:root:HTTP error for P01942
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for O88990
+INFO:root:HTTP error for Q9R0Y5
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for O55143
+INFO:root:HTTP error for P97443
+INFO:root:HTTP error for Q8K2I4
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P60898
+INFO:root:HTTP error for Q3U7R1
+INFO:root:HTTP error for Q8VEK3
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q3UDE2
+INFO:root:HTTP error for Q02053
+INFO:root:HTTP error for Q8R429
+INFO:root:HTTP error for Q9CXA2
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q8R429
+INFO:root:HTTP error for P08071
+INFO:root:HTTP error for P07310
+INFO:root:HTTP error for Q99M87
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P02088
+INFO:root:HTTP error for Q9EQQ9
+INFO:root:HTTP error for P14211
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q8K370
+INFO:root:HTTP error for P16546
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for Q8BH61
+INFO:root:HTTP error for P07901
+INFO:root:HTTP error for Q9JI91
+INFO:root:HTTP error for Q8BPM2
+INFO:root:HTTP error for Q3U7R1
+INFO:root:HTTP error for P08071
+INFO:root:HTTP error for Q9JHI5
+INFO:root:HTTP error for Q9JHI5
+INFO:root:HTTP error for P97478
+INFO:root:HTTP error for P68369
+INFO:root:HTTP error for P52480
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q9R060
+INFO:root:HTTP error for P21981
+INFO:root:HTTP error for Q61696
+INFO:root:HTTP error for Q9D662
+INFO:root:HTTP error for Q9DCM0
+INFO:root:HTTP error for Q7TPR4
+INFO:root:HTTP error for Q99K85
+INFO:root:HTTP error for P17182
+INFO:root:HTTP error for Q60953
+INFO:root:HTTP error for P11499
+INFO:root:HTTP error for Q64521
+INFO:root:HTTP error for Q9ER72
+INFO:root:HTTP error for P01942
+INFO:root:HTTP error for Q9CWS0
+INFO:root:HTTP error for Q9ET01
+INFO:root:HTTP error for Q02053
+INFO:root:HTTP error for O08529
+INFO:root:HTTP error for P63038
+INFO:root:HTTP error for P83870
+INFO:root:HTTP error for P68372
+INFO:root:HTTP error for P35279
+INFO:root:HTTP error for P07310
+INFO:root:HTTP error for P99024
+INFO:root:HTTP error for P21981
+INFO:root:HTTP error for Q9Z2E2
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q9CQ26
+INFO:root:HTTP error for P97333
+INFO:root:HTTP error for Q9Z0N1
+INFO:root:HTTP error for P01942
+INFO:root:HTTP error for P60843
+INFO:root:HTTP error for P08032
+INFO:root:HTTP error for P16015
+INFO:root:HTTP error for Q9CZE3
+INFO:root:HTTP error for P16015
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P70268
+INFO:root:HTTP error for Q05512
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for P08113
+INFO:root:HTTP error for P62196
+INFO:root:HTTP error for P08121
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P05063
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q9WTP6
+INFO:root:HTTP error for Q9CQA3
+INFO:root:HTTP error for P56389
+INFO:root:HTTP error for P56480
+INFO:root:HTTP error for Q9Z183
+INFO:root:HTTP error for Q9EQQ9
+INFO:root:HTTP error for Q8K0C9
+INFO:root:HTTP error for P56480
+INFO:root:HTTP error for Q06770
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for O88456
+INFO:root:HTTP error for P13020
+INFO:root:HTTP error for O35130
+INFO:root:HTTP error for P56480
+INFO:root:HTTP error for Q3B7Z2
+INFO:root:HTTP error for Q9JHU4
+INFO:root:HTTP error for Q9D7G0
+INFO:root:HTTP error for P62196
+INFO:root:HTTP error for P58252
+INFO:root:HTTP error for Q9DBJ1
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for P31725
+INFO:root:HTTP error for Q9CS42
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P10107
+INFO:root:HTTP error for O70274
+INFO:root:HTTP error for Q9CR68
+INFO:root:HTTP error for P07901
+INFO:root:HTTP error for P24472
+INFO:root:HTTP error for P57780
+INFO:root:HTTP error for P58252
+INFO:root:HTTP error for Q9R0Y5
+INFO:root:HTTP error for P68369
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for Q8BMK1
+INFO:root:HTTP error for Q8C1A5
+INFO:root:HTTP error for P54822
+INFO:root:HTTP error for P02088
+INFO:root:HTTP error for P63328
+INFO:root:HTTP error for P56480
+INFO:root:HTTP error for Q91YL3
+INFO:root:HTTP error for P56480
+INFO:root:HTTP error for P57780
+INFO:root:HTTP error for Q9CWK8
+INFO:root:HTTP error for Q8BGB5
+INFO:root:HTTP error for Q6P542
+INFO:root:HTTP error for Q9WTP6
+INFO:root:HTTP error for P62814
+INFO:root:HTTP error for P62334
+INFO:root:HTTP error for P52480
+INFO:root:HTTP error for P01942
+INFO:root:HTTP error for Q63844
+INFO:root:HTTP error for P63085
+INFO:root:HTTP error for P62878
+INFO:root:HTTP error for P62878
+INFO:root:HTTP error for P09411
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for P34152
+INFO:root:HTTP error for Q9Z110
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for O88990
+INFO:root:HTTP error for P11499
+INFO:root:HTTP error for P52480
+INFO:root:HTTP error for Q61768
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q99KK7
+INFO:root:HTTP error for P58252
+INFO:root:HTTP error for P17182
+INFO:root:HTTP error for Q9D0M3
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q8BP92
+INFO:root:HTTP error for P17427
+INFO:root:HTTP error for Q8CHP8
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for P56480
+INFO:root:HTTP error for Q2NL51
+INFO:root:HTTP error for P01942
+INFO:root:HTTP error for P16045
+INFO:root:HTTP error for Q9JMA2
+INFO:root:HTTP error for P62631
+INFO:root:HTTP error for P47713
+INFO:root:HTTP error for P54775
+INFO:root:HTTP error for P13541
+INFO:root:HTTP error for P62141
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for Q8K385
+INFO:root:HTTP error for P68369
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for Q8R429
+INFO:root:HTTP error for P23506
+INFO:root:HTTP error for P16858
+INFO:root:HTTP error for P16858
+INFO:root:HTTP error for Q921I1
+INFO:root:HTTP error for P19157
+INFO:root:HTTP error for Q9Z247
+INFO:root:HTTP error for Q8K2C7
+INFO:root:HTTP error for P47738
+INFO:root:HTTP error for P26638
+INFO:root:HTTP error for P11499
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q9CQX2
+INFO:root:HTTP error for Q99MN1
+INFO:root:HTTP error for P40142
+INFO:root:HTTP error for Q3TRM8
+INFO:root:HTTP error for Q60932
+INFO:root:HTTP error for Q9WTM5
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P19157
+INFO:root:HTTP error for Q9Z0F8
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q8C1B7
+INFO:root:HTTP error for Q8C878
+INFO:root:HTTP error for P17751
+INFO:root:HTTP error for O08997
+INFO:root:HTTP error for Q9DBJ1
+INFO:root:HTTP error for Q3TB82
+INFO:root:HTTP error for P68369
+INFO:root:HTTP error for P02088
+INFO:root:HTTP error for P08249
+INFO:root:HTTP error for Q61183
+INFO:root:HTTP error for P24527
+INFO:root:HTTP error for Q04447
+INFO:root:HTTP error for Q7TMM9
+INFO:root:HTTP error for Q8BMF4
+INFO:root:HTTP error for P08113
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q99KI0
+INFO:root:HTTP error for P08113
+INFO:root:HTTP error for Q9DBH5
+INFO:root:HTTP error for Q03265
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for P68369
+INFO:root:HTTP error for P05064
+INFO:root:HTTP error for P08113
+INFO:root:HTTP error for Q9CQN1
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for Q04447
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P06745
+INFO:root:HTTP error for P52480
+INFO:root:HTTP error for Q01853
+INFO:root:HTTP error for P05064
+INFO:root:HTTP error for P46471
+INFO:root:HTTP error for P04117
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q05816
+INFO:root:HTTP error for Q01853
+INFO:root:HTTP error for E9PVX6
+INFO:root:HTTP error for Q80SU7
+INFO:root:HTTP error for Q5EG47
+INFO:root:HTTP error for Q9WV80
+INFO:root:HTTP error for Q03265
+INFO:root:HTTP error for Q03265
+INFO:root:HTTP error for Q5U431
+INFO:root:HTTP error for P05063
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q8BWF0
+INFO:root:HTTP error for Q9DBC7
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for Q8BP92
+INFO:root:HTTP error for P58252
+INFO:root:HTTP error for P56480
+INFO:root:HTTP error for Q921I1
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q6PEB6
+INFO:root:HTTP error for O55222
+INFO:root:HTTP error for Q8C650
+INFO:root:HTTP error for P02088
+INFO:root:HTTP error for P58252
+INFO:root:HTTP error for Q8VEK3
+INFO:root:HTTP error for Q9EPU0
+INFO:root:HTTP error for Q02789
+INFO:root:HTTP error for P10107
+INFO:root:HTTP error for Q01279
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P31725
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P28650
+INFO:root:HTTP error for Q91VJ4
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q91YI0
+INFO:root:HTTP error for O08638
+INFO:root:HTTP error for Q8CAY6
+INFO:root:HTTP error for P07310
+INFO:root:HTTP error for O35459
+INFO:root:HTTP error for Q91X72
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P35564
+INFO:root:HTTP error for P52480
+INFO:root:HTTP error for P58252
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P16858
+INFO:root:HTTP error for P97821
+INFO:root:HTTP error for P46471
+INFO:root:HTTP error for Q63844
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P97311
+INFO:root:HTTP error for P58252
+INFO:root:HTTP error for P58252
+INFO:root:HTTP error for P07901
+INFO:root:HTTP error for P46735
+INFO:root:HTTP error for P68369
+INFO:root:HTTP error for Q99KI0
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for P08113
+INFO:root:HTTP error for Q8VEK3
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P10518
+INFO:root:HTTP error for Q9Z1N5
+INFO:root:HTTP error for Q04447
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q61129
+INFO:root:HTTP error for Q9CR24
+INFO:root:HTTP error for O08605
+INFO:root:HTTP error for P17751
+INFO:root:HTTP error for Q9CQB5
+INFO:root:HTTP error for Q04447
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P63017
+INFO:root:HTTP error for P07901
+INFO:root:HTTP error for Q3U1V6
+INFO:root:HTTP error for O35459
+INFO:root:HTTP error for Q9Z0N1
+INFO:root:HTTP error for O88990
+INFO:root:HTTP error for Q91YN5
+INFO:root:HTTP error for P12382
+INFO:root:HTTP error for P63158
+INFO:root:HTTP error for Q8BH61
+INFO:root:HTTP error for P47739
+INFO:root:HTTP error for Q9CZB0
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q9CY28
+INFO:root:HTTP error for Q9JHH6
+INFO:root:HTTP error for Q9D0F9
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for Q8CC86
+INFO:root:HTTP error for Q9CS42
+INFO:root:HTTP error for P10630
+INFO:root:HTTP error for Q9WUB3
+INFO:root:HTTP error for P16858
+INFO:root:HTTP error for P62196
+INFO:root:HTTP error for Q03265
+INFO:root:HTTP error for Q8VEK3
+INFO:root:HTTP error for Q9QXK2
+INFO:root:HTTP error for P50516
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q91Z83
+INFO:root:HTTP error for O70493
+INFO:root:HTTP error for O09164
+INFO:root:HTTP error for P35831
+INFO:root:HTTP error for P62482
+INFO:root:HTTP error for Q8VEK3
+INFO:root:HTTP error for Q9CYR6
+INFO:root:HTTP error for P97821
+INFO:root:HTTP error for P97820
+INFO:root:HTTP error for P21981
+INFO:root:HTTP error for P16546
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for Q6P1B1
+INFO:root:HTTP error for P14240
+INFO:root:HTTP error for P21550
+INFO:root:HTTP error for Q9JI91
+INFO:root:HTTP error for P31725
+INFO:root:HTTP error for P05063
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for Q6ZQ88
+INFO:root:HTTP error for P20029
+INFO:root:HTTP error for O88990
+INFO:root:HTTP error for Q6P8X1
+INFO:root:HTTP error for P07310
+INFO:root:HTTP error for P07310
+INFO:root:HTTP error for P07901
+INFO:root:HTTP error for O35887
+INFO:root:HTTP error for Q922H2
+INFO:root:HTTP error for P16858
+INFO:root:HTTP error for P18653
+INFO:root:HTTP error for P09528
+INFO:root:HTTP error for P21981
+INFO:root:HTTP error for Q03265
+INFO:root:HTTP error for P02088
+INFO:root:HTTP error for Q61074
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q6PEE3
+INFO:root:HTTP error for P97310
+INFO:root:HTTP error for Q3TT99
+INFO:root:HTTP error for Q924W5
+INFO:root:HTTP error for Q9R0Y5
+INFO:root:HTTP error for Q60936
+INFO:root:HTTP error for P46718
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P40142
+INFO:root:HTTP error for P63038
+INFO:root:HTTP error for P52480
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q00612
+INFO:root:HTTP error for Q8VEK3
+INFO:root:HTTP error for P02088
+INFO:root:HTTP error for Q3V1D3
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q62074
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q8R429
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q9D8S4
+INFO:root:HTTP error for O70252
+INFO:root:HTTP error for P62878
+INFO:root:HTTP error for Q9D8Y0
+INFO:root:HTTP error for Q6NSR8
+INFO:root:HTTP error for Q61738
+INFO:root:HTTP error for Q9DCB8
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q75N62
+INFO:root:HTTP error for P08113
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for P17182
+INFO:root:HTTP error for P35550
+INFO:root:HTTP error for O08795
+INFO:root:HTTP error for P07310
+INFO:root:HTTP error for P21981
+INFO:root:HTTP error for P13542
+INFO:root:HTTP error for O88456
+INFO:root:HTTP error for P16546
+INFO:root:HTTP error for P19157
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for B8JK39
+INFO:root:HTTP error for Q8VDD5
+INFO:root:HTTP error for Q8BHG1
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P42208
+INFO:root:HTTP error for Q99MN1
+INFO:root:HTTP error for O88456
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for P35550
+INFO:root:HTTP error for P97478
+INFO:root:HTTP error for P60122
+INFO:root:HTTP error for P16858
+INFO:root:HTTP error for Q9WUB3
+INFO:root:HTTP error for Q9D1G2
+INFO:root:HTTP error for P26443
+INFO:root:HTTP error for P47811
+INFO:root:HTTP error for Q9QWR8
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q7TMM9
+INFO:root:HTTP error for O55143
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q8CI94
+INFO:root:HTTP error for P35283
+INFO:root:HTTP error for Q6ZPY7
+INFO:root:HTTP error for Q7TMM9
+INFO:root:HTTP error for Q8VEK3
+INFO:root:HTTP error for P63017
+INFO:root:HTTP error for Q6NZM9
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for Q9R0B7
+INFO:root:HTTP error for P07901
+INFO:root:HTTP error for Q04447
+INFO:root:HTTP error for P62334
+INFO:root:HTTP error for Q8R429
+INFO:root:HTTP error for Q9DCD0
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for Q02053
+INFO:root:HTTP error for P97807
+INFO:root:HTTP error for Q5XG73
+INFO:root:HTTP error for Q61696
+INFO:root:HTTP error for P11499
+INFO:root:HTTP error for P20029
+INFO:root:HTTP error for Q6P542
+INFO:root:HTTP error for Q921I1
+INFO:root:HTTP error for Q01279
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for Q00612
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P16858
+INFO:root:HTTP error for P39098
+INFO:root:HTTP error for Q03265
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q9JI10
+INFO:root:HTTP error for P16858
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for O08663
+INFO:root:HTTP error for Q8CAY6
+INFO:root:HTTP error for Q91X72
+INFO:root:HTTP error for P20029
+INFO:root:HTTP error for P01942
+INFO:root:HTTP error for P97311
+INFO:root:HTTP error for P28650
+INFO:root:HTTP error for Q8R4C2
+INFO:root:HTTP error for P13020
+INFO:root:HTTP error for Q8CI75
+INFO:root:HTTP error for P97807
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P26443
+INFO:root:HTTP error for Q922W5
+INFO:root:HTTP error for Q9DBJ1
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P11087
+INFO:root:HTTP error for P07310
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q7TMM9
+INFO:root:HTTP error for Q9Z2Q6
+INFO:root:HTTP error for P16858
+INFO:root:HTTP error for Q64261
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P20444
+INFO:root:HTTP error for Q9QZE7
+INFO:root:HTTP error for Q9CQA3
+INFO:root:HTTP error for P61161
+INFO:root:HTTP error for Q8C0V0
+INFO:root:HTTP error for P21550
+INFO:root:HTTP error for P68369
+INFO:root:HTTP error for P05064
+INFO:root:HTTP error for P16858
+INFO:root:HTTP error for Q61696
+INFO:root:HTTP error for P07901
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q8VDD5
+INFO:root:HTTP error for Q923D2
+INFO:root:HTTP error for Q9CXT8
+INFO:root:HTTP error for Q03265
+INFO:root:HTTP error for P53810
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q9QZE7
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for O08663
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for Q64518
+INFO:root:HTTP error for O08638
+INFO:root:HTTP error for Q6P9J9
+INFO:root:HTTP error for P56399
+INFO:root:HTTP error for P68404
+INFO:root:HTTP error for Q03265
+INFO:root:HTTP error for P35276
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P17182
+INFO:root:HTTP error for P56546
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for P16546
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for Q9WUM5
+INFO:root:HTTP error for P62878
+INFO:root:HTTP error for Q8BGQ7
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q8BFR5
+INFO:root:HTTP error for Q9DCN2
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q9QWR8
+INFO:root:HTTP error for P20029
+INFO:root:HTTP error for P51569
+INFO:root:HTTP error for P19536
+INFO:root:HTTP error for P60843
+INFO:root:HTTP error for P09528
+INFO:root:HTTP error for Q1XH17
+INFO:root:HTTP error for P49025
+INFO:root:HTTP error for Q3UH66
+INFO:root:HTTP error for P56480
+INFO:root:HTTP error for Q9R060
+INFO:root:HTTP error for Q8VDD5
+INFO:root:HTTP error for P68369
+INFO:root:HTTP error for Q923T9
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q99MK8
+INFO:root:HTTP error for P16015
+INFO:root:HTTP error for P09411
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q9QXX4
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for Q8BVF9
+INFO:root:HTTP error for Q923B6
+INFO:root:HTTP error for P33174
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for O88685
+INFO:root:HTTP error for Q9D1P4
+INFO:root:HTTP error for Q91V92
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q501J6
+INFO:root:HTTP error for P02088
+INFO:root:HTTP error for P16858
+INFO:root:HTTP error for P33609
+INFO:root:HTTP error for Q8VDD5
+INFO:root:HTTP error for P21981
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q8BGA8
+INFO:root:HTTP error for Q8VDD5
+INFO:root:HTTP error for P68369
+INFO:root:HTTP error for Q6P542
+INFO:root:HTTP error for P62814
+INFO:root:HTTP error for P17182
+INFO:root:HTTP error for Q64455
+INFO:root:HTTP error for P11672
+INFO:root:HTTP error for P21981
+INFO:root:HTTP error for Q8R050
+INFO:root:HTTP error for Q9R060
+INFO:root:HTTP error for O35744
+INFO:root:HTTP error for P59997
+INFO:root:HTTP error for Q8R429
+INFO:root:HTTP error for Q9WTU0
+INFO:root:HTTP error for Q03147
+INFO:root:HTTP error for P63158
+INFO:root:HTTP error for Q9QZ88
+INFO:root:HTTP error for P16858
+INFO:root:HTTP error for P34884
+INFO:root:HTTP error for Q8VDD5
+INFO:root:HTTP error for Q99KI0
+INFO:root:HTTP error for P20801
+INFO:root:HTTP error for Q91X72
+INFO:root:HTTP error for P40142
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for P17182
+INFO:root:HTTP error for Q91ZA3
+INFO:root:HTTP error for P15105
+INFO:root:HTTP error for Q99J99
+INFO:root:HTTP error for P58252
+INFO:root:HTTP error for P46735
+INFO:root:HTTP error for P52480
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for P21981
+INFO:root:HTTP error for P16015
+INFO:root:HTTP error for Q91WP0
+INFO:root:HTTP error for P13020
+INFO:root:HTTP error for O09159
+INFO:root:HTTP error for Q91ZX7
+INFO:root:HTTP error for P23591
+INFO:root:HTTP error for P07901
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for O88967
+INFO:root:HTTP error for O35945
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for Q9R0N0
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P02104
+INFO:root:HTTP error for B1AR13
+INFO:root:HTTP error for Q8BHG1
+INFO:root:HTTP error for P05064
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for P07310
+INFO:root:HTTP error for O35350
+INFO:root:HTTP error for P12296
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P16045
+INFO:root:HTTP error for P21550
+INFO:root:HTTP error for Q9WVL0
+INFO:root:HTTP error for Q03526
+INFO:root:HTTP error for P54071
+INFO:root:HTTP error for P56399
+INFO:root:HTTP error for P21550
+INFO:root:HTTP error for O35219
+INFO:root:HTTP error for P19536
+INFO:root:HTTP error for Q99K85
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for P04444
+INFO:root:HTTP error for P07310
+INFO:root:HTTP error for P50543
+INFO:root:HTTP error for P09055
+INFO:root:HTTP error for Q9D6R2
+INFO:root:HTTP error for E9PZQ0
+INFO:root:HTTP error for Q9QUM7
+INFO:root:HTTP error for P31725
+INFO:root:HTTP error for Q9D0F9
+INFO:root:HTTP error for P05555
+INFO:root:HTTP error for P49586
+INFO:root:HTTP error for Q9D8Y0
+INFO:root:HTTP error for P07901
+INFO:root:HTTP error for Q02789
+INFO:root:HTTP error for Q99K85
+INFO:root:HTTP error for P19536
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q61233
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P11087
+INFO:root:HTTP error for Q9ET01
+INFO:root:HTTP error for B2RR83
+INFO:root:HTTP error for Q9R0Y5
+INFO:root:HTTP error for P68369
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P07310
+INFO:root:HTTP error for P21981
+INFO:root:HTTP error for P99024
+INFO:root:HTTP error for Q8CHE4
+INFO:root:HTTP error for Q7TMM9
+INFO:root:HTTP error for Q91XI1
+INFO:root:HTTP error for P70424
+INFO:root:HTTP error for P37040
+INFO:root:HTTP error for P06745
+INFO:root:HTTP error for P21550
+INFO:root:HTTP error for Q6PIC6
+INFO:root:HTTP error for Q80UG5
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q9JI91
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q8C460
+INFO:root:HTTP error for Q62318
+INFO:root:HTTP error for P16015
+INFO:root:HTTP error for Q9QY06
+INFO:root:HTTP error for P10107
+INFO:root:HTTP error for P08249
+INFO:root:HTTP error for Q9CQ49
+INFO:root:HTTP error for P52480
+INFO:root:HTTP error for P20444
+INFO:root:HTTP error for Q6Q477
+INFO:root:HTTP error for P42208
+INFO:root:HTTP error for O70293
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for P54923
+INFO:root:HTTP error for P27601
+INFO:root:HTTP error for Q91WS0
+INFO:root:HTTP error for P48962
+INFO:root:HTTP error for Q8K411
+INFO:root:HTTP error for P07310
+INFO:root:HTTP error for Q8K274
+INFO:root:HTTP error for P17427
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q60953
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P47857
+INFO:root:HTTP error for P11499
+INFO:root:HTTP error for Q8K4K6
+INFO:root:HTTP error for Q9D5S7
+INFO:root:HTTP error for P17751
+INFO:root:HTTP error for P48441
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for P59325
+INFO:root:HTTP error for Q9WTK7
+INFO:root:HTTP error for P10107
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for Q9DB30
+INFO:root:HTTP error for P59111
+INFO:root:HTTP error for P68369
+INFO:root:HTTP error for P10126
+INFO:root:HTTP error for P52480
+INFO:root:HTTP error for Q9D0I9
+INFO:root:HTTP error for Q9QZ05
+INFO:root:HTTP error for O70624
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for P05064
+INFO:root:HTTP error for Q99J62
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for P57780
+INFO:root:HTTP error for Q7TMM9
+INFO:root:HTTP error for Q99KN9
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for Q9CQN1
+INFO:root:HTTP error for D3Z7P3
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for P17427
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q9QYZ6
+INFO:root:HTTP error for P15208
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q922W5
+INFO:root:HTTP error for Q9DBC7
+INFO:root:HTTP error for Q05920
+INFO:root:HTTP error for Q91ZX7
+INFO:root:HTTP error for P47199
+INFO:root:HTTP error for P35278
+INFO:root:HTTP error for Q8C0D5
+INFO:root:HTTP error for Q8BGE5
+INFO:root:HTTP error for P21981
+INFO:root:HTTP error for P11672
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q91VD9
+INFO:root:HTTP error for Q01853
+INFO:root:HTTP error for P41234
+INFO:root:HTTP error for Q99MK8
+INFO:root:HTTP error for P47791
+INFO:root:HTTP error for Q9ERK0
+INFO:root:HTTP error for Q91Z83
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for A2ARV4
+INFO:root:HTTP error for Q03265
+INFO:root:HTTP error for Q8C6J9
+INFO:root:HTTP error for Q8C1B7
+INFO:root:HTTP error for P62715
+INFO:root:HTTP error for Q9QZE7
+INFO:root:HTTP error for Q61129
+INFO:root:HTTP error for P17156
+INFO:root:HTTP error for Q8CGK3
+INFO:root:HTTP error for Q9WUB3
+INFO:root:HTTP error for Q5SX39
+INFO:root:HTTP error for Q9DD16
+INFO:root:HTTP error for P16858
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q61503
+INFO:root:HTTP error for P05480
+INFO:root:HTTP error for Q9DAR7
+INFO:root:HTTP error for E9PVX6
+INFO:root:HTTP error for Q922K7
+INFO:root:HTTP error for P16546
+INFO:root:HTTP error for P63017
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P08071
+INFO:root:HTTP error for Q8C0D5
+INFO:root:HTTP error for Q60953
+INFO:root:HTTP error for E9PV24
+INFO:root:HTTP error for Q91X72
+INFO:root:HTTP error for Q9R001
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q99PU8
+INFO:root:HTTP error for Q9CZ30
+INFO:root:HTTP error for Q9QX66
+INFO:root:HTTP error for Q6PIC6
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P07742
+INFO:root:HTTP error for Q9Z1J3
+INFO:root:HTTP error for Q9WUB3
+INFO:root:HTTP error for Q9Z2R6
+INFO:root:HTTP error for P58801
+INFO:root:HTTP error for Q3UX10
+INFO:root:HTTP error for P40142
+INFO:root:HTTP error for Q9DCD0
+INFO:root:HTTP error for Q05117
+INFO:root:HTTP error for Q8CGK3
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P35550
+INFO:root:HTTP error for P58242
+INFO:root:HTTP error for Q9ES70
+INFO:root:HTTP error for Q3THG9
+INFO:root:HTTP error for E9PZQ0
+INFO:root:HTTP error for Q8K441
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for O88990
+INFO:root:HTTP error for Q9DBJ1
+INFO:root:HTTP error for P09528
+INFO:root:HTTP error for P35831
+INFO:root:HTTP error for Q62083
+INFO:root:HTTP error for Q01320
+INFO:root:HTTP error for Q9WUV0
+INFO:root:HTTP error for F8VQB6
+INFO:root:HTTP error for Q69Z23
+INFO:root:HTTP error for O88990
+INFO:root:HTTP error for Q9CWY3
+INFO:root:HTTP error for Q9EPK2
+INFO:root:HTTP error for Q6NZP1
+INFO:root:HTTP error for P13542
+INFO:root:HTTP error for Q8R429
+INFO:root:HTTP error for E9PZQ0
+INFO:root:HTTP error for Q61738
+INFO:root:HTTP error for P07901
+INFO:root:HTTP error for Q9DCD0
+INFO:root:HTTP error for Q6IQX7
+INFO:root:HTTP error for Q69Z28
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q8CHE4
+INFO:root:HTTP error for P98197
+INFO:root:HTTP error for Q9WVS7
+INFO:root:HTTP error for Q5NCC3
+INFO:root:HTTP error for P56654
+INFO:root:HTTP error for P07724
+INFO:root:HTTP error for Q8BPY9
+INFO:root:HTTP error for P21550
+INFO:root:HTTP error for Q3UES3
+INFO:root:HTTP error for Q3UVC0
+INFO:root:HTTP error for P62482
+INFO:root:HTTP error for P24547
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q9EQX4
+INFO:root:HTTP error for Q8CGC7
+INFO:root:HTTP error for Q64512
+INFO:root:HTTP error for Q8K007
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q3V3R1
+INFO:root:HTTP error for Q05512
+INFO:root:HTTP error for Q03265
+INFO:root:HTTP error for Q6PDQ2
+INFO:root:HTTP error for P21981
+INFO:root:HTTP error for Q3UJK4
+INFO:root:HTTP error for O35887
+INFO:root:HTTP error for P17751
+INFO:root:HTTP error for Q923J1
+INFO:root:HTTP error for P16546
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for Q9WUB3
+INFO:root:HTTP error for Q8VDD5
+INFO:root:HTTP error for O70589
+INFO:root:HTTP error for Q8K1Z0
+INFO:root:HTTP error for O08992
+INFO:root:HTTP error for P08775
+INFO:root:HTTP error for Q99J99
+INFO:root:HTTP error for P07091
+INFO:root:HTTP error for P14211
+INFO:root:HTTP error for Q8R1Q9
+INFO:root:HTTP error for Q8VHE6
+INFO:root:HTTP error for P33173
+INFO:root:HTTP error for O70310
+INFO:root:HTTP error for Q69Z23
+INFO:root:HTTP error for Q96DY5
+INFO:root:HTTP error for Q8BGE5
+INFO:root:HTTP error for Q8CG03
+INFO:root:HTTP error for Q8CIN4
+INFO:root:HTTP error for Q9DBV3
+INFO:root:HTTP error for Q9D5U0
+INFO:root:HTTP error for O08795
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for B1AVY7
+INFO:root:HTTP error for Q769J6
+INFO:root:HTTP error for P97471
+INFO:root:HTTP error for Q9ESK4
+INFO:root:HTTP error for Q8CG48
+INFO:root:HTTP error for Q61772
+INFO:root:HTTP error for Q8K045
+INFO:root:HTTP error for Q5SX40
+INFO:root:HTTP error for Q8R516
+INFO:root:HTTP error for S4R1M9
+INFO:root:HTTP error for Q8K0C9
+INFO:root:HTTP error for A2ASS6
+INFO:root:HTTP error for P70227
+INFO:root:HTTP error for P07901
+INFO:root:HTTP error for Q8K3P5
+INFO:root:HTTP error for Q01853
+INFO:root:HTTP error for O70405
+INFO:root:HTTP error for P12246
+INFO:root:HTTP error for Q7TPQ3
+INFO:root:HTTP error for Q91Z46
+INFO:root:HTTP error for O35375
+INFO:root:HTTP error for Q9D7B1
+INFO:root:HTTP error for Q69154
+INFO:root:HTTP error for O08529
+INFO:root:HTTP error for Q9R0N5
+INFO:root:HTTP error for Q3U2P1
+INFO:root:HTTP error for P70695
+INFO:root:HTTP error for Q9CZ30
+INFO:root:HTTP error for Q61102
+INFO:root:HTTP error for P39053
+INFO:root:HTTP error for P00186
+INFO:root:HTTP error for B2RX12
+INFO:root:HTTP error for Q9CQN1
+INFO:root:HTTP error for P21981
+INFO:root:HTTP error for P12296
+INFO:root:HTTP error for P35283
+INFO:root:HTTP error for Q9QZL6
+INFO:root:HTTP error for Q9JJZ8
+INFO:root:HTTP error for Q9JI91
+INFO:root:HTTP error for P05555
+INFO:root:HTTP error for Q99K67
+INFO:root:HTTP error for P56480
+INFO:root:HTTP error for Q91ZT5
+INFO:root:HTTP error for Q03265
+INFO:root:HTTP error for Q9WU65
+INFO:root:HTTP error for Q8BTF7
+INFO:root:HTTP error for Q9R0Y5
+INFO:root:HTTP error for Q6DG52
+INFO:root:HTTP error for Q6P3D0
+INFO:root:HTTP error for A2A825
+INFO:root:HTTP error for Q9CZW6
+INFO:root:HTTP error for Q9QZ67
+INFO:root:HTTP error for Q9DBC0
+INFO:root:HTTP error for Q6Q477
+INFO:root:HTTP error for Q8R0F8
+INFO:root:Finished annotation
+INFO:root:Finished proteoform check
+INFO:root:Starting exopeptidase check
+INFO:root:1 EDVQETDTSQKDQSPASHEIATNLGDFALR DVQETDTSQKDQSPASHEIATNLGDFALR
+INFO:root:1 CDEDETTALVCDNGSGLVKAGFAGDDAPR DEDETTALVCDNGSGLVKAGFAGDDAPR
+INFO:root:1 CEEEDSTALVCDNGSGLCKAGFAGDDAPR EEEDSTALVCDNGSGLCKAGFAGDDAPR
+INFO:root:1 CDDEETTALVCDNGSGLVKAGFAGDDAPR DDEETTALVCDNGSGLVKAGFAGDDAPR
+INFO:root:1 AAEKQIPGGGSGGGGSGSGGGGGGSGGGR AEKQIPGGGSGGGGSGSGGGGGGSGGGR
+INFO:root:1 AAEKQIPGGGSGGGGSGSGGGGGGSGGGR EKQIPGGGSGGGGSGSGGGGGGSGGGR
+INFO:root:1 MTDDQDCAAELEKVDSSSEDGVDAKPDR TDDQDCAAELEKVDSSSEDGVDAKPDR
+INFO:root:2 HDGADETSEKEQQEAIEHIDEVQNEIDR GADETSEKEQQEAIEHIDEVQNEIDR
+INFO:root:2 SKGPPDFSSDEEREPTPVLGSGASVGR GPPDFSSDEEREPTPVLGSGASVGR
+INFO:root:1 LSLEGDHSTPPSAYGSVKPYTNFDAER SLEGDHSTPPSAYGSVKPYTNFDAER
+INFO:root:1 EEEIAALVIDNGSGMCKAGFAGDDAPR EEIAALVIDNGSGMCKAGFAGDDAPR
+INFO:root:2 VERPYSGFPDASSEGPEPTQGEAR RPYSGFPDASSEGPEPTQGEAR
+INFO:root:2 AAAVFQAQNSDVQDSPQHNPEQAR AVFQAQNSDVQDSPQHNPEQAR
+INFO:root:2 SETAPAAPAAPAPAEKTPVKKKAR TAPAAPAAPAPAEKTPVKKKAR
+INFO:root:2 TLEIPGSSDPNIVPDGDFSSLVR EIPGSSDPNIVPDGDFSSLVR
+INFO:root:2 HQGVMVGMGQKDSYVGDEAQSKR GVMVGMGQKDSYVGDEAQSKR
+INFO:root:1 HQGVMVGMGQKDSYVGDEAQSKR VMVGMGQKDSYVGDEAQSKR
+INFO:root:1 HQGVMVGMGQKDSYVGDEAQSKR MVGMGQKDSYVGDEAQSKR
+INFO:root:2 HQGVMVGMGQKDSYVGDEAQSKR GMGQKDSYVGDEAQSKR
+INFO:root:1 HQGVMVGMGQKDSYVGDEAQSKR MGQKDSYVGDEAQSKR
+INFO:root:1 HQGVMVGMGQKDSYVGDEAQSKR GQKDSYVGDEAQSKR
+INFO:root:1 HQGVMVGMGQKDSYVGDEAQSKR QKDSYVGDEAQSKR
+INFO:root:1 HQGVMVGMGQKDSYVGDEAQSKR KDSYVGDEAQSKR
+INFO:root:1 HQGVMVGMGQKDSYVGDEAQSKR DSYVGDEAQSKR
+INFO:root:1 HQGVMVGMGQKDSYVGDEAQSKR SYVGDEAQSKR
+INFO:root:1 HQGVMVGMGQKDSYVGDEAQSKR YVGDEAQSKR
+INFO:root:1 HQGVMVGMGQKDSYVGDEAQSKR VGDEAQSKR
+INFO:root:2 ASGSPGKSSTHASVSPASEPSR GSPGKSSTHASVSPASEPSR
+INFO:root:1 VGVKPVGSDPDFQPELSGAGSR GVKPVGSDPDFQPELSGAGSR
+INFO:root:1 QQEAISPQEQEAVSPDISTTER QEAISPQEQEAVSPDISTTER
+INFO:root:1 QQEAISPQEQEAVSPDISTTER EAISPQEQEAVSPDISTTER
+INFO:root:1 KDLYANNVMSGGTTMYPGIADR DLYANNVMSGGTTMYPGIADR
+INFO:root:2 SSSLEKSYELPDGQVITIGNER SLEKSYELPDGQVITIGNER
+INFO:root:2 SSSLEKSYELPDGQVITIGNER EKSYELPDGQVITIGNER
+INFO:root:2 SSSLEKSYELPDGQVITIGNER SYELPDGQVITIGNER
+INFO:root:1 SSSLEKSYELPDGQVITIGNER YELPDGQVITIGNER
+INFO:root:1 SSSLEKSYELPDGQVITIGNER ELPDGQVITIGNER
+INFO:root:1 SSSLEKSYELPDGQVITIGNER LPDGQVITIGNER
+INFO:root:1 SSSLEKSYELPDGQVITIGNER PDGQVITIGNER
+INFO:root:2 SSSLEKSYELPDGQVITIGNER GQVITIGNER
+INFO:root:1 SSSLEKSYELPDGQVITIGNER QVITIGNER
+INFO:root:1 SSSLEKSYELPDGQVITIGNER VITIGNER
+INFO:root:1 SSSLEKSYELPDGQVITIGNER ITIGNER
+INFO:root:2 SSGTGASVGPPQPSDQDTLVQR GTGASVGPPQPSDQDTLVQR
+INFO:root:2 APKGGSKQQSEEDLLLQDFSR KGGSKQQSEEDLLLQDFSR
+INFO:root:1 VAPEEHPVLLTEAPLNPKANR APEEHPVLLTEAPLNPKANR
+INFO:root:1 VAPEEHPVLLTEAPLNPKANR PEEHPVLLTEAPLNPKANR
+INFO:root:1 VAPEEHPTLLTEAPLNPKANR APEEHPTLLTEAPLNPKANR
+INFO:root:1 VAPEEHPTLLTEAPLNPKANR PEEHPTLLTEAPLNPKANR
+INFO:root:2 MNGEADCPTDLEMAAPKGQDR GEADCPTDLEMAAPKGQDR
+INFO:root:1 TKVKAAPEESEAQAEGCSEER KVKAAPEESEAQAEGCSEER
+INFO:root:1 TKVKAAPEESEAQAEGCSEER VKAAPEESEAQAEGCSEER
+INFO:root:2 TKVKAAPEESEAQAEGCSEER AAPEESEAQAEGCSEER
+INFO:root:1 NTLDLNGGKGGPGDEDDPLR TLDLNGGKGGPGDEDDPLR
+INFO:root:2 NTLDLNGGKGGPGDEDDPLR DLNGGKGGPGDEDDPLR
+INFO:root:1 SVATKKTEQGPPSSEYIFER VATKKTEQGPPSSEYIFER
+INFO:root:2 SVATKKTEQGPPSSEYIFER TKKTEQGPPSSEYIFER
+INFO:root:1 SVATKKTEQGPPSSEYIFER KKTEQGPPSSEYIFER
+INFO:root:2 VCDNGSGLVKAGFAGDDAPR DNGSGLVKAGFAGDDAPR
+INFO:root:1 VDNGSGMCKAGFAGDDAPR DNGSGMCKAGFAGDDAPR
+INFO:root:1 AHGSVVKSEDYAFPTYADR HGSVVKSEDYAFPTYADR
+INFO:root:1 AHGSVVKSEDYAFPTYADR GSVVKSEDYAFPTYADR
+INFO:root:2 AHGSVVKSEDYAFPTYADR VVKSEDYAFPTYADR
+INFO:root:2 GQQASSQNEGLTIDLKNFR QASSQNEGLTIDLKNFR
+INFO:root:1 KSPTKAEPATPAEAAQSDR SPTKAEPATPAEAAQSDR
+INFO:root:1 EVKCDMEVSCPEGYTCCR VKCDMEVSCPEGYTCCR
+INFO:root:1 ASTESGSESATHDSSAPR STESGSESATHDSSAPR
+INFO:root:2 ASTESGSESATHDSSAPR ESGSESATHDSSAPR
+INFO:root:2 AYYDVDYEKNAKGSNYWR YDVDYEKNAKGSNYWR
+INFO:root:1 AYYDVDYEKNAKGSNYWR DVDYEKNAKGSNYWR
+INFO:root:1 AAAAEIDEEPVSKAKQSR AAAEIDEEPVSKAKQSR
+INFO:root:2 AAAAEIDEEPVSKAKQSR AEIDEEPVSKAKQSR
+INFO:root:2 ANTVLSGGTTMYPGIADR TVLSGGTTMYPGIADR
+INFO:root:1 LYSSSDDVIELTPSNFNR YSSSDDVIELTPSNFNR
+INFO:root:1 GDVPVVADPTVPNVTVTR DVPVVADPTVPNVTVTR
+INFO:root:2 SQGSQYKISEPLHIHQVR GSQYKISEPLHIHQVR
+INFO:root:1 AEPVPGIKAEPDESNAR EPVPGIKAEPDESNAR
+INFO:root:1 KHTGPNSPDTANDGFVR HTGPNSPDTANDGFVR
+INFO:root:2 ANYEFSQVSGDRPGCR YEFSQVSGDRPGCR
+INFO:root:2 PLAKDLLHPSPEEEKR AKDLLHPSPEEEKR
+INFO:root:2 KALAAAGYDVEKNNSR LAAAGYDVEKNNSR
+INFO:root:2 KALAAAGYDVEKNNSR AAGYDVEKNNSR
+INFO:root:1 HPTLLTEAPLNPKANR PTLLTEAPLNPKANR
+INFO:root:1 HPTLLTEAPLNPKANR TLLTEAPLNPKANR
+INFO:root:1 HPTLLTEAPLNPKANR LLTEAPLNPKANR
+INFO:root:1 HPTLLTEAPLNPKANR LTEAPLNPKANR
+INFO:root:1 HPTLLTEAPLNPKANR TEAPLNPKANR
+INFO:root:1 HPTLLTEAPLNPKANR EAPLNPKANR
+INFO:root:1 HPTLLTEAPLNPKANR APLNPKANR
+INFO:root:1 HPTLLTEAPLNPKANR PLNPKANR
+INFO:root:1 HPVLLTEAPLNPKANR PVLLTEAPLNPKANR
+INFO:root:2 HPVLLTEAPLNPKANR LLTEAPLNPKANR
+INFO:root:1 HPVLLTEAPLNPKANR LTEAPLNPKANR
+INFO:root:1 HPVLLTEAPLNPKANR TEAPLNPKANR
+INFO:root:1 HPVLLTEAPLNPKANR EAPLNPKANR
+INFO:root:1 HPVLLTEAPLNPKANR APLNPKANR
+INFO:root:1 HPVLLTEAPLNPKANR PLNPKANR
+INFO:root:2 KSLAAAGYDVEKNNSR LAAAGYDVEKNNSR
+INFO:root:2 KSLAAAGYDVEKNNSR AAGYDVEKNNSR
+INFO:root:1 MMLGPEGGEGYVVKLR MLGPEGGEGYVVKLR
+INFO:root:1 MMLGPEGGEGYVVKLR LGPEGGEGYVVKLR
+INFO:root:2 MKSVTEQGAELSNEER SVTEQGAELSNEER
+INFO:root:1 CEVDALKGTNESLER EVDALKGTNESLER
+INFO:root:2 KGFVEDLNESFKDNR FVEDLNESFKDNR
+INFO:root:2 SDSSDSMDTGAGSIR SSDSMDTGAGSIR
+INFO:root:1 MTENSTSAPAAKPKR TENSTSAPAAKPKR
+INFO:root:1 GEDGLDFPEYDGVDR EDGLDFPEYDGVDR
+INFO:root:1 GEDGLDFPEYDGVDR DGLDFPEYDGVDR
+INFO:root:2 HFYAGGQVYPGEASR YAGGQVYPGEASR
+INFO:root:1 HFYAGGQVYPGEASR AGGQVYPGEASR
+INFO:root:2 MNNQKQQKPTLSGQR NQKQQKPTLSGQR
+INFO:root:2 SLADAINTEFKNTR ADAINTEFKNTR
+INFO:root:1 LDYSDEINQVVEVR DYSDEINQVVEVR
+INFO:root:2 LDYSDEINQVVEVR SDEINQVVEVR
+INFO:root:2 LDYSDEINQVVEVR EINQVVEVR
+INFO:root:1 VKMAAAGGGGGGGR KMAAAGGGGGGGR
+INFO:root:1 VKMAAAGGGGGGGR MAAAGGGGGGGR
+INFO:root:1 AAVKTLNPKAEVAR AVKTLNPKAEVAR
+INFO:root:2 EGLEQAALPAEESR LEQAALPAEESR
+INFO:root:2 EQEAVSPDISTTER EAVSPDISTTER
+INFO:root:1 EQEAVSPDISTTER AVSPDISTTER
+INFO:root:1 EQEAVSPDISTTER VSPDISTTER
+INFO:root:1 EEEEEPVKAAPGKR EEEEPVKAAPGKR
+INFO:root:2 SLYSSSPGGAYVTR YSSSPGGAYVTR
+INFO:root:1 SLYSSSPGGAYVTR SSSPGGAYVTR
+INFO:root:1 SLYSSSPGGAYVTR SSPGGAYVTR
+INFO:root:1 FLEYEDHKTAAQAR LEYEDHKTAAQAR
+INFO:root:1 VDVSKPDLTAALR DVSKPDLTAALR
+INFO:root:1 VDVSKPDLTAALR VSKPDLTAALR
+INFO:root:2 LVKAGFAGDDAPR KAGFAGDDAPR
+INFO:root:1 LVKAGFAGDDAPR AGFAGDDAPR
+INFO:root:1 LVKAGFAGDDAPR GFAGDDAPR
+INFO:root:1 LVKAGFAGDDAPR FAGDDAPR
+INFO:root:1 AEVEDASEEAPLR EVEDASEEAPLR
+INFO:root:1 SAPPHFHFGQTNR APPHFHFGQTNR
+INFO:root:1 SGGTTMYPGIADR GGTTMYPGIADR
+INFO:root:1 SADPNVPNVIVTR ADPNVPNVIVTR
+INFO:root:1 EEVEDASEEAPLR EVEDASEEAPLR
+INFO:root:1 MSSGAHGEEGSAR SSGAHGEEGSAR
+INFO:root:1 MSSGAHGEEGSAR SGAHGEEGSAR
+INFO:root:2 SNGYEDHMAEDCR GYEDHMAEDCR
+INFO:root:2 SPTPALFSLPEAR TPALFSLPEAR
+INFO:root:2 QKSQPQNQNIPR SQPQNQNIPR
+INFO:root:2 ANSTGKAPPDER STGKAPPDER
+INFO:root:1 KLEVDPNIQAVR LEVDPNIQAVR
+INFO:root:1 KLEVDPNIQAVR EVDPNIQAVR
+INFO:root:1 KLEVDPNIQAVR VDPNIQAVR
+INFO:root:2 MMTEEHTDLEAR TEEHTDLEAR
+INFO:root:1 DNIQGITKPAIR NIQGITKPAIR
+INFO:root:1 DNIQGITKPAIR IQGITKPAIR
+INFO:root:1 SLGSALRPSTSR LGSALRPSTSR
+INFO:root:2 SLGSALRPSTSR SALRPSTSR
+INFO:root:1 VMEKPSPLLVGR MEKPSPLLVGR
+INFO:root:2 CLTNFHGMDLTR TNFHGMDLTR
+INFO:root:2 AYDEAIMAQQDR DEAIMAQQDR
+INFO:root:1 AAAAAAATKPAR AAAAAATKPAR
+INFO:root:2 STAASRPPVTLR AASRPPVTLR
+INFO:root:2 STAASRPPVTLR SRPPVTLR
+INFO:root:1 EDIDLPETFDAR DIDLPETFDAR
+INFO:root:1 EDIDLPETFDAR IDLPETFDAR
+INFO:root:1 EDIDLPETFDAR DLPETFDAR
+INFO:root:1 EDIDLPETFDAR LPETFDAR
+INFO:root:1 ESEVASSLVLER SEVASSLVLER
+INFO:root:1 FDLQIGDESVGR DLQIGDESVGR
+INFO:root:1 FDITADDEPLGR DITADDEPLGR
+INFO:root:2 TNEEPLPKKVR EEPLPKKVR
+INFO:root:1 LTDTGTESSPR TDTGTESSPR
+INFO:root:1 SAVSGEDTQDR AVSGEDTQDR
+INFO:root:1 NSIMKCDVDIR SIMKCDVDIR
+INFO:root:1 NSIMKCDIDIR SIMKCDIDIR
+INFO:root:2 SAGSGSFTDVR GSGSFTDVR
+INFO:root:1 SAGSGSFTDVR SGSFTDVR
+INFO:root:2 ANKGPSYGMSR KGPSYGMSR
+INFO:root:1 QALIDSHFEAR ALIDSHFEAR
+INFO:root:1 QSTQAATASSR STQAATASSR
+INFO:root:2 STSVTSDNLSR SVTSDNLSR
+INFO:root:1 IQNKPLYFADR QNKPLYFADR
+INFO:root:1 MKFNPFVTSDR KFNPFVTSDR
+INFO:root:1 MKFNPFVTSDR FNPFVTSDR
+INFO:root:2 GPYPSSMDWR YPSSMDWR
+INFO:root:2 GYSFTTTAER SFTTTAER
+INFO:root:1 KGSDFDCELR GSDFDCELR
+INFO:root:1 YSDQNVDSR SDQNVDSR
+INFO:root:1 TMYPGIADR MYPGIADR
+INFO:root:1 TMLADHAAR MLADHAAR
+INFO:root:1 IKIIAPPER KIIAPPER
+INFO:root:1 MGGEQEEER GGEQEEER
+INFO:root:1 SGLIYEETR GLIYEETR
+INFO:root:2 SGLIYEETR IYEETR
+INFO:root:2 ADMQNLVER MQNLVER
+INFO:root:1 DLPKNWDWR LPKNWDWR
+INFO:root:1 TLPDTVDWR LPDTVDWR
+INFO:root:1 YTSVAPVLR TSVAPVLR
+INFO:root:1 CIGAWHPAR IGAWHPAR
+INFO:root:2 SFVNDIFER VNDIFER
+INFO:root:2 GPEEDLSHR EEDLSHR
+INFO:root:1 LQGLESDER QGLESDER
+INFO:root:1 LQGLESDER GLESDER
+INFO:root:1 MKHYEVEIR KHYEVEIR
+INFO:root:1 HTFYNELR TFYNELR
+INFO:root:1 HTFYNELR FYNELR
+INFO:root:1 FADDFVR ADDFVR
+INFO:root:Finished exopeptidase check
+INFO:root:Parsed condition file
+INFO:root:Finished general stats
+INFO:root:Finished statistical testing
+INFO:root:Finished fold distribution check
+INFO:root:Starting gallery generation...
+INFO:root:Finished gallery generation...
+INFO:root:Finished figures
+INFO:root:Finished logos
+INFO:root:Finished. Wrote results to C:\Users\konka\Documents\Python_Scripts\Annotator\annotator-4.1.0\results\080822172743
+INFO:root:Wrote files
+INFO:root:Reported success in 0:06:50.386721
