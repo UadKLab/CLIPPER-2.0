@@ -2,7 +2,7 @@
 Peptide level annotation
 
 ## Program init
--Init function
+- Init function
 
 ## Program preprocess class - tasks/functions:
 - Infer software: use column headings
