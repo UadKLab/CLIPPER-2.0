@@ -63,3 +63,4 @@ Peptide level annotation
 - Gprofiler - metascape GO enrichment
 - Pathway annotation/significance
 - Protease prediction (PSSM/GOtosubstrates)
+- Fix condition bug in volcano plots
