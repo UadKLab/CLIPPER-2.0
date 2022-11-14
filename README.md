@@ -51,7 +51,7 @@ Peptide level annotation
 - write files
 
 ## To do list:
-- Refactor code 
+- Refactor code (made branch annotator_refactor with a folder for refactored code)
 - Spectronaut support
 - Dimethylation support
 - Dimensionality reduction (PCA & UMAP)
