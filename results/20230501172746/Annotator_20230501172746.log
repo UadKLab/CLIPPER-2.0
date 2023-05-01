@@ -1,0 +1,41 @@
+2023-05-01 17:27:46,744 [INFO] Annotator started at 2023-05-01 17:27:46
+2023-05-01 17:27:46,749 [INFO] Arguments: {'infile': '..\\tests\\HUNTER_clean_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'singlecpu': False, 'conditionfile': None, 'stat': False, 'stat_pairwise': False, 'significance': None, 'visualize': False, 'logo': None, 'pseudocounts': True, 'output_name': None, 'outfile_type': 'xlsx', 'separate': False}
+2023-05-01 17:27:46,750 [INFO] Initialization successful
+2023-05-01 17:27:46,752 [INFO] Input is excel
+2023-05-01 17:27:48,265 [INFO] Read dataframe
+2023-05-01 17:27:48,265 [INFO] Read input with 284 peptides
+2023-05-01 17:27:48,279 [INFO] Input software is sm
+2023-05-01 17:27:48,287 [INFO] Successfully generated indexing patterns
+2023-05-01 17:27:48,287 [INFO] Format check complete
+2023-05-01 17:27:48,288 [INFO] Sanitizing
+2023-05-01 17:27:48,292 [INFO] Sanitized dataframe, 284 peptides remaining
+2023-05-01 17:27:48,296 [INFO] Starting annotation
+2023-05-01 17:27:48,297 [INFO] Reading MEROPS data..
+2023-05-01 17:27:48,829 [INFO] Read MEROPS data
+2023-05-01 17:27:48,840 [INFO] Initialized annotation dataframe..
+2023-05-01 17:27:59,744 [INFO] No match found for peptide in A0A087X2B5. Peptide sequence: NLNMEADPGQYR
+2023-05-01 17:27:59,818 [INFO] No match found for peptide in A0A087X2B5. Peptide sequence: NLNMEADPGQYR
+2023-05-01 17:27:59,833 [INFO] No match found for peptide in A0A087X2B5. Peptide sequence: ADPGQYR
+2023-05-01 17:27:59,837 [INFO] No match found for peptide in A0A087X2B5. Peptide sequence: YSCVFLPEPMGTANIQLHGPPR
+2023-05-01 17:27:59,838 [INFO] No match found for peptide in A0A087X2B5. Peptide sequence: NLNMEADPGQYR
+2023-05-01 17:27:59,841 [INFO] No match found for peptide in A0A087X2B5. Peptide sequence: SELHIENLNMEADPGQYR
+2023-05-01 17:28:00,839 [INFO] No match found for peptide in A0A087X2B5. Peptide sequence: SCVFLPEPMGTANIQLHGPPR
+2023-05-01 17:28:09,331 [INFO] HTTP error for A0A494C169
+2023-05-01 17:28:27,879 [INFO] Finished annotation
+2023-05-01 17:28:27,914 [INFO] Finished proteoform check
+2023-05-01 17:28:27,915 [INFO] Starting exopeptidase check
+2023-05-01 17:28:27,941 [INFO] 2 LGLGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR LGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR
+2023-05-01 17:28:27,980 [INFO] 1 YSCVFLPEPMGTANIQLHGPPR SCVFLPEPMGTANIQLHGPPR
+2023-05-01 17:28:27,984 [INFO] 2 AEAMDLGKDPNGPTHSSTLFVR AMDLGKDPNGPTHSSTLFVR
+2023-05-01 17:28:27,990 [INFO] 2 AEAQALLSGDTQTDATSFYDR AQALLSGDTQTDATSFYDR
+2023-05-01 17:28:28,007 [INFO] 1 KACANPAAGSVILLENLR ACANPAAGSVILLENLR
+2023-05-01 17:28:28,007 [INFO] 2 KACANPAAGSVILLENLR ANPAAGSVILLENLR
+2023-05-01 17:28:28,027 [INFO] 1 AAQTSPSPKAGAATGR AQTSPSPKAGAATGR
+2023-05-01 17:28:28,029 [INFO] 1 SSGFSLEDPQTHSNR SGFSLEDPQTHSNR
+2023-05-01 17:28:28,031 [INFO] 2 SKNLKLGIHEDSTNR NLKLGIHEDSTNR
+2023-05-01 17:28:28,069 [INFO] 2 SEDFSLPAYMDR DFSLPAYMDR
+2023-05-01 17:28:28,095 [INFO] 2 SPVLHFYVR VLHFYVR
+2023-05-01 17:28:28,116 [INFO] Finished exopeptidase check
+2023-05-01 17:28:28,117 [INFO] Starting general statistics annotation
+2023-05-01 17:28:28,466 [INFO] Finished general statistics annotation
+2023-05-01 17:28:28,742 [INFO] Finished. Wrote results to C:\Users\konka\Documents\annotator\results\20230501172746
