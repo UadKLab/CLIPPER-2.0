@@ -5,3 +5,4 @@
 - Pathway enrichment analysis
 - Gene ontology enrichment analysis
 - Pathway and gene ontology visualization
+- Uniprot static database lookup
