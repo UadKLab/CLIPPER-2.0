@@ -7,80 +7,108 @@ from annutils import initialize
 
 
 def main(args=None):
-    """Main function"""
+    """Runs the CLIPPER annotation pipeline.
 
-    start = time.perf_counter()
+    Args:
+        args (dict): Dictionary containing arguments.
 
-    # run with arguments without command line. Must pass a dict with arguments
+    Returns:
+        None
+    """
+
+    start_time = time.perf_counter()
+
+    # If arguments are not provided, use the default values from initialize()
     if args is None:
         args = initialize()
 
-    ann = Annotator(args)
+    # Create an Annotator object with the provided arguments
+    annotator = Annotator(args)
 
-    ann.prepare()
+    # Prepare the input data for annotation
+    annotator.prepare()
 
-    print("Annotating...")
-    if args["singlecpu"] is False:
-        ann.threaded_annotate()
+    # Perform peptide annotation
+    logging.info("Starting annotation")
+    print("Annotating peptides...")
+    if not args["singlecpu"]:
+        annotator.threaded_annotate()
     else:
-        ann.annotate()
+        annotator.annotate()
     logging.info("Finished annotation")
-    print("Finished annotation")
+    print("Finished annotating peptides.")
 
-    ann.proteoform_check()
+    # Perform proteoform check
+    annotator.proteoform_check()
     logging.info("Finished proteoform check")
 
-    if args["noexo"] is False:
+    # Perform exopeptidase check if specified
+    if not args["noexo"]:
         logging.info("Starting exopeptidase check")
-        print("Starting exopeptidase check...")
-        ann.exopeptidase()
+        print("Checking exopeptidase activity...")
+        annotator.exopeptidase()
         logging.info("Finished exopeptidase check")
         print("Finished exopeptidase activity check.")
 
+    # Perform general statistics annotation if condition file is not specified
     if args["conditionfile"] is None:
-        print("Starting general stats annotation...")
-        #ann.general_conditions()
-        logging.info("Finished general stats")
-        print("Finished general stats")
-    else:
-        ann.read_condition_file()
-        logging.info("Parsed condition file")
-        print("Starting general stats annotation...")
-        ann.general_conditions()
-        logging.info("Finished general stats")
-        print("Finished general stats")
+        logging.info("Starting general statistics annotation")
+        print("Performing general statistics annotation...")
+        annotator.general_conditions()
+        logging.info("Finished general statistics annotation")
+        print("Finished general statistics annotation")
 
+    # Perform condition-specific statistics annotation if condition file is specified
+    else:
+        # Read the condition file
+        annotator.read_condition_file()
+        logging.info("Parsed condition file")
+
+        # Perform general statistics annotation
+        logging.info("Starting general statistics annotation")
+        print("Performing general statistics annotation...")
+        annotator.general_conditions()
+        logging.info("Finished general statistics annotation")
+        print("Finished general statistics annotation")
+
+        # Perform pairwise or all-vs-all statistical testing if specified
         if args["stat"]:
-            print("Starting statistical testing...")
-            ann.condition_statistics(pairwise=args["stat_pairwise"])
+            print("Performing statistical testing...")
+            annotator.condition_statistics(pairwise=args["stat_pairwise"])
             logging.info("Finished statistical testing")
             print("Finished statistical testing")
-        
+
+        # Perform fold distribution check if specified
         if args["significance"]:
-            print("Starting fold distribution check...")
-            ann.percentile_fold(0.05)
+            print("Checking fold distribution...")
+            annotator.percentile_fold(0.05)
             logging.info("Finished fold distribution check")
             print("Finished fold distribution check")
 
+    # Generate figures if specified
     if args["visualize"]:
         print("Generating figures...")
-        ann.visualize()
-        logging.info("Finished figures")
-        print("Finished figures")
+        annotator.visualize()
+        logging.info("Finished generating figures")
+        print("Finished generating figures")
 
+    # Generate logos if specified
     if args["logo"] is not None:
-        print("Starting logo generation...")
-        ann.create_logos()
-        logging.info("Finished logos")
-        print("Finished logos")
+        print("Generating logos...")
+        annotator.create_logos()
+        logging.info("Finished generating logos")
+        print("Finished generating logos")
 
-    print("Writing files...")
-    ann.write_files()
-    logging.info("Wrote files")
+    # Write output files
+    print("Writing output files...")
+    annotator.write_files()
+    logging.info("Finished writing output files")
 
-    end = time.perf_counter()
-    logging.info(f"Reported success in {str(timedelta(seconds=end-start))}")
-    print(f"\nReported success in {str(timedelta(seconds=end-start))}")
+    # Calculate and log the total running time
+    end_time = time.perf_counter()
+    total_time = str(timedelta(seconds=end_time - start_time))
+    logging.info(f"Pipeline completed in {total_time}")
+    print(f"\nCLIPPER pipeline completed in {total_time}")
 
 
 if __name__ == "__main__":
