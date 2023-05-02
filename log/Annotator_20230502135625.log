@@ -1,7 +1,0 @@
-2023-05-02 13:56:25,857 [INFO] Annotator started at 2023-05-02 13:56:25
-2023-05-02 13:56:25,863 [INFO] Arguments: {'infile': '..\\tests\\HUNTER8_long.csv', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'singlecpu': False, 'conditionfile': None, 'stat': False, 'stat_pairwise': False, 'significance': None, 'visualize': False, 'logo': 'all', 'pseudocounts': True, 'output_name': None, 'outfile_type': 'xlsx', 'separate': False}
-2023-05-02 13:56:25,864 [INFO] Initialization successful
-2023-05-02 13:56:25,865 [INFO] Input is csv
-2023-05-02 13:56:26,159 [INFO] Read dataframe
-2023-05-02 13:56:26,160 [INFO] Read input with 23235 peptides
-2023-05-02 13:56:26,162 [CRITICAL] Invalid input. Exiting with code 4.

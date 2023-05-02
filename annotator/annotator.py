@@ -822,7 +822,7 @@ class Annotator:
         
         self.figures["General"] = vis.general()
         self.figures["CV"] = vis.cv_plot()
-        self.figures["Piechart"] = vis.piechart()
+        self.figures["Piechart"] = vis.generate_pie_charts()
         self.figures["Heatmap"] = vis.heatmap()
         self.figures["Clustermap"] = vis.clustermap()
 
