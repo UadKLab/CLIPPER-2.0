@@ -1,0 +1,26 @@
+2023-05-02 11:14:41,370 [INFO] Annotator started at 2023-05-02 11:14:41
+2023-05-02 11:14:41,377 [INFO] Arguments: {'infile': '..\\tests\\PDout_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'singlecpu': False, 'conditionfile': None, 'stat': False, 'stat_pairwise': False, 'significance': None, 'visualize': False, 'logo': None, 'pseudocounts': True, 'output_name': None, 'outfile_type': 'xlsx', 'separate': False}
+2023-05-02 11:14:41,379 [INFO] Initialization successful
+2023-05-02 11:14:41,381 [INFO] Input is excel
+2023-05-02 11:14:41,891 [INFO] Read dataframe
+2023-05-02 11:14:41,891 [INFO] Read input with 97 peptides
+2023-05-02 11:14:41,896 [INFO] Input software is pd
+2023-05-02 11:14:41,904 [INFO] Successfully generated indexing patterns
+2023-05-02 11:14:41,904 [INFO] Format check complete
+2023-05-02 11:14:41,905 [INFO] Sanitizing
+2023-05-02 11:14:41,908 [INFO] Sanitized dataframe, 97 peptides remaining
+2023-05-02 11:14:41,910 [INFO] Starting annotation
+2023-05-02 11:14:41,911 [INFO] Reading MEROPS data..
+2023-05-02 11:14:42,516 [INFO] Read MEROPS data
+2023-05-02 11:14:42,518 [INFO] Initialized annotation dataframe..
+2023-05-02 11:14:57,600 [INFO] Finished annotation
+2023-05-02 11:14:57,608 [INFO] Finished proteoform check
+2023-05-02 11:14:57,608 [INFO] Starting exopeptidase check
+2023-05-02 11:14:57,635 [INFO] 1 AAAAASPPLLR AAAASPPLLR
+2023-05-02 11:14:57,639 [INFO] 1 AAAAVVEFQR AAAVVEFQR
+2023-05-02 11:14:57,648 [INFO] Finished exopeptidase check
+2023-05-02 11:14:57,648 [INFO] Starting general statistics annotation
+2023-05-02 11:14:57,779 [INFO] Finished general statistics annotation
+2023-05-02 11:14:58,118 [INFO] Finished. Wrote results to C:\Users\konka\Documents\annotator\results\20230502111441
+2023-05-02 11:14:58,161 [INFO] Finished writing output files
+2023-05-02 11:14:58,162 [INFO] Pipeline completed in 0:00:16.789241
