@@ -16,25 +16,57 @@ from statsmodels.stats.weightstats import ttest_ind
 from tqdm import tqdm
 from visualize import Visualizer
 
+# global variables
+result_folder_name = "results"
+data_folder_name = "data"
+annotation_prefix = "_annot."
+
 
 class Annotator:
-    def __init__(self, args):
+    """Annotator class for processing and analyzing peptide proteomics data. All
+    arguments are passed as a dictionary to the class constructor.
 
+    Attributes:
+        conditions (dict): A dictionary of conditions and their respective files.
+        annot (pd.DataFrame): The input data as a Pandas DataFrame.
+        outfolder (str): The path to the output folder.
+        outfile_type (str): The type of output file to generate.
+        logfolder (str): The path to the log folder.
+        logfile (str): The path to the log file.
+        figures (dict): A dictionary of generated figures.
+        separate (bool): A flag to indicate if annotation data should be separate.
+        pseudocounts (float): The pseudocount value for sequence logo generation.
+        logo (str): The type of logo to generate.
+        stat (bool): A flag to indicate if statistical calculations should be performed.
+        df (pd.DataFrame): The dataframe to store processed data.
+    """
+
+    def __init__(self, args):
+        """Initialize the Annotator class, and set the attributes from the arguments."""
+
+        # input attributes
         self.infile_type = args["infile_type"]
         self.infile = args["infile"]
         self.software = args["software"]
+
+        # filtering and sanitizing
         self.level = args["level"]
+        self.dropna = args["dropna"]
+
+        # annotation attributes
         self.separate = args["separate"]
         self.sleeptime = args["sleeptime"]
         self.noexo = args["noexo"]
         self.nomerops = args["nomerops"]
+
         self.conditionfile = args["conditionfile"]
         self.stat = args["stat"]
         self.significance = args["significance"]
-        self.dropna = args["dropna"]
+        
         self.logo = args["logo"]
         self.pseudocounts = args["pseudocounts"]
 
+        # logging and file handling
         self.timestamp = args["timestamp"]
         self.logfile = args["logfile"]
         self.outfile_type = args["outfile_type"]
@@ -44,15 +76,15 @@ class Annotator:
         self.figures = {}
 
         self.basefolder = os.path.dirname(os.getcwd())
-        self.resultfolder = os.path.join(self.basefolder, "results")
-        self.datafolder = os.path.join(self.basefolder, "data")
+        self.resultfolder = os.path.join(self.basefolder, result_folder_name)
+        self.datafolder = os.path.join(self.basefolder, data_folder_name)
 
         if self.outname:
             self.outfolder = os.path.join(self.resultfolder, self.outname)
-            self.outname = self.outname + "_annot." + self.outfile_type
+            self.outname = self.outname + annotation_prefix + self.outfile_type
         else:
             self.outfolder = os.path.join(self.resultfolder, self.timestamp)
-            self.outname = self.infile.rsplit("/", 1)[-1].rsplit("\\", 1)[-1].rsplit(".", 1)[0] + "_annot." + self.outfile_type
+            self.outname = self.infile.rsplit("/", 1)[-1].rsplit("\\", 1)[-1].rsplit(".", 1)[0] + annotation_prefix + self.outfile_type
 
         print("\nAnnotator initialized\n")
         logging.info("Initialization successful")
@@ -669,8 +701,8 @@ class Annotator:
     def threaded_annotate(self):
         """Annotation with multiple threading.
 
-        Using two functions, one to set up and another to call with the
-        executor from concurrent futures
+        Fold change, mean, std and CV. Fold change is reported for each
+        pairwise comparison of input conditions
         """
 
         length = len(self.df)

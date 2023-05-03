@@ -246,23 +246,6 @@ class Visualizer:
             plt.close()
 
             return {"clustermap": fig.fig}
-
-    def create_pie_chart(self, y, x, colors, explode):
-        """Creates a pie chart of the given data."""
-
-        porcent = 100.0 * y / y.sum()
-        patches, texts = plt.pie(y, explode=explode, colors=colors, startangle=90, normalize=True)
-        
-        labels = ["{0} - {1:1.2f} %".format(i, j) for i, j in zip(x, porcent)]
-        patches, labels, dummy = zip(*sorted(zip(patches, labels, y), key=lambda x: x[2], reverse=True))
-        
-        plt.legend(patches, labels, loc="center left", bbox_to_anchor=(-0.5, 0.5), fontsize=8)
-        plt.subplots_adjust(left=0.4)
-        
-        figure = plt.gcf()
-        plt.close()
-        
-        return figure
     
     def generate_pie_charts(self):
         """Generates pie charts for the different peptide categories."""
@@ -279,7 +262,7 @@ class Visualizer:
                 x = [k for k in categories]
                 colors = ["violet", "olivedrab"]
                 explode = [0, 0.1]
-                figures["lysine"] = self.create_pie_chart(y, x, colors, explode)
+                figures["lysine"] = create_pie_chart(y, x, colors, explode)
 
             # N-term pie chart
             total = len(self.df[self.patterns['mod']])
@@ -289,7 +272,7 @@ class Visualizer:
             x = [k for k in categories]
             colors = ["salmon", "darkcyan"]
             explode = [0, 0.1]
-            figures["nterm"] = self.create_pie_chart(y, x, colors, explode)
+            figures["nterm"] = create_pie_chart(y, x, colors, explode)
 
             # N-term acetylation vs labeling pie chart
             if self.software == "sm":
@@ -311,7 +294,7 @@ class Visualizer:
             x = [k for k in categories]
             colors = ["teal", "saddlebrown"]
             explode = [0, 0.1]
-            figures["modification"] = self.create_pie_chart(y, x, colors, explode)
+            figures["modification"] = create_pie_chart(y, x, colors, explode)
 
             # Cysteine pie chart
             cysteines = len(self.df[self.df[self.patterns['mod']].str.contains(r"C", na=False)])
@@ -322,7 +305,7 @@ class Visualizer:
                 x = [k for k in categories]
                 colors = ["indianred", "cadetblue"]
                 explode = [0, 0.1]
-                figures["cysteine"] = self.create_pie_chart(y, x, colors, explode)
+                figures["cysteine"] = create_pie_chart(y, x, colors, explode)
 
 
         # Exopeptidase pie chart
@@ -335,7 +318,7 @@ class Visualizer:
             x = [k for k in categories]
             colors = ["darkolivegreen", "mediumslateblue"]
             explode = [0.1, 0]
-            figures["exopep"] = self.create_pie_chart(y, x, colors, explode)
+            figures["exopep"] = create_pie_chart(y, x, colors, explode)
 
         # N-term annotation pie charts
         column = self.annot["nterm_annot"].dropna()
@@ -356,51 +339,21 @@ class Visualizer:
         x = ["Internal", "Natural"]
         explode = [0.1, 0]
         colors = ["darkgreen","peru",]
-        figures["type"] = self.create_pie_chart(y, x, colors, explode)
+        figures["type"] = create_pie_chart(y, x, colors, explode)
 
         y = np.array([categories.pop("met removed"), categories.pop("met intact"), sum(categories.values()),])
         x = ["Met removal", "Met intact", "Other"]
         colors = ["crimson", "lightpink", "seagreen"]
         explode = [0, 0.1, 0.1]
-        figures["natural"] = self.create_pie_chart(y, x, colors, explode)
+        figures["natural"] = create_pie_chart(y, x, colors, explode)
 
         y = np.array([categories[k] for k in categories])
         x = [k for k in categories]
         colors = ["steelblue", "goldenrod", "slategrey", "forestgreen", "violet", "tomato"]
         explode = [0, 0.1, 0, 0.1, 0, 0]
-        figures["other"] = self.create_pie_chart(y, x, colors, explode)
+        figures["other"] = create_pie_chart(y, x, colors, explode)
 
         return figures
-
-    def generate_bar_plot(self, ax, data, palette, title, xticklabels_rotation=90):
-        """Generate a bar plot with the given data and parameters."""
-
-        names = [k for k in data.keys()]
-        values = [v for v in data.values()]
-        sns.barplot(x=names, y=values, palette=palette, ax=ax)
-        ax.set_xticklabels(names, fontsize=12, fontfamily="sans-serif", rotation=xticklabels_rotation)
-        ax.set_title(title, fontsize=11)
-    
-    def get_mean_values_data(self, columns, natural, internal):
-        """Get the mean values for the given columns in the natural and internal dataframes."""
-
-        type_term = ["natural", "internal"]
-        data = {}
-        for col in columns:
-            for t, subframe in zip(type_term, [natural, internal]):
-                data[f"{col}_{t}"] = subframe[col].mean()
-        return data
-
-    def get_quant_values_data(self, columns, natural, internal):
-        """Get the quant values for the given columns in the natural and internal dataframes."""
-
-        type_term = ["natural", "internal"]
-        data = {}
-        for t, subframe in zip(type_term, [natural, internal]):
-            for row in subframe.index:
-                for col in columns:
-                    data[f"{col[:-5]}_{t}_{subframe.loc[row, 'query_sequence']}"] = subframe.loc[row, col]
-        return data
 
     def gallery(self, stat=False, cutoff=0.05, folder=None):
         """Generate a gallery of the significant peptides."""
@@ -441,12 +394,12 @@ class Visualizer:
                 fig, ax = plt.subplots(1, 2, figsize=(12, 10))
 
                 # Generate the mean values bar plot
-                mean_values_data = self.get_mean_values_data(columns, natural, internal)
-                self.generate_bar_plot(ax[0], mean_values_data, "summer", "Mean values per condition")
+                mean_values_data = get_mean_values_data(columns, natural, internal)
+                generate_bar_plot(ax[0], mean_values_data, "summer", "Mean values per condition")
 
                 # Generate the peptides with quant values bar plot
-                quant_values_data = self.get_quant_values_data(columns, natural, internal)
-                self.generate_bar_plot(ax[1], quant_values_data, "winter", "Peptides with quant values")
+                quant_values_data = get_quant_values_data(columns, natural, internal)
+                generate_bar_plot(ax[1], quant_values_data, "winter", "Peptides with quant values")
 
                 plt.suptitle(f"Protein Uniprot ID: {acc}")
                 plt.tight_layout()
@@ -454,3 +407,54 @@ class Visualizer:
                 plt.close()
 
         pp.close()
+
+
+def create_pie_chart(y, x, colors, explode):
+    """Creates a pie chart of the given data."""
+
+    porcent = 100.0 * y / y.sum()
+    patches, texts = plt.pie(y, explode=explode, colors=colors, startangle=90, normalize=True)
+    
+    labels = ["{0} - {1:1.2f} %".format(i, j) for i, j in zip(x, porcent)]
+    patches, labels, dummy = zip(*sorted(zip(patches, labels, y), key=lambda x: x[2], reverse=True))
+    
+    plt.legend(patches, labels, loc="center left", bbox_to_anchor=(-0.5, 0.5), fontsize=8)
+    plt.subplots_adjust(left=0.4)
+    
+    figure = plt.gcf()
+    plt.close()
+    
+    return figure
+
+
+def generate_bar_plot(ax, data, palette, title, xticklabels_rotation=90):
+    """Generate a bar plot with the given data and parameters."""
+
+    names = [k for k in data.keys()]
+    values = [v for v in data.values()]
+    sns.barplot(x=names, y=values, palette=palette, ax=ax)
+    ax.set_xticklabels(names, fontsize=12, fontfamily="sans-serif", rotation=xticklabels_rotation)
+    ax.set_title(title, fontsize=11)
+
+
+def get_mean_values_data(columns, natural, internal):
+    """Get the mean values for the given columns in the natural and internal dataframes."""
+
+    type_term = ["natural", "internal"]
+    data = {}
+    for col in columns:
+        for t, subframe in zip(type_term, [natural, internal]):
+            data[f"{col}_{t}"] = subframe[col].mean()
+    return data
+
+
+def get_quant_values_data(columns, natural, internal):
+    """Get the quant values for the given columns in the natural and internal dataframes."""
+
+    type_term = ["natural", "internal"]
+    data = {}
+    for t, subframe in zip(type_term, [natural, internal]):
+        for row in subframe.index:
+            for col in columns:
+                data[f"{col[:-5]}_{t}_{subframe.loc[row, 'query_sequence']}"] = subframe.loc[row, col]
+    return data

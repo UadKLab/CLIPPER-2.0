@@ -1,0 +1,49 @@
+2023-05-03 10:32:40,666 [INFO] Annotator started at 2023-05-03 10:32:40
+2023-05-03 10:32:40,672 [INFO] Arguments: {'infile': '..\\tests\\HUNTER_clean_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'singlecpu': False, 'conditionfile': '..\\tests\\cond_HUNTER.txt', 'stat': True, 'stat_pairwise': True, 'significance': None, 'visualize': True, 'logo': 'all', 'pseudocounts': True, 'output_name': None, 'outfile_type': 'xlsx', 'separate': False}
+2023-05-03 10:32:40,674 [INFO] Initialization successful
+2023-05-03 10:32:40,675 [INFO] Input is excel
+2023-05-03 10:32:42,773 [INFO] Read dataframe
+2023-05-03 10:32:42,773 [INFO] Read input with 284 peptides
+2023-05-03 10:32:42,775 [INFO] Input software is sm
+2023-05-03 10:32:42,798 [INFO] Successfully generated indexing patterns
+2023-05-03 10:32:42,799 [INFO] Format check complete
+2023-05-03 10:32:42,799 [INFO] Sanitizing
+2023-05-03 10:32:42,809 [INFO] Sanitized dataframe, 284 peptides remaining
+2023-05-03 10:32:42,811 [INFO] Starting annotation
+2023-05-03 10:32:42,815 [INFO] Reading MEROPS data..
+2023-05-03 10:32:43,422 [INFO] Read MEROPS data
+2023-05-03 10:32:43,425 [INFO] Initialized annotation dataframe..
+2023-05-03 10:32:55,555 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-03 10:32:55,584 [WARNING] Peptide SELHIENLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-03 10:32:55,586 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-03 10:32:55,587 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-03 10:32:55,589 [WARNING] Peptide ADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-03 10:32:55,609 [WARNING] Peptide YSCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-05-03 10:32:56,588 [WARNING] Peptide SCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-05-03 10:33:05,481 [WARNING] Error retrieving Uniprot record for A0A494C169: No SwissProt record found
+2023-05-03 10:33:24,748 [INFO] Finished annotation
+2023-05-03 10:33:24,765 [INFO] Finished proteoform check
+2023-05-03 10:33:24,766 [INFO] Starting exopeptidase check
+2023-05-03 10:33:24,798 [INFO] 2 LGLGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR LGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR
+2023-05-03 10:33:24,831 [INFO] 1 YSCVFLPEPMGTANIQLHGPPR SCVFLPEPMGTANIQLHGPPR
+2023-05-03 10:33:24,833 [INFO] 2 AEAMDLGKDPNGPTHSSTLFVR AMDLGKDPNGPTHSSTLFVR
+2023-05-03 10:33:24,838 [INFO] 2 AEAQALLSGDTQTDATSFYDR AQALLSGDTQTDATSFYDR
+2023-05-03 10:33:24,853 [INFO] 1 KACANPAAGSVILLENLR ACANPAAGSVILLENLR
+2023-05-03 10:33:24,854 [INFO] 2 KACANPAAGSVILLENLR ANPAAGSVILLENLR
+2023-05-03 10:33:24,875 [INFO] 1 AAQTSPSPKAGAATGR AQTSPSPKAGAATGR
+2023-05-03 10:33:24,877 [INFO] 1 SSGFSLEDPQTHSNR SGFSLEDPQTHSNR
+2023-05-03 10:33:24,879 [INFO] 2 SKNLKLGIHEDSTNR NLKLGIHEDSTNR
+2023-05-03 10:33:24,909 [INFO] 2 SEDFSLPAYMDR DFSLPAYMDR
+2023-05-03 10:33:24,932 [INFO] 2 SPVLHFYVR VLHFYVR
+2023-05-03 10:33:24,950 [INFO] Finished exopeptidase check
+2023-05-03 10:33:24,961 [INFO] Parsed condition file
+2023-05-03 10:33:24,962 [INFO] Starting general statistics annotation
+2023-05-03 10:33:26,140 [INFO] Finished general statistics annotation
+2023-05-03 10:33:26,426 [INFO] Finished statistical testing
+2023-05-03 10:33:29,705 [INFO] Starting gallery generation...
+2023-05-03 10:33:34,071 [INFO] Finished gallery generation...
+2023-05-03 10:33:34,071 [INFO] Finished generating figures
+2023-05-03 10:33:40,547 [INFO] Finished generating logos
+2023-05-03 10:33:49,781 [INFO] Finished. Wrote results to C:\Users\konka\Documents\annotator\results\20230503103240
+2023-05-03 10:33:50,472 [INFO] Finished writing output files
+2023-05-03 10:33:50,472 [INFO] Pipeline completed in 0:01:09.806847
