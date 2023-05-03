@@ -22,7 +22,7 @@ def initialize_logger(logfile):
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
 
-    logger.info(f"Annotator started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+    logger.info(f"Annotator started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.")
 
     return logger
 
@@ -284,3 +284,33 @@ def map_dict(annot_df_row: pd.core.series.Series, annot_dict: dict):
         annot_df_row.loc[key] = annot_dict[key]
 
     return annot_df_row
+
+
+def save_figures(figures, outfolder):
+    for k in figures:
+        if figures[k] is not None:
+            for i in figures[k]:
+                if figures[k][i] is not None:
+                    try:
+                        if k != "Clustermap" and not k.startswith("Logo") and not k.startswith("General") and not k.startswith("Piechart"):
+                            figures[k][i].figure.savefig(
+                                os.path.join(outfolder, f"{k}_{i}.png"),
+                                format="png",
+                                dpi=300,
+                            )
+                            figures[k][i].figure.savefig(
+                                os.path.join(outfolder, f"{k}_{i}.svg"),
+                                format="svg",
+                            )
+                        else:
+                            figures[k][i].savefig(
+                                os.path.join(outfolder, f"{k}_{i}.png"),
+                                                                format="png",
+                                dpi=300,
+                            )
+                            figures[k][i].savefig(
+                                os.path.join(outfolder, f"{k}_{i}.svg"),
+                                format="svg",
+                            )
+                    except:
+                        logging.info(f"Skipped {k, figures[k]}")

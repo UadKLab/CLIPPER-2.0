@@ -29,34 +29,29 @@ def main(args=None):
     annotator.prepare()
 
     # Perform peptide annotation
-    logging.info("Starting annotation")
-    print("Annotating peptides...")
+    logging.info("Starting annotation of peptides...")
     if not args["singlecpu"]:
         annotator.threaded_annotate()
     else:
         annotator.annotate()
-    logging.info("Finished annotation")
-    print("Finished annotating peptides.")
+    logging.info("Finished annotation of peptides.\n")
 
     # Perform proteoform check
+    logging.info("Starting proteoform check...")
     annotator.proteoform_check()
-    logging.info("Finished proteoform check")
+    logging.info("Finished proteoform check.")
 
     # Perform exopeptidase check if specified
     if not args["noexo"]:
-        logging.info("Starting exopeptidase check")
-        print("Checking exopeptidase activity...")
+        logging.info("Starting exopeptidase activity check...")
         annotator.exopeptidase()
-        logging.info("Finished exopeptidase check")
-        print("Finished exopeptidase activity check.")
+        logging.info("Finished exopeptidase activity check.\n")
 
     # Perform general statistics annotation if condition file is not specified
     if args["conditionfile"] is None:
-        logging.info("Starting general statistics annotation")
-        print("Performing general statistics annotation...")
+        logging.info("Performing general statistics annotation...")
         annotator.general_conditions()
-        logging.info("Finished general statistics annotation")
-        print("Finished general statistics annotation")
+        logging.info("Finished general statistics annotation.\n")
 
     # Perform condition-specific statistics annotation if condition file is specified
     else:
@@ -65,50 +60,43 @@ def main(args=None):
         logging.info("Parsed condition file")
 
         # Perform general statistics annotation
-        logging.info("Starting general statistics annotation")
-        print("Performing general statistics annotation...")
+        logging.info("Performing general statistics annotation...")
         annotator.general_conditions()
-        logging.info("Finished general statistics annotation")
-        print("Finished general statistics annotation")
+        logging.info("Finished general statistics annotation.")
 
         # Perform pairwise or all-vs-all statistical testing if specified
         if args["stat"]:
-            print("Performing statistical testing...")
-            annotator.condition_statistics(pairwise=args["stat_pairwise"])
-            logging.info("Finished statistical testing")
-            print("Finished statistical testing")
+            logging.info("Performing statistical testing...")
+            annotator.condition_statistics()
+            logging.info("Finished statistical testing\n.")
 
         # Perform fold distribution check if specified
         if args["significance"]:
-            print("Checking fold distribution...")
+            logging.info("Checking fold distribution...")
             annotator.percentile_fold(0.05)
-            logging.info("Finished fold distribution check")
-            print("Finished fold distribution check")
+            logging.info("Finished fold distribution check.\n")
 
     # Generate figures if specified
     if args["visualize"]:
-        print("Generating figures...")
+        logging.info("Generating figures...")
         annotator.visualize()
-        logging.info("Finished generating figures")
-        print("Finished generating figures")
+        logging.info("Finished generating figures.")
 
     # Generate logos if specified
     if args["logo"] is not None:
-        print("Generating logos...")
+        logging.info("Generating logos...")
         annotator.create_logos()
-        logging.info("Finished generating logos")
-        print("Finished generating logos")
+        logging.info("Finished generating logos.\n")
 
     # Write output files
-    print("Writing output files...")
+    logging.info("Writing output files...")
     annotator.write_files()
     logging.info("Finished writing output files")
 
     # Calculate and log the total running time
     end_time = time.perf_counter()
     total_time = str(timedelta(seconds=end_time - start_time))
-    logging.info(f"Pipeline completed in {total_time}")
-    print(f"\nCLIPPER pipeline completed in {total_time}")
+    logging.info(f"\nCLIPPER 2.0 pipeline completed in {total_time}.\n")
 
 
 if __name__ == "__main__":

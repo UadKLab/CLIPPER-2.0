@@ -1,3 +1,4 @@
+import logging
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -153,6 +154,21 @@ class Logo:
         plt.close()
 
         return figure
+
+
+def create_logo_helper(data, condition, pseudocounts, logo):
+    data = data["p4_p4prime"].astype(str)
+    filtered = data[~data.str.contains("-|Not found|nan|X|Z|U|B|J|O")]
+    sequences = filtered.to_list()
+
+    if len(sequences) > 0:
+        figures = generate_logos(sequences, condition, pseudocounts, logo)
+        return figures
+    else:
+        logging.debug(
+            f"Logo generation for {condition} was skipped as sequences were 0"
+        )
+        return None
 
 
 def generate_logos(sequences, condition, pseudocounts, logo):
