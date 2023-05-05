@@ -53,16 +53,24 @@ Install **python 3.11.3**, and setup with *requirements.txt* through *pip*.
 - write files
 
 ## To do list:
-- Refactor code (made branch annotator_refactor with a folder for refactored code)
-- Spectronaut support
-- Dimethylation support
-- Dimensionality reduction (PCA & UMAP)
-- Multiple testing correction
-- Protein atlas integration
-- Visualize cleavages in sequences
-- Visualize cleavages in structure
-- Add secondary structure annotation
-- Gprofiler - metascape GO enrichment
-- Pathway annotation/significance
-- Protease prediction (PSSM/GOtosubstrates)
-- Fix condition bug in volcano plots
+- [ ] Refactor code (made branch annotator_refactor with a folder for refactored code)
+    - [x] Rewritten for readability and modularity, but not refactored as described above
+- [ ] Spectronaut support
+- [ ] Dimethylation support
+    - [ ] Dimethylation support for Spectromine
+- [ ] Dimensionality reduction (PCA & UMAP)
+    - [x] Added PCA
+    - [x] Added UMAP
+- [x] Multiple testing correction
+- [ ] Protein atlas integration
+- [ ] Visualize cleavages in sequences
+- [ ] Visualize cleavages in structure
+    - [x] Downloaded Alphafold EBI database
+- [ ] Add secondary structure annotation
+- [ ] Gprofiler - metascape GO enrichment
+- [ ] Pathway annotation/significance
+- [ ] Protease prediction (PSSM/GOtosubstrates)
+- [ ] Fix condition bug in volcano plots
+    - Have not managed to recreate it yet, need to use input data with multiple (>4) conditions
+- [x] Static Uniprot entry lookup
+    - [x] Will not be implemented

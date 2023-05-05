@@ -2,7 +2,10 @@ import os
 
 import matplotlib.pyplot as plt
 import numpy as np
+import pandas as pd
 import seaborn as sns
+from sklearn.decomposition import PCA
+from umap import UMAP
 from matplotlib.backends.backend_pdf import PdfPages
 from tqdm import tqdm
 
@@ -32,9 +35,7 @@ class Visualizer:
         data["peptides"] = self.df[seq_col].drop_duplicates().count()
 
         if mod_col in self.df.columns:
-            quant_columns = self.df.columns[
-                self.df.columns.str.contains(quant_columns_pat)
-            ]
+            quant_columns = self.df.columns[self.df.columns.str.contains(quant_columns_pat)]
 
             if len(quant_columns) > 0:
                 subframe = self.df[[seq_col, mod_col]]
@@ -46,17 +47,11 @@ class Visualizer:
                 quant_frame = self.df.dropna(subset=quant_columns, how="all")
 
                 data["modified peptides"] = unique_mod[seq_col].count()
-                data["labelled peptides"] = unique_mod[
-                    unique_mod[mod_col].str.contains(label_pat)
-                ][seq_col].count()
-                data["nterm"] = unique_mod[unique_mod[mod_col].str.contains(nter_pat)][
-                    seq_col
-                ].count()
+                data["labelled peptides"] = unique_mod[unique_mod[mod_col].str.contains(label_pat)][seq_col].count()
+                data["nterm"] = unique_mod[unique_mod[mod_col].str.contains(nter_pat)][seq_col].count()
                 data["quant proteins"] = quant_frame[acc_col].drop_duplicates().count()
                 data["quant peptides"] = quant_frame[seq_col].drop_duplicates().count()
-                data["quant mod peptides"] = quant_frame.drop_duplicates(
-                    [seq_col, mod_col]
-                )[seq_col].count()
+                data["quant mod peptides"] = quant_frame.drop_duplicates([seq_col, mod_col])[seq_col].count()
 
         ticks_no = list(range(len(data)))
         stat_names = [k for k in data]
@@ -68,23 +63,12 @@ class Visualizer:
         for i in range(len(stat_vals)):
             x_pos = ticks_no[i]
             y_pos = stat_vals[i] / 2
-            ax.text(
-                x_pos,
-                y_pos,
-                stat_vals[i],
-                fontfamily="sans-serif",
-                ha="center",
-                va="center",
-                fontsize=12,
-            )
+            ax.text(x_pos, y_pos, stat_vals[i],
+                fontfamily="sans-serif", ha="center", va="center", fontsize=12,)
 
         ax.set_yticks([int(i) for i in ax.get_yticks()])
-        ax.set_xticklabels(
-            stat_names, fontsize=14, fontfamily="sans-serif", rotation=90
-        )
-        ax.set_yticklabels(
-            [int(i) for i in ax.get_yticks()], fontsize=14, fontfamily="sans-serif"
-        )
+        ax.set_xticklabels(stat_names, fontsize=14, fontfamily="sans-serif", rotation=90)
+        ax.set_yticklabels([int(i) for i in ax.get_yticks()], fontsize=14, fontfamily="sans-serif")
 
         sns.despine(fig=fig, ax=ax)
         plt.subplots_adjust(bottom=0.3)
@@ -97,12 +81,8 @@ class Visualizer:
     def volcano(self):
         """Creates a volcano plot for each condition pair."""
 
-        columns_fold = self.annot.columns[
-            self.annot.columns.str.contains("Log2_fold_change:")
-        ]
-        columns_ttest = self.annot.columns[
-            self.annot.columns.str.contains("Log10_ttest:")
-        ]
+        columns_fold = self.annot.columns[self.annot.columns.str.contains("Log2_fold_change:")]
+        columns_ttest = self.annot.columns[self.annot.columns.str.contains("Log10_ttest:")]
         figures = {}
 
         for test in columns_ttest:
@@ -114,12 +94,7 @@ class Visualizer:
                     frame = self.annot.loc[:, [fold, test]].dropna(how="any")
                     # log values are negative for ttest column, inverse
                     frame[test] = frame[test] * -1
-                    frame["coding"] = np.where(
-                        (~frame[fold].between(-1.5, 1.5))
-                        & (~frame[test].between(-1.5, 1.5)),
-                        "1",
-                        "0",
-                    )
+                    frame["coding"] = np.where((~frame[fold].between(-1.5, 1.5)) & (~frame[test].between(-1.5, 1.5)), "1", "0",)
                     frame = frame.sort_values("coding")
 
                     if len(frame.coding.unique()) == 1:
@@ -127,9 +102,7 @@ class Visualizer:
                     else:
                         colors = ["grey", "crimson"]
 
-                    g = sns.scatterplot(
-                        data=frame, x=fold, y=test, hue="coding", palette=colors
-                    )
+                    g = sns.scatterplot(data=frame, x=fold, y=test, hue="coding", palette=colors)
                     ax = plt.gca()
                     ax.set_ylabel("- " + test)
                     xmin, xmax = ax.get_xlim()
@@ -157,12 +130,7 @@ class Visualizer:
             fig, ax = plt.subplots()
 
             for i in range(len(columns)):
-                g = sns.kdeplot(
-                    self.annot[columns[i]],
-                    color=colors[i],
-                    ax=ax,
-                    label=columns[i][:-3],
-                )
+                g = sns.kdeplot(self.annot[columns[i]], color=colors[i], ax=ax, label=columns[i][:-3],)
 
             plt.legend()
             plt.xlabel("")
@@ -173,9 +141,7 @@ class Visualizer:
     def fold_plot(self):
         """Creates a plot of fold changes of all peptides in the dataset for all conditions."""
 
-        columns = self.annot.columns[
-            self.annot.columns.str.contains("Log2_fold_change:")
-        ]
+        columns = self.annot.columns[self.annot.columns.str.contains("Log2_fold_change:")]
         figures = {}
         colors = sns.color_palette("husl", (len(self.conditions) - 1)*len(self.conditions))
 
@@ -192,9 +158,7 @@ class Visualizer:
         """Creates a plot of fold changes for internal and n-terminal peptides
         across all conditions."""
 
-        columns = self.annot.columns[
-            self.annot.columns.str.contains("Log2_fold_change:")
-        ]
+        columns = self.annot.columns[self.annot.columns.str.contains("Log2_fold_change:")]
         figures = {}
         colors = sns.color_palette("husl", (len(self.conditions) - 1)*len(self.conditions)*2)
         
@@ -407,6 +371,110 @@ class Visualizer:
                 plt.close()
 
         pp.close()
+    
+    def pca_visualization(self):
+        """Perform PCA on the quantification columns and visualize the results."""
+
+        # Get data and perform PCA on quantification columns
+        data_columns = self.df.columns[self.df.columns.str.contains(self.patterns['quant'])]
+        # Get data in arrays and replace Nan values with 0
+        data = self.df[data_columns].fillna(0).values.T
+
+        pca = PCA(n_components=2)
+        pca_result = pca.fit_transform(data)
+
+        # Prepare a dictionary to map condition names to colors
+        condition_colors = {key: plt.cm.tab10(i) for i, key in enumerate(self.conditions.keys())}
+
+        # Create a DataFrame with PCA results, conditions, and colors
+        pca_df = pd.DataFrame(pca_result, columns=['PC1', 'PC2'])
+        pca_df['condition'] = None
+        pca_df['color'] = None
+
+        condition_df = pd.DataFrame(index=data_columns, columns=['condition', 'color', 'annotation'])
+
+        for condition, substrings in self.conditions.items():
+            for substring in substrings:
+                condition_idx = data_columns.str.contains(substring)
+                condition_df.loc[condition_idx, 'condition'] = condition
+                condition_colors_list = [condition_colors[condition]] * sum(condition_idx)
+                condition_df.loc[condition_idx, 'color'] = condition_colors_list
+                condition_df.loc[condition_idx, 'annotation'] = substring
+
+        pca_df['condition'] = condition_df['condition'].values
+        pca_df['color'] = condition_df['color'].values
+        pca_df['annotation'] = condition_df['annotation'].values
+
+        # Create a Figure object and visualize the PCA results
+        fig, ax = plt.subplots()
+        for condition, color in condition_colors.items():
+            idx = pca_df['condition'] == condition
+            ax.scatter(pca_df.loc[idx, 'PC1'], pca_df.loc[idx, 'PC2'], c=[color], label=condition)
+            
+            # Add text annotations above the data points
+            for i, txt in enumerate(pca_df.loc[idx, 'annotation']):
+                ax.annotate(txt, (pca_df.loc[idx, 'PC1'].iloc[i], pca_df.loc[idx, 'PC2'].iloc[i]),
+                            textcoords="offset points", xytext=(0, 5), ha='center', fontsize=8)
+
+        ax.set_xlabel('PC1 ({:.2f}%)'.format(pca.explained_variance_ratio_[0] * 100))
+        ax.set_ylabel('PC2 ({:.2f}%)'.format(pca.explained_variance_ratio_[1] * 100))
+        ax.legend()
+        plt.tight_layout()
+        plt.close()
+
+        return {"PCA": fig}
+
+    def umap_visualization(self):
+        """Perform UMAP on the quantification columns and visualize the results."""
+
+        # Get data and perform UMAP on quantification columns
+        data_columns = self.df.columns[self.df.columns.str.contains(self.patterns['quant'])]
+        # Get data in arrays and replace Nan values with 0
+        data = self.df[data_columns].fillna(0).values.T
+
+        reducer = UMAP()
+        umap_result = reducer.fit_transform(data)
+
+        # Prepare a dictionary to map condition names to colors
+        condition_colors = {key: plt.cm.tab10(i) for i, key in enumerate(self.conditions.keys())}
+
+        # Create a DataFrame with UMAP results, conditions, and colors
+        umap_df = pd.DataFrame(umap_result, columns=['UMAP1', 'UMAP2'])
+        umap_df['condition'] = None
+        umap_df['color'] = None
+
+        condition_df = pd.DataFrame(index=data_columns, columns=['condition', 'color', 'annotation'])
+
+        for condition, substrings in self.conditions.items():
+            for substring in substrings:
+                condition_idx = data_columns.str.contains(substring)
+                condition_df.loc[condition_idx, 'condition'] = condition
+                condition_colors_list = [condition_colors[condition]] * sum(condition_idx)
+                condition_df.loc[condition_idx, 'color'] = condition_colors_list
+                condition_df.loc[condition_idx, 'annotation'] = substring
+
+        umap_df['condition'] = condition_df['condition'].values
+        umap_df['color'] = condition_df['color'].values
+        umap_df['annotation'] = condition_df['annotation'].values
+
+        # Create a Figure object and visualize the UMAP results
+        fig, ax = plt.subplots()
+        for condition, color in condition_colors.items():
+            idx = umap_df['condition'] == condition
+            ax.scatter(umap_df.loc[idx, 'UMAP1'], umap_df.loc[idx, 'UMAP2'], c=[color], label=condition)
+            
+            # Add text annotations above the data points
+            for i, txt in enumerate(umap_df.loc[idx, 'annotation']):
+                ax.annotate(txt, (umap_df.loc[idx, 'UMAP1'].iloc[i], umap_df.loc[idx, 'UMAP2'].iloc[i]),
+                            textcoords="offset points", xytext=(0, 5), ha='center', fontsize=8)
+
+        ax.set_xlabel('UMAP1')
+        ax.set_ylabel('UMAP2')
+        ax.legend()
+        plt.tight_layout()
+        plt.close()
+
+        return {"UMAP": fig}
 
 
 def create_pie_chart(y, x, colors, explode):

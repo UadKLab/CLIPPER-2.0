@@ -1,4 +1,0 @@
-2023-05-05 15:47:22,573 [INFO] Annotator started at 2023-05-05 15:47:22.
-2023-05-05 15:47:22,575 [INFO] Arguments: {'infile': '..\\tests', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'singlecpu': False, 'conditionfile': None, 'stat': False, 'stat_pairwise': False, 'significance': None, 'visualize': False, 'logo': None, 'pseudocounts': True, 'output_name': None, 'outfile_type': 'xlsx', 'separate': False}
-2023-05-05 15:47:22,576 [INFO] Initialization successful.
-2023-05-05 15:47:22,576 [CRITICAL] Invalid input format. Please select a valid input format and try again.. Exiting with code 1.

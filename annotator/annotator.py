@@ -630,7 +630,7 @@ class Annotator:
         length = len(self.df)
         if self.nomerops is False:
             self.read_MEROPS()
-            logging.info("Read MEROPS data")
+            logging.info("Read MEROPS data.")
 
         self.initialize_annotation(length)
         logging.info("Initialized annotation dataframe.\n")
@@ -729,6 +729,8 @@ class Annotator:
         self.figures["Piechart"] = vis.generate_pie_charts()
         self.figures["Heatmap"] = vis.heatmap()
         self.figures["Clustermap"] = vis.clustermap()
+        self.figures["PCA"]  = vis.pca_visualization()
+        self.figures["UMAP"]  = vis.umap_visualization()
 
         # if there are more than one condition, generate volcano, fold change and fold change at termini plots, and gallery of significant peptides
         if len(self.conditions) > 1:
