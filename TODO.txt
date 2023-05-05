@@ -1,8 +1,10 @@
-- Sequence visualization
-- Structure visualization
-- Protein altas integration
-- Alphafold integration
-- Pathway enrichment analysis
-- Gene ontology enrichment analysis
-- Pathway and gene ontology visualization
-- Uniprot static database lookup
+- [ ] Sequence visualization
+- [ ] Structure visualization
+- [ ] Protein altas integration
+- [ ] Alphafold integration
+- [ ] Pathway enrichment analysis
+- [ ] Gene ontology enrichment analysis
+- [ ] Pathway and gene ontology visualization
+- [x] Uniprot static database lookup
+    - Will not be implemented
+- [x] Multiple testing
