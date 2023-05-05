@@ -14,6 +14,7 @@ from entry import Entry
 from logo import generate_logos, create_logo_helper
 from scipy.stats import f_oneway, rv_histogram
 from statsmodels.stats.weightstats import ttest_ind
+from statsmodels.stats.multitest import multipletests
 from tqdm import tqdm
 from visualize import Visualizer
 
@@ -65,6 +66,8 @@ class Annotator:
         self.stat = args["stat"]
         self.pairwise = args["stat_pairwise"]
         self.significance = args["significance"]
+        self.multiple_testing = 'fdr_bh'
+        self.alpha = 0.05
         
         self.logo = args["logo"]
         self.pseudocounts = args["pseudocounts"]
@@ -503,10 +506,10 @@ class Annotator:
                 self.annot[f"Fold {pair[0]}/{pair[1]} significance"] = np.nan
 
                 if self.significance == 'all':
-                    subframe = self.df
+                    subframe = self.annot
                 elif self.significance == 'nterm':
-                    is_internal = self.df["nterm_annot"] == "Internal"
-                    subframe = self.df[~is_internal] if column.endswith("low") else self.df[is_internal]
+                    is_internal = self.annot["nterm_annot"] == "Internal"
+                    subframe = self.annot[~is_internal] if column.endswith("low") else self.annot[is_internal]
                 else:
                     logging.info(f"Significance invalid argument {self.significance}, skipping")
                     continue
@@ -526,7 +529,7 @@ class Annotator:
 
     def condition_statistics(self):
         """Perform a ttest or ANOVA statistical significance tests."""
-
+        
         def perform_test(test_func, cols0, cols1, column_name, column_log):
             values0 = self.df[cols0].values
             values1 = self.df[cols1].values
@@ -551,6 +554,49 @@ class Annotator:
                 column_log = f"Log10_{column_name}"
                 cols_per_condition = [self.df.columns[self.df.columns.str.contains("|".join(self.conditions[cond])) & self.df.columns.str.contains(self.patterns['quant'])] for cond in conditions]
                 perform_test(test_func, *cols_per_condition, column_name, column_log)
+
+    def correct_multiple_testing(self):
+        """Correct p-values for multiple testing."""
+            
+        if not self.multiple_testing or len(self.conditions) < 2:
+            logging.info("No multiple testing correction performed")
+            return   
+
+        def perform_correction(pvals, column_name, column_log, original_column_name):
+            # Identify NaN values
+            not_nan = ~np.isnan(pvals)
+
+            # Remove NaN values before performing multiple testing correction
+            pvals_no_nan = pvals[not_nan]
+            corrected_pvals_no_nan = multipletests(pvals_no_nan, alpha=self.alpha, method=self.multiple_testing)[1]
+
+            # Save the corrected p-values back to their original index positions
+            corrected_pvals = np.empty_like(pvals)
+            corrected_pvals[:] = np.nan
+            corrected_pvals[not_nan] = corrected_pvals_no_nan
+
+            # Insert the corrected p-value columns next to the original p-value columns
+            original_column_idx = self.annot.columns.get_loc(original_column_name)
+            self.annot.insert(original_column_idx + 2, column_name, corrected_pvals)
+            self.annot.insert(original_column_idx + 3, column_log, np.log10(corrected_pvals))
+
+            logging.info(f"Corrected p-values for {column_name} using {self.multiple_testing} method")
+        
+        if self.pairwise:
+            col_stat = 'Ttest'
+            for pair in combinations(self.conditions.keys(), 2):
+                column_name = f"Corrected {col_stat}: {pair[0]}_{pair[1]}"
+                column_log = f"Log10_{column_name}"
+                original_column_name = f"{col_stat}: {pair[0]}_{pair[1]}"
+                pvals = self.annot[original_column_name].values
+                perform_correction(pvals, column_name, column_log, original_column_name)
+        else:
+            col_stat = 'Ttest' if len(self.conditions) == 2 else 'ANOVA'
+            column_name = f"Corrected {col_stat}: {'_'.join(self.conditions.keys())}"
+            column_log = f"Log10_{column_name}"
+            original_column_name = f"{col_stat}: {'_'.join(self.conditions.keys())}"
+            pvals = self.annot[original_column_name].values
+            perform_correction(pvals, column_name, column_log, original_column_name)
 
     def process_entry(self, loc):
         """Process a single entry and return the annotation."""

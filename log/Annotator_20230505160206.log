@@ -1,0 +1,49 @@
+2023-05-05 16:02:06,065 [INFO] Annotator started at 2023-05-05 16:02:06.
+2023-05-05 16:02:06,068 [INFO] Arguments: {'infile': '..\\tests\\HUNTER_clean_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'singlecpu': False, 'conditionfile': '..\\tests\\cond_HUNTER.txt', 'stat': True, 'stat_pairwise': True, 'significance': None, 'visualize': True, 'logo': 'all', 'pseudocounts': True, 'output_name': None, 'outfile_type': 'xlsx', 'separate': False}
+2023-05-05 16:02:06,068 [INFO] Initialization successful.
+2023-05-05 16:02:06,069 [INFO] Reading file...
+
+2023-05-05 16:02:06,069 [INFO] Input is excel
+2023-05-05 16:02:06,347 [INFO] Read dataframe.
+2023-05-05 16:02:06,347 [INFO] Read input with 284 peptides
+2023-05-05 16:02:06,348 [INFO] Input software is sm
+2023-05-05 16:02:06,351 [INFO] Successfully generated indexing patterns
+2023-05-05 16:02:06,351 [INFO] Format check complete
+
+2023-05-05 16:02:06,354 [INFO] Starting annotation of peptides...
+2023-05-05 16:02:06,355 [INFO] Reading MEROPS data..
+2023-05-05 16:02:06,782 [INFO] Read MEROPS data
+2023-05-05 16:02:06,784 [INFO] Initialized annotation dataframe.
+
+2023-05-05 16:02:14,671 [WARNING] Peptide YSCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-05-05 16:02:14,768 [WARNING] Peptide SELHIENLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-05 16:02:14,819 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-05 16:02:14,822 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-05 16:02:14,825 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-05 16:02:14,861 [WARNING] Peptide ADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-05 16:02:16,290 [WARNING] Peptide SCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-05-05 16:02:22,057 [WARNING] Error retrieving Uniprot record for A0A494C169: No SwissProt record found
+2023-05-05 16:02:34,056 [INFO] Finished annotation of peptides.
+
+2023-05-05 16:02:34,056 [INFO] Starting proteoform check...
+2023-05-05 16:02:34,058 [INFO] Finished proteoform check.
+2023-05-05 16:02:34,058 [INFO] Starting exopeptidase activity check...
+2023-05-05 16:02:34,067 [INFO] 2 LGLGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR LGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR
+2023-05-05 16:02:34,096 [INFO] 1 YSCVFLPEPMGTANIQLHGPPR SCVFLPEPMGTANIQLHGPPR
+2023-05-05 16:02:34,099 [INFO] 2 AEAMDLGKDPNGPTHSSTLFVR AMDLGKDPNGPTHSSTLFVR
+2023-05-05 16:02:34,101 [INFO] 2 AEAQALLSGDTQTDATSFYDR AQALLSGDTQTDATSFYDR
+2023-05-05 16:02:34,114 [INFO] 1 KACANPAAGSVILLENLR ACANPAAGSVILLENLR
+2023-05-05 16:02:34,115 [INFO] 2 KACANPAAGSVILLENLR ANPAAGSVILLENLR
+2023-05-05 16:02:34,130 [INFO] 1 AAQTSPSPKAGAATGR AQTSPSPKAGAATGR
+2023-05-05 16:02:34,131 [INFO] 1 SSGFSLEDPQTHSNR SGFSLEDPQTHSNR
+2023-05-05 16:02:34,132 [INFO] 2 SKNLKLGIHEDSTNR NLKLGIHEDSTNR
+2023-05-05 16:02:34,154 [INFO] 2 SEDFSLPAYMDR DFSLPAYMDR
+2023-05-05 16:02:34,172 [INFO] 2 SPVLHFYVR VLHFYVR
+2023-05-05 16:02:34,188 [INFO] Finished exopeptidase activity check.
+
+2023-05-05 16:02:34,188 [INFO] Parsed condition file
+2023-05-05 16:02:34,189 [INFO] Performing general statistics annotation...
+2023-05-05 16:02:34,205 [INFO] Finished general statistics annotation.
+2023-05-05 16:02:34,205 [INFO] Performing statistical testing...
+2023-05-05 16:02:34,208 [INFO] Finished statistical testing.
+

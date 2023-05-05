@@ -68,7 +68,10 @@ def main(args=None):
         if args["stat"]:
             logging.info("Performing statistical testing...")
             annotator.condition_statistics()
-            logging.info("Finished statistical testing\n.")
+            logging.info("Finished statistical testing.")
+
+            annotator.correct_multiple_testing()
+            logging.info("Finished multiple testing correction.\n")
 
         # Perform fold distribution check if specified
         if args["significance"]:

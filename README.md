@@ -1,5 +1,7 @@
-# annotator
+# CLIPPER 2.0
 Peptide level annotation
+
+Install **python 3.11.3**, and setup with *requirements.txt* through *pip*.
 
 ## Program init
 - Init function
