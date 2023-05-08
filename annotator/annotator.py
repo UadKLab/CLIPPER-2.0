@@ -23,7 +23,7 @@ from visualize import Visualizer
 result_folder_name = "results"
 data_folder_name = "data"
 annotation_prefix = "_annot."
-
+plot_sequence_folder = "sequence_plots"
 
 class Annotator:
     """Annotator class for processing and analyzing peptide proteomics data. All
@@ -60,6 +60,7 @@ class Annotator:
         self.separate = args["separate"]
         self.sleeptime = args["sleeptime"]
         self.noexo = args["noexo"]
+        self.merops = None
         self.nomerops = args["nomerops"]
 
         self.conditionfile = args["conditionfile"]
@@ -130,6 +131,8 @@ class Annotator:
         else:
             self.outfolder = os.path.join(self.resultfolder, self.timestamp)
             self.outname = self.infile.rsplit("/", 1)[-1].rsplit("\\", 1)[-1].rsplit(".", 1)[0] + annotation_prefix + self.outfile_type
+
+        self.sequence_folder = os.path.join(self.outfolder, plot_sequence_folder)
 
     def load_data(self):
         """Load the input data into a Pandas DataFrame."""
@@ -246,6 +249,8 @@ class Annotator:
 
         self.sanitize()
         os.mkdir(self.outfolder)
+        if self.stat:
+            os.mkdir(self.sequence_folder)
 
     def read_MEROPS(self):
         """Read MEROPS data from csv files."""
@@ -722,7 +727,7 @@ class Annotator:
         """Calls Visualizer class and stores figure objects."""
 
         # initialize Visualizer class, and generate figures for general statistics, CV plot, pie charts, heatmap and clustermap
-        vis = Visualizer(self.df, self.annot, self.conditions, self.software, self.patterns)
+        vis = Visualizer(self.df, self.annot, self.conditions, self.software, self.patterns, self.pairwise)
         
         self.figures["General"] = vis.general()
         self.figures["CV"] = vis.cv_plot()
@@ -741,7 +746,16 @@ class Annotator:
 
             logging.info("Starting gallery generation...")
             vis.gallery(stat=self.stat, cutoff=0.05, folder=self.outfolder)
-            logging.info("Finished gallery generation...")
+            logging.info("Finished gallery generation.")
+            
+            if self.stat:
+                logging.info("Starting sequence plotting...")
+                if self.nomerops is False:
+                    vis.plot_sequence(cutoff=0.05, folder=self.sequence_folder, merops=self.merops)
+                    logging.info("Finished sequence plotting.")
+                else:
+                    vis.plot_sequence(cutoff=0.05, folder=self.sequence_folder)
+                logging.info("Finished sequence plotting.")
 
     def create_logos(self):
         """Create sequence logos.

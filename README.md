@@ -58,14 +58,19 @@ Install **python 3.11.3**, and setup with *requirements.txt* through *pip*.
 - [ ] Spectronaut support
 - [ ] Dimethylation support
     - [ ] Dimethylation support for Spectromine
-- [ ] Dimensionality reduction (PCA & UMAP)
+- [x] Dimensionality reduction (PCA & UMAP)
     - [x] Added PCA
     - [x] Added UMAP
 - [x] Multiple testing correction
 - [ ] Protein atlas integration
 - [ ] Visualize cleavages in sequences
+    - [x] Added sequence plots
+    - [ ] Add colormap 
+    - [ ] Merge with structure visualization
+    - [ ] Integrate with structural plots
 - [ ] Visualize cleavages in structure
     - [x] Downloaded Alphafold EBI database
+    - [ ] Save significant proteins in pdb files
 - [ ] Add secondary structure annotation
 - [ ] Gprofiler - metascape GO enrichment
 - [ ] Pathway annotation/significance

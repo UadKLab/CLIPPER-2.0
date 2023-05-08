@@ -1,0 +1,64 @@
+2023-05-08 17:01:23,132 [INFO] Annotator started at 2023-05-08 17:01:23.
+2023-05-08 17:01:23,136 [INFO] Arguments: {'infile': '..\\tests\\HUNTER_clean_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'singlecpu': False, 'conditionfile': '..\\tests\\cond_HUNTER.txt', 'stat': True, 'stat_pairwise': False, 'significance': None, 'visualize': True, 'logo': None, 'pseudocounts': True, 'output_name': None, 'outfile_type': 'xlsx', 'separate': False}
+2023-05-08 17:01:23,137 [INFO] Initialization successful.
+2023-05-08 17:01:23,138 [INFO] Reading file...
+
+2023-05-08 17:01:23,139 [INFO] Input is excel
+2023-05-08 17:01:23,484 [INFO] Read dataframe.
+2023-05-08 17:01:23,485 [INFO] Read input with 284 peptides
+2023-05-08 17:01:23,486 [INFO] Input software is sm
+2023-05-08 17:01:23,492 [INFO] Successfully generated indexing patterns
+2023-05-08 17:01:23,492 [INFO] Format check complete
+
+2023-05-08 17:01:23,495 [INFO] Starting annotation of peptides...
+2023-05-08 17:01:23,496 [INFO] Reading MEROPS data..
+2023-05-08 17:01:24,058 [INFO] Read MEROPS data
+2023-05-08 17:01:24,061 [INFO] Initialized annotation dataframe.
+
+2023-05-08 17:01:41,407 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-08 17:01:41,407 [WARNING] Peptide ADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-08 17:01:41,454 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-08 17:01:41,466 [WARNING] Peptide SELHIENLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-08 17:01:41,466 [WARNING] Peptide YSCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-05-08 17:01:41,468 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-08 17:01:43,889 [WARNING] Peptide SCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-05-08 17:02:05,405 [WARNING] Error retrieving Uniprot record for A0A494C169: No SwissProt record found
+2023-05-08 17:02:34,564 [INFO] Finished annotation of peptides.
+
+2023-05-08 17:02:34,565 [INFO] Starting proteoform check...
+2023-05-08 17:02:34,566 [INFO] Finished proteoform check.
+2023-05-08 17:02:34,566 [INFO] Starting exopeptidase activity check...
+2023-05-08 17:02:34,585 [INFO] 2 LGLGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR LGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR
+2023-05-08 17:02:34,646 [INFO] 1 YSCVFLPEPMGTANIQLHGPPR SCVFLPEPMGTANIQLHGPPR
+2023-05-08 17:02:34,653 [INFO] 2 AEAMDLGKDPNGPTHSSTLFVR AMDLGKDPNGPTHSSTLFVR
+2023-05-08 17:02:34,668 [INFO] 2 AEAQALLSGDTQTDATSFYDR AQALLSGDTQTDATSFYDR
+2023-05-08 17:02:34,702 [INFO] 1 KACANPAAGSVILLENLR ACANPAAGSVILLENLR
+2023-05-08 17:02:34,704 [INFO] 2 KACANPAAGSVILLENLR ANPAAGSVILLENLR
+2023-05-08 17:02:34,735 [INFO] 1 AAQTSPSPKAGAATGR AQTSPSPKAGAATGR
+2023-05-08 17:02:34,739 [INFO] 1 SSGFSLEDPQTHSNR SGFSLEDPQTHSNR
+2023-05-08 17:02:34,742 [INFO] 2 SKNLKLGIHEDSTNR NLKLGIHEDSTNR
+2023-05-08 17:02:34,786 [INFO] 2 SEDFSLPAYMDR DFSLPAYMDR
+2023-05-08 17:02:34,823 [INFO] 2 SPVLHFYVR VLHFYVR
+2023-05-08 17:02:34,863 [INFO] Finished exopeptidase activity check.
+
+2023-05-08 17:02:34,866 [INFO] Parsed condition file
+2023-05-08 17:02:34,866 [INFO] Performing general statistics annotation...
+2023-05-08 17:02:34,901 [INFO] Finished general statistics annotation.
+2023-05-08 17:02:34,902 [INFO] Performing statistical testing...
+2023-05-08 17:02:34,905 [INFO] Finished statistical testing.
+2023-05-08 17:02:34,907 [INFO] Corrected p-values for Corrected Ttest: gluc_control using fdr_bh method
+2023-05-08 17:02:34,908 [INFO] Finished multiple testing correction.
+
+2023-05-08 17:02:34,910 [INFO] Generating figures...
+2023-05-08 17:02:53,071 [INFO] Starting gallery generation...
+2023-05-08 17:02:59,076 [INFO] Finished gallery generation.
+2023-05-08 17:02:59,077 [INFO] Starting sequence plotting...
+2023-05-08 17:04:19,271 [INFO] Finished sequence plotting.
+2023-05-08 17:04:19,271 [INFO] Finished sequence plotting.
+2023-05-08 17:04:19,271 [INFO] Finished generating figures.
+2023-05-08 17:04:19,271 [INFO] Writing output files...
+2023-05-08 17:04:24,462 [INFO] Finished. Wrote results to C:\Users\konka\Documents\annotator\results\20230508170123.
+2023-05-08 17:04:24,895 [INFO] Finished writing output files
+2023-05-08 17:04:24,895 [INFO] 
+CLIPPER 2.0 pipeline completed in 0:03:01.764575.
+

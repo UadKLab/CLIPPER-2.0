@@ -9,15 +9,21 @@ from umap import UMAP
 from matplotlib.backends.backend_pdf import PdfPages
 from tqdm import tqdm
 
+from Bio import ExPASy
+from Bio import SwissProt
+from Bio import Seq
+from Bio.SeqFeature import SeqFeature, FeatureLocation
+from dna_features_viewer import GraphicFeature, GraphicRecord
 
 class Visualizer:
-    def __init__(self, df, annot, conditions, software, patterns):
+    def __init__(self, df, annot, conditions, software, patterns, pairwise=False):
 
         self.df = df
         self.annot = annot
         self.conditions = conditions
         self.software = software
         self.patterns = patterns
+        self.pairwise = pairwise
 
     def general(self):
         """Plots general statistics for the dataset"""
@@ -322,21 +328,7 @@ class Visualizer:
     def gallery(self, stat=False, cutoff=0.05, folder=None):
         """Generate a gallery of the significant peptides."""
 
-        if stat:
-            cols = self.annot.columns[self.annot.columns.str.contains("Ttest:")]
-            indices = []
-            for col in cols:
-                ind = self.annot[self.annot[col] < cutoff].index
-                indices += list(ind)
-            indices = list(set(indices))
-        else:
-            cols = self.annot.columns[self.annot.columns.str.contains("significance")]
-            indices = []
-            for col in cols:
-                ind = self.annot[self.annot[col].str.contains("significant", na=False)].index
-                indices += list(ind)
-            indices = list(set(indices))
-
+        indices = self.get_significant_indices(stat, cutoff)
         accs = self.annot.loc[indices, "query_accession"].unique()
 
         sns.set("paper", "ticks")
@@ -371,6 +363,26 @@ class Visualizer:
                 plt.close()
 
         pp.close()
+
+    def get_significant_indices(self, stat, cutoff):
+        if stat:
+            if len(self.conditions) == 2 or self.pairwise:
+                cols = self.annot.columns[self.annot.columns.str.startswith("Ttest:")]
+            else:
+                cols = self.annot.columns[self.annot.columns.str.startswith("ANOVA:")]
+            indices = []
+            for col in cols:
+                ind = self.annot[self.annot[col] < cutoff].index
+                indices += list(ind)
+            indices = list(set(indices))
+        else:
+            cols = self.annot.columns[self.annot.columns.str.contains("significance")]
+            indices = []
+            for col in cols:
+                ind = self.annot[self.annot[col].str.contains("significant", na=False)].index
+                indices += list(ind)
+            indices = list(set(indices))
+        return indices
     
     def pca_visualization(self):
         """Perform PCA on the quantification columns and visualize the results."""
@@ -475,8 +487,28 @@ class Visualizer:
         plt.close()
 
         return {"UMAP": fig}
+    
+    def plot_sequence(self, cutoff=0.05, folder=None, merops=None):
+        """Plots significant peptides for each condition on protein sequence"""
 
+        if len(self.conditions) == 2 or self.pairwise:
+            cols = self.annot.columns[self.annot.columns.str.startswith("Ttest:")]
+        else:
+            cols = self.annot.columns[self.annot.columns.str.startswith("ANOVA:")]
 
+        for col in cols:
+            df = self.annot[self.annot[col] < cutoff]
+            accs = df["query_accession"].unique()
+
+            # Create a PDF file to save all figures
+            pdf_path = os.path.join(folder, f"{col[7:]}_sequence_plots.pdf")
+            with PdfPages(pdf_path) as pp:
+                for acc in tqdm(accs):
+                    subframe = df[df["query_accession"] == acc]
+                    if len(subframe) > 0:
+                        plot_protein_figure(pp, subframe, acc, col, merops)
+
+    
 def create_pie_chart(y, x, colors, explode):
     """Creates a pie chart of the given data."""
 
@@ -526,3 +558,84 @@ def get_quant_values_data(columns, natural, internal):
             for col in columns:
                 data[f"{col[:-5]}_{t}_{subframe.loc[row, 'query_sequence']}"] = subframe.loc[row, col]
     return data
+
+def extract_protein_features(acc, record, merops):
+    """Extracts the protein features from the UniProt record and the MEROPS database."""
+
+    features = []
+    colors_native = {"SIGNAL":'palevioletred', "PROPEP":'peru', "TRANSIT":'darkcyan'}
+
+    for feature in record.features:
+        if feature.type == "SIGNAL" or feature.type == "PROPEP" or feature.type == "TRANSIT":
+            start = feature.location.start.position
+            end = feature.location.end.position
+
+            if isinstance(start, int) and isinstance(end, int):
+                gf = GraphicFeature(
+                    start=feature.location.start.position,
+                    end=feature.location.end.position,
+                    strand=feature.strand,
+                    color=colors_native[feature.type],
+                    label=feature.type
+                )
+                features.append(gf)
+    
+    if isinstance(merops, pd.DataFrame):
+        cleavage_sites = merops[merops["uniprot_acc"]== acc]["p1"].values
+        codes = merops[merops["uniprot_acc"]== acc]["code"].values
+
+        for site, code in zip(cleavage_sites, codes):
+            gf = GraphicFeature(
+                start=site,
+                end=site,
+                strand=1,
+                color="seashell",
+                label=code + str(site)
+            )
+            features.append(gf)
+
+    return features
+
+def plot_protein_figure(pp, subframe, acc, col, merops):
+    """Plots the protein sequence with the significant peptides highlighted, and saves the figure to the PDF file.
+    Also adds existing protein features to the figure."""
+
+    # get the protein record from UniProt
+    record = SwissProt.read(ExPASy.get_sprot_raw(acc))
+
+    # get the protein description and gene name
+    desc = record.description.split(';')[0].split('=')[1]
+    gene = record.gene_name[0]["Name"].split()[0] if record.gene_name else "Unknown"
+    title = '-'.join([acc, gene, desc])
+
+    # extract the protein features
+    features = extract_protein_features(acc, record, merops)
+
+    # get the significant peptides
+    col_fold = col.replace('_', '/').replace('Ttest', 'Log2_fold_change')
+    fold_changes = subframe[col_fold].values
+
+    # Create a colormap centered at 0
+    max_fold_change = np.max(np.abs(fold_changes))
+    cmap = plt.get_cmap('coolwarm')
+    norm = plt.Normalize(-max_fold_change, max_fold_change)
+
+    for index, row in subframe.iterrows():
+        peptide = row['query_sequence']
+        start, end = row['start_pep'], row['end_pep']
+
+        if isinstance(start, int) and isinstance(end, int): 
+            color = cmap(norm(row[col_fold]))
+
+            f = SeqFeature(FeatureLocation(start, end), type="peptide")
+            f.qualifiers['name'] = [peptide + ' ' + '-'.join([str(start), str(end)])]
+
+            gf = GraphicFeature(start=start, end=end, strand=+1, color=color, label=f.qualifiers['name'][0])
+            features.append(gf)
+
+    fig, ax = plt.subplots(figsize=(13, 8))
+    gr = GraphicRecord(sequence_length=record.sequence_length, features=features, first_index=1)
+    gr.plot(ax=ax)
+    plt.title(title, fontsize=18)
+    plt.savefig(pp, format="pdf")
+    plt.close()

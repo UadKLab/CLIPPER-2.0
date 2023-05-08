@@ -1,6 +1,8 @@
 import time
 import logging
 from datetime import timedelta
+import warnings
+from numba import NumbaDeprecationWarning
 
 from annotator import Annotator
 from annutils import initialize
@@ -103,4 +105,5 @@ def main(args=None):
 
 
 if __name__ == "__main__":
+    warnings.filterwarnings("ignore", category=NumbaDeprecationWarning)
     main()
