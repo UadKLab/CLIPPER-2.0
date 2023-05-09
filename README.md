@@ -1,11 +1,14 @@
 # CLIPPER 2.0
 Peptide level annotation
 
-Install **python 3.11.3**, and setup with *requirements_conda.txt* through *conda*.
+Install **python 3.11.3**, and setup with *requirements.txt* through *conda*.
 
 Create an environment:
+
 `conda create --n clipper python=3.11.3`
+
 And then install packages:
+
 `conda install --file requirements.txt`
 
 ## Program init
