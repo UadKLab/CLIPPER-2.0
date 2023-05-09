@@ -658,7 +658,7 @@ def get_pymol_image(acc, positions, colormap, vmin, vmax, alphafold):
     # Orient the structure based on the highest fold change peptide
     if max_fold_change_pos is not None:
         pymol.cmd.orient(f'resi {max_fold_change_pos[0]}-{max_fold_change_pos[1]} and {acc}')
-        pymol.cmd.zoom(acc, complete=0.8)
+        pymol.cmd.zoom(acc, complete=0.65)
         
     tmp_file = tempfile.mktemp(suffix=".png")
     pymol.cmd.ray(1280, 720)

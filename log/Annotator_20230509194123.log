@@ -15,3 +15,79 @@
 2023-05-09 19:41:23,727 [INFO] Read MEROPS data
 2023-05-09 19:41:23,729 [INFO] Initialized annotation dataframe.
 
+2023-05-09 19:41:34,898 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-09 19:41:35,040 [WARNING] Peptide YSCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-05-09 19:41:35,085 [WARNING] Peptide ADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-09 19:41:35,086 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-09 19:41:35,098 [WARNING] Peptide SELHIENLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-09 19:41:35,117 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-09 19:41:37,537 [WARNING] Peptide SCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-05-09 19:41:46,439 [WARNING] Error retrieving Uniprot record for A0A494C169: No SwissProt record found
+2023-05-09 19:42:04,148 [INFO] Finished annotation of peptides.
+
+2023-05-09 19:42:04,148 [INFO] Starting proteoform check...
+2023-05-09 19:42:04,150 [INFO] Finished proteoform check.
+2023-05-09 19:42:04,150 [INFO] Starting exopeptidase activity check...
+2023-05-09 19:42:04,163 [INFO] 2 LGLGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR LGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR
+2023-05-09 19:42:04,191 [INFO] 1 YSCVFLPEPMGTANIQLHGPPR SCVFLPEPMGTANIQLHGPPR
+2023-05-09 19:42:04,194 [INFO] 2 AEAMDLGKDPNGPTHSSTLFVR AMDLGKDPNGPTHSSTLFVR
+2023-05-09 19:42:04,198 [INFO] 2 AEAQALLSGDTQTDATSFYDR AQALLSGDTQTDATSFYDR
+2023-05-09 19:42:04,211 [INFO] 1 KACANPAAGSVILLENLR ACANPAAGSVILLENLR
+2023-05-09 19:42:04,212 [INFO] 2 KACANPAAGSVILLENLR ANPAAGSVILLENLR
+2023-05-09 19:42:04,230 [INFO] 1 AAQTSPSPKAGAATGR AQTSPSPKAGAATGR
+2023-05-09 19:42:04,232 [INFO] 1 SSGFSLEDPQTHSNR SGFSLEDPQTHSNR
+2023-05-09 19:42:04,234 [INFO] 2 SKNLKLGIHEDSTNR NLKLGIHEDSTNR
+2023-05-09 19:42:04,262 [INFO] 2 SEDFSLPAYMDR DFSLPAYMDR
+2023-05-09 19:42:04,285 [INFO] 2 SPVLHFYVR VLHFYVR
+2023-05-09 19:42:04,304 [INFO] Finished exopeptidase activity check.
+
+2023-05-09 19:42:04,304 [INFO] Parsed condition file
+2023-05-09 19:42:04,305 [INFO] Performing general statistics annotation...
+2023-05-09 19:42:04,324 [INFO] Finished general statistics annotation.
+2023-05-09 19:42:04,325 [INFO] Performing statistical testing...
+2023-05-09 19:42:04,329 [INFO] Finished statistical testing.
+2023-05-09 19:42:04,330 [INFO] Corrected p-values for Corrected Ttest: gluc_control using fdr_bh method
+2023-05-09 19:42:04,331 [INFO] Finished multiple testing correction.
+
+2023-05-09 19:42:04,331 [INFO] Checking fold distribution...
+2023-05-09 19:42:04,396 [INFO] Finished fold distribution check.
+
+2023-05-09 19:42:04,396 [INFO] Generating figures...
+2023-05-09 19:42:15,432 [INFO] Starting gallery generation...
+2023-05-09 19:42:19,452 [INFO] Finished gallery generation.
+2023-05-09 19:42:19,453 [INFO] Reading available AlphaFold models...
+2023-05-09 19:42:19,498 [INFO] Read available AlphaFold models.
+2023-05-09 19:42:19,499 [INFO] Starting protein plotting...
+2023-05-09 19:42:32,360 [INFO] Alphafold model for A0A0C4DG17 not available.
+2023-05-09 19:42:33,295 [INFO] Alphafold model for C9J6D1 not available.
+2023-05-09 19:42:38,683 [INFO] Alphafold model for E9PB61 not available.
+2023-05-09 19:42:49,605 [INFO] Alphafold model for E7EVA0 not available.
+2023-05-09 19:42:52,997 [INFO] Alphafold model for C9J329 not available.
+2023-05-09 19:42:54,185 [INFO] Alphafold model for A0A087X2B5 not available.
+2023-05-09 19:42:57,755 [INFO] Alphafold model for P62913-2 not available.
+2023-05-09 19:43:15,328 [INFO] Alphafold model for E5RGS9 not available.
+2023-05-09 19:43:20,798 [INFO] Alphafold model for K7ELL7 not available.
+2023-05-09 19:43:21,597 [INFO] Alphafold model for H3BUP2 not available.
+2023-05-09 19:43:22,851 [INFO] Alphafold model for H3BT13 not available.
+2023-05-09 19:43:24,163 [INFO] Alphafold model for P58107 not available.
+2023-05-09 19:43:43,083 [INFO] Alphafold model for F8WAS3 not available.
+2023-05-09 19:43:43,871 [INFO] Alphafold model for A0A2R8YF49 not available.
+2023-05-09 19:43:55,825 [INFO] Alphafold model for H3BN72 not available.
+2023-05-09 19:43:56,603 [INFO] Alphafold model for C9J9C1 not available.
+2023-05-09 19:43:57,583 [INFO] Alphafold model for A0A0U1RQF0 not available.
+2023-05-09 19:44:06,559 [INFO] Alphafold model for B4E0Y9 not available.
+2023-05-09 19:44:07,595 [INFO] Alphafold model for D6RAT0 not available.
+2023-05-09 19:44:08,405 [INFO] Alphafold model for A0A0D9SEI7 not available.
+2023-05-09 19:44:15,956 [INFO] Alphafold model for Q01105-2 not available.
+2023-05-09 19:44:17,038 [INFO] Finished protein plotting.
+2023-05-09 19:44:17,038 [INFO] Finished protein plotting.
+2023-05-09 19:44:17,038 [INFO] Finished generating figures.
+2023-05-09 19:44:17,039 [INFO] Generating logos...
+2023-05-09 19:44:23,366 [INFO] Finished generating logos.
+
+2023-05-09 19:44:23,366 [INFO] Writing output files...
+2023-05-09 19:44:34,350 [INFO] Finished. Wrote results to D:\DTU\PhD\Projects\CLIPPER\annotator\results\20230509194123.
+2023-05-09 19:44:34,642 [INFO] Finished writing output files
+2023-05-09 19:44:34,642 [INFO] 
+CLIPPER 2.0 pipeline completed in 0:03:11.606510.
+
