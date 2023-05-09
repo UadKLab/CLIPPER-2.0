@@ -1,0 +1,17 @@
+2023-05-09 19:41:23,037 [INFO] Annotator started at 2023-05-09 19:41:23.
+2023-05-09 19:41:23,039 [INFO] Arguments: {'infile': '..\\tests\\HUNTER_clean_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'singlecpu': False, 'conditionfile': '..\\tests\\cond_HUNTER.txt', 'stat': True, 'stat_pairwise': True, 'significance': 'all', 'visualize': True, 'logo': 'all', 'pseudocounts': True, 'output_name': None, 'outfile_type': 'xlsx', 'separate': False}
+2023-05-09 19:41:23,040 [INFO] Initialization successful.
+2023-05-09 19:41:23,040 [INFO] Reading file...
+
+2023-05-09 19:41:23,041 [INFO] Input is excel
+2023-05-09 19:41:23,333 [INFO] Read dataframe.
+2023-05-09 19:41:23,333 [INFO] Read input with 284 peptides
+2023-05-09 19:41:23,334 [INFO] Input software is sm
+2023-05-09 19:41:23,339 [INFO] Successfully generated indexing patterns
+2023-05-09 19:41:23,339 [INFO] Format check complete
+
+2023-05-09 19:41:23,344 [INFO] Starting annotation of peptides...
+2023-05-09 19:41:23,344 [INFO] Reading MEROPS data..
+2023-05-09 19:41:23,727 [INFO] Read MEROPS data
+2023-05-09 19:41:23,729 [INFO] Initialized annotation dataframe.
+

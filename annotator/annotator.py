@@ -47,13 +47,12 @@ class Annotator:
         self.data_folder_name = "data"
         self.alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
         self.annotation_prefix = "_annot."
-        self.plot_sequence_folder = "sequence_plots"
+        self.plot_protein_folder = "protein_plots"
         self.plot_general_folder = "general_plots"
         self.plot_fold_change_folder = "fold_change_plots"
         self.plot_volcano_folder = "volcano_plots"
         self.plot_piechart_folder = "piecharts"
         self.plot_logo_folder = "logos"
-        self.pdb_folder = "pdb"
 
         # input attributes
         self.infile_type = args["infile_type"]
@@ -141,15 +140,14 @@ class Annotator:
             self.outfolder = os.path.join(self.resultfolder, self.timestamp)
             self.outname = self.infile.rsplit("/", 1)[-1].rsplit("\\", 1)[-1].rsplit(".", 1)[0] + self.annotation_prefix + self.outfile_type
 
-        self.sequence_folder = os.path.join(self.outfolder, self.plot_sequence_folder)
+        self.protein_folder = os.path.join(self.outfolder, self.plot_protein_folder)
         self.general_folder = os.path.join(self.outfolder, self.plot_general_folder)
         self.fold_change_folder = os.path.join(self.outfolder, self.plot_fold_change_folder)
         self.plot_volcano_folder = os.path.join(self.outfolder, self.plot_volcano_folder)
         self.piechart_folder = os.path.join(self.outfolder, self.plot_piechart_folder)
         self.logo_folder = os.path.join(self.outfolder, self.plot_logo_folder)
-        self.pdb_folder = os.path.join(self.outfolder, self.pdb_folder)
 
-        self.folders = {"out": self.resultfolder, "data": self.datafolder, "sequence": self.sequence_folder, "general": self.general_folder, "pdb": self.pdb_folder,
+        self.folders = {"out": self.resultfolder, "data": self.datafolder, "protein": self.protein_folder, "general": self.general_folder,
                         "volcano": self.plot_volcano_folder, "fold": self.fold_change_folder, "piechart": self.piechart_folder, "logo": self.logo_folder}
 
     def load_data(self):
@@ -269,7 +267,7 @@ class Annotator:
 
         os.mkdir(self.outfolder)
         if self.stat:
-            os.mkdir(self.sequence_folder)
+            os.mkdir(self.protein_folder)
         if self.plot:
             os.mkdir(self.general_folder)
             os.mkdir(self.fold_change_folder)
@@ -277,7 +275,6 @@ class Annotator:
             os.mkdir(self.piechart_folder)
         if self.logo:
             os.mkdir(self.logo_folder)
-        os.mkdir(self.pdb_folder)
 
     def read_MEROPS(self):
         """Read MEROPS data from csv files."""
@@ -287,6 +284,14 @@ class Annotator:
         self.merops = pd.read_csv(datafolder_path / "cleavage.csv")
         self.merops_name = pd.read_csv(datafolder_path / "protein_name.csv")
         self.merops_name = self.merops_name[self.merops_name.type == "real"]
+
+    def read_available_models(self):
+        # read available alphafold models
+        logging.info("Reading available AlphaFold models...")
+        available_models = annutils.read_alphafold_accessions(os.path.join(self.datafolder, "alphafold_accs.txt"))
+        logging.info(f"Read available AlphaFold models.")
+
+        self.available_models = available_models
 
     def initialize_annotation(self, length: int):
         """Initialize a dataframe with empty annotation columns, same size as
@@ -776,13 +781,15 @@ class Annotator:
             logging.info("Finished gallery generation.")
             
             if self.stat:
-                logging.info("Starting sequence plotting...")
+                self.read_available_models()
+
+                logging.info("Starting protein plotting...")
                 if self.nomerops is False:
-                    vis.plot_sequence(cutoff=0.05, folder=self.sequence_folder, merops=self.merops)
-                    logging.info("Finished sequence plotting.")
+                    vis.plot_protein(cutoff=0.05, folder=self.protein_folder, merops=self.merops, alphafold=self.available_models)
+                    logging.info("Finished protein plotting.")
                 else:
-                    vis.plot_sequence(cutoff=0.05, folder=self.sequence_folder)
-                logging.info("Finished sequence plotting.")
+                    vis.plot_protein(cutoff=0.05, folder=self.protein_folder, alphafold=self.available_models)
+                logging.info("Finished protein plotting.")
 
     def create_logos(self):
         """Create sequence logos.

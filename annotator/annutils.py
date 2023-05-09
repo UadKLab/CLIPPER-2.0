@@ -286,6 +286,15 @@ def map_dict(annot_df_row: pd.core.series.Series, annot_dict: dict):
     return annot_df_row
 
 
+def read_alphafold_accessions(accession_file: str):
+    """Reads accessions from a file and returns a list of accessions."""
+
+    with open(accession_file, "r") as f:
+        accessions = f.read().splitlines()
+
+    return accessions
+
+
 def save_figures(figures, folders):
     """Saves figures to output folder."""
 

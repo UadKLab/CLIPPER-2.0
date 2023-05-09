@@ -1,24 +1,33 @@
 import os
-
+import tempfile
 import warnings
+import gzip
+import logging
 from numba import NumbaDeprecationWarning
 
-import matplotlib.pyplot as plt
+from tqdm import tqdm
+
 import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn.decomposition import PCA
 from umap import UMAP
-from matplotlib.backends.backend_pdf import PdfPages
-from tqdm import tqdm
 
+import matplotlib.pyplot as plt
+import matplotlib.colors as colors
+from matplotlib.backends.backend_pdf import PdfPages
+
+import pymol
 from Bio import ExPASy
 from Bio import SwissProt
 from Bio import Seq
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from dna_features_viewer import GraphicFeature, GraphicRecord
 
+
 warnings.filterwarnings("ignore", category=NumbaDeprecationWarning)
+alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
+
 
 class Visualizer:
     def __init__(self, df, annot, conditions, software, patterns, pairwise=False):
@@ -493,8 +502,8 @@ class Visualizer:
 
         return {"UMAP": fig}
     
-    def plot_sequence(self, cutoff=0.05, folder=None, merops=None):
-        """Plots significant peptides for each condition on protein sequence"""
+    def plot_protein(self, cutoff=0.05, folder=None, merops=None, alphafold=None):
+        """Plots significant peptides for each condition on protein sequence and structure."""
 
         if len(self.conditions) == 2 or self.pairwise:
             cols = self.annot.columns[self.annot.columns.str.startswith("Ttest:")]
@@ -511,7 +520,7 @@ class Visualizer:
                 for acc in tqdm(accs):
                     subframe = df[df["query_accession"] == acc]
                     if len(subframe) > 0:
-                        plot_protein_figure(pp, subframe, acc, col, merops)
+                        plot_protein_figure(pp, subframe, acc, col, merops, alphafold)
 
     
 def create_pie_chart(y, x, colors, explode):
@@ -601,7 +610,65 @@ def extract_protein_features(acc, record, merops):
 
     return features
 
-def plot_protein_figure(pp, subframe, acc, col, merops):
+def get_pymol_image(acc, positions, colormap, vmin, vmax, alphafold):
+    """Get the image of the protein structure with the significant positions highlighted."""
+    
+    if acc not in alphafold:
+        logging.info(f"Alphafold model for {acc} not available.")
+        return None
+    
+    alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
+    model_filename = f"AF-{acc}-F1-model_v4.cif.gz"
+    model_path = os.path.join(alphafold_folder_name, model_filename)
+
+    with tempfile.NamedTemporaryFile(suffix=".cif", delete=False) as temp_cif:
+        # Open the gzipped CIF file
+        with gzip.open(model_path, 'rb') as f_in:
+            # Write the decompressed contents to the temporary file
+            temp_cif.write(f_in.read())
+        
+        temp_cif.flush()  # Ensure the file is written
+
+        pymol.cmd.delete('all')
+        pymol.cmd.load(temp_cif.name, acc)
+
+    pymol.cmd.set('ray_trace_mode', '1')
+    pymol.cmd.set('ray_trace_color', 'black')
+    pymol.cmd.orient(acc)
+    pymol.cmd.select('het_atoms', f'{acc} and hetatm')
+    pymol.cmd.extract('het_atob', 'het_atoms')
+    pymol.cmd.delete('het_atob')
+
+    # Set the entire protein to grey
+    pymol.cmd.color('grey', acc)
+
+    positions = sorted(positions, key=lambda tup: tup[2])
+    max_fold_change_pos = None
+    max_fold_change = vmin
+
+    for ind, pos in enumerate(positions):
+        color = colormap((pos[2] - vmin) / (vmax - vmin))
+        pymol.cmd.select('sel', f'resi {pos[0]}-{pos[1]} and {acc}')
+        pymol.cmd.color('0x' + colors.to_hex(color)[1:], 'sel')
+
+        if pos[2] > max_fold_change:
+            max_fold_change = pos[2]
+            max_fold_change_pos = pos
+
+    # Orient the structure based on the highest fold change peptide
+    if max_fold_change_pos is not None:
+        pymol.cmd.orient(f'resi {max_fold_change_pos[0]}-{max_fold_change_pos[1]} and {acc}')
+        pymol.cmd.zoom(acc, complete=0.8)
+        
+    tmp_file = tempfile.mktemp(suffix=".png")
+    pymol.cmd.ray(1280, 720)
+    pymol.cmd.png(tmp_file, dpi=600)
+    img = plt.imread(tmp_file)
+    os.remove(tmp_file)
+
+    return img
+
+def plot_protein_figure(pp, subframe, acc, col, merops, alphafold):
     """Plots the protein sequence with the significant peptides highlighted, and saves the figure to the PDF file.
     Also adds existing protein features to the figure."""
 
@@ -638,9 +705,26 @@ def plot_protein_figure(pp, subframe, acc, col, merops):
             gf = GraphicFeature(start=start, end=end, strand=+1, color=color, label=f.qualifiers['name'][0])
             features.append(gf)
 
-    fig, ax = plt.subplots(figsize=(13, 8))
+    # create the figure
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 12))
+
     gr = GraphicRecord(sequence_length=record.sequence_length, features=features, first_index=1)
-    gr.plot(ax=ax)
-    plt.title(title, fontsize=18)
+    gr.plot(ax=ax1)
+
+    # add the colorbar to the sequence plot
+    cax = fig.add_axes([0.25, 0.92, 0.5, 0.02])
+    cb = fig.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cax, orientation='horizontal', aspect=12)
+    cb.set_label('Log2 Fold Change', fontsize=12)
+
+    # get the pymol image of the protein structure
+    if alphafold:
+        positions = subframe[['start_pep', 'end_pep', col_fold]].values.tolist()
+        img = get_pymol_image(acc, positions, cmap, -max_fold_change, max_fold_change, alphafold)
+
+        if img is not None:
+            ax2.imshow(img)
+    
+    ax2.axis('off')
+    plt.suptitle(title, x=0.02, fontsize=14, horizontalalignment='left')
     plt.savefig(pp, format="pdf")
     plt.close()
