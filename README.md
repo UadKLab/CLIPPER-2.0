@@ -55,6 +55,8 @@ Install **python 3.11.3**, and setup with *requirements.txt* through *pip*.
 ## To do list:
 - [ ] Refactor code (made branch annotator_refactor with a folder for refactored code)
     - [x] Rewritten for readability and modularity, but not refactored as described above
+    - [x] Clean up destination folders and structured output better
+    - [ ] Clean up paths and use Path for relative paths
 - [ ] Spectronaut support
 - [ ] Dimethylation support
     - [ ] Dimethylation support for Spectromine
