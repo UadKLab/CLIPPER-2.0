@@ -18,13 +18,6 @@ from statsmodels.stats.multitest import multipletests
 from tqdm import tqdm
 from visualize import Visualizer
 
-
-# global variables
-result_folder_name = "results"
-data_folder_name = "data"
-annotation_prefix = "_annot."
-plot_sequence_folder = "sequence_plots"
-
 class Annotator:
     """Annotator class for processing and analyzing peptide proteomics data. All
     arguments are passed as a dictionary to the class constructor.
@@ -46,6 +39,17 @@ class Annotator:
 
     def __init__(self, args):
         """Initialize the Annotator class, and set the attributes from the arguments."""
+
+        # global variables
+        self.result_folder_name = "results"
+        self.data_folder_name = "data"
+        self.annotation_prefix = "_annot."
+        self.plot_sequence_folder = "sequence_plots"
+        self.plot_general_folder = "general_plots"
+        self.plot_fold_change_folder = "fold_change_plots"
+        self.plot_volcano_folder = "volcano_plots"
+        self.plot_piechart_folder = "piecharts"
+        self.plot_logo_folder = "logos"
 
         # input attributes
         self.infile_type = args["infile_type"]
@@ -70,6 +74,7 @@ class Annotator:
         self.multiple_testing = 'fdr_bh'
         self.alpha = 0.05
         
+        self.plot = args["visualize"]
         self.logo = args["logo"]
         self.pseudocounts = args["pseudocounts"]
 
@@ -83,8 +88,8 @@ class Annotator:
         self.figures = {}
 
         self.basefolder = os.path.dirname(os.getcwd())
-        self.resultfolder = os.path.join(self.basefolder, result_folder_name)
-        self.datafolder = os.path.join(self.basefolder, data_folder_name)
+        self.resultfolder = os.path.join(self.basefolder, self.result_folder_name)
+        self.datafolder = os.path.join(self.basefolder, self.data_folder_name)
 
         logging.info("Initialization successful.")
 
@@ -122,17 +127,25 @@ class Annotator:
         """Set the paths to the input and output files."""
 
         self.basefolder = os.path.dirname(os.getcwd())
-        self.resultfolder = os.path.join(self.basefolder, result_folder_name)
-        self.datafolder = os.path.join(self.basefolder, data_folder_name)
+        self.resultfolder = os.path.join(self.basefolder, self.result_folder_name)
+        self.datafolder = os.path.join(self.basefolder, self.data_folder_name)
 
         if self.outname:
             self.outfolder = os.path.join(self.resultfolder, self.outname)
-            self.outname = self.outname + annotation_prefix + self.outfile_type
+            self.outname = self.outname + self.annotation_prefix + self.outfile_type
         else:
             self.outfolder = os.path.join(self.resultfolder, self.timestamp)
-            self.outname = self.infile.rsplit("/", 1)[-1].rsplit("\\", 1)[-1].rsplit(".", 1)[0] + annotation_prefix + self.outfile_type
+            self.outname = self.infile.rsplit("/", 1)[-1].rsplit("\\", 1)[-1].rsplit(".", 1)[0] + self.annotation_prefix + self.outfile_type
 
-        self.sequence_folder = os.path.join(self.outfolder, plot_sequence_folder)
+        self.sequence_folder = os.path.join(self.outfolder, self.plot_sequence_folder)
+        self.general_folder = os.path.join(self.outfolder, self.plot_general_folder)
+        self.fold_change_folder = os.path.join(self.outfolder, self.plot_fold_change_folder)
+        self.plot_volcano_folder = os.path.join(self.outfolder, self.plot_volcano_folder)
+        self.piechart_folder = os.path.join(self.outfolder, self.plot_piechart_folder)
+        self.logo_folder = os.path.join(self.outfolder, self.plot_logo_folder)
+
+        self.folders = {"out": self.resultfolder, "data": self.datafolder, "sequence": self.sequence_folder, "general": self.general_folder, 
+                        "volcano": self.plot_volcano_folder, "fold": self.fold_change_folder, "piechart": self.piechart_folder, "logo": self.logo_folder}
 
     def load_data(self):
         """Load the input data into a Pandas DataFrame."""
@@ -248,9 +261,17 @@ class Annotator:
             self.filter_df()
 
         self.sanitize()
+
         os.mkdir(self.outfolder)
         if self.stat:
             os.mkdir(self.sequence_folder)
+        if self.plot:
+            os.mkdir(self.general_folder)
+            os.mkdir(self.fold_change_folder)
+            os.mkdir(self.plot_volcano_folder)
+            os.mkdir(self.piechart_folder)
+        if self.logo:
+            os.mkdir(self.logo_folder)
 
     def read_MEROPS(self):
         """Read MEROPS data from csv files."""
@@ -745,7 +766,7 @@ class Annotator:
             self.figures["Fold_nterm"] = vis.fold_termini()
 
             logging.info("Starting gallery generation...")
-            vis.gallery(stat=self.stat, cutoff=0.05, folder=self.outfolder)
+            vis.gallery(stat=self.stat, cutoff=0.05, folder=self.general_folder)
             logging.info("Finished gallery generation.")
             
             if self.stat:
@@ -822,7 +843,7 @@ class Annotator:
 
         # Save figures
         if len(self.figures) > 0:
-            annutils.save_figures(self.figures, self.outfolder)
+            annutils.save_figures(self.figures, self.folders)
 
         logging.info(f"Finished. Wrote results to {self.outfolder}.")
 

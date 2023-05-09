@@ -286,13 +286,29 @@ def map_dict(annot_df_row: pd.core.series.Series, annot_dict: dict):
     return annot_df_row
 
 
-def save_figures(figures, outfolder):
+def save_figures(figures, folders):
+    """Saves figures to output folder."""
+
     for k in figures:
         if figures[k] is not None:
+
             for i in figures[k]:
                 if figures[k][i] is not None:
+
+                    if "Fold" in k:
+                        outfolder = folders["fold"]
+                    elif "Piechart" in k:
+                        outfolder = folders["piechart"]
+                    elif "Logo" in k:
+                        outfolder = folders["logo"]
+                    elif "Volcano" in k:
+                        outfolder = folders["volcano"]
+                    else:
+                        outfolder = folders["general"]
+                    print(k, i, outfolder)
                     try:
                         if k != "Clustermap" and not k.startswith("Logo") and not k.startswith("General") and not k.startswith("Piechart"):
+
                             figures[k][i].figure.savefig(
                                 os.path.join(outfolder, f"{k}_{i}.png"),
                                 format="png",

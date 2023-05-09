@@ -1,5 +1,8 @@
 import os
 
+import warnings
+from numba import NumbaDeprecationWarning
+
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
@@ -14,6 +17,8 @@ from Bio import SwissProt
 from Bio import Seq
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from dna_features_viewer import GraphicFeature, GraphicRecord
+
+warnings.filterwarnings("ignore", category=NumbaDeprecationWarning)
 
 class Visualizer:
     def __init__(self, df, annot, conditions, software, patterns, pairwise=False):
