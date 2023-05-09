@@ -69,10 +69,9 @@ Install **python 3.11.3**, and setup with *requirements.txt* through *pip*.
     - [x] Added sequence plots
     - [ ] Add colormap 
     - [ ] Merge with structure visualization
-    - [ ] Integrate with structural plots
 - [ ] Visualize cleavages in structure
     - [x] Downloaded Alphafold EBI database
-    - [ ] Save significant proteins in pdb files
+    - [ ] Plot structures
 - [ ] Add secondary structure annotation
 - [ ] Gprofiler - metascape GO enrichment
 - [ ] Pathway annotation/significance

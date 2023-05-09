@@ -1,21 +1,23 @@
-import concurrent.futures
-import logging
 import os
 import shutil
-import sys
+
+import logging
 import warnings
+import concurrent.futures
+
 from itertools import combinations, permutations
 from pathlib import Path
+from tqdm import tqdm
 
-import annutils
 import numpy as np
 import pandas as pd
-from entry import Entry
-from logo import generate_logos, create_logo_helper
 from scipy.stats import f_oneway, rv_histogram
 from statsmodels.stats.weightstats import ttest_ind
 from statsmodels.stats.multitest import multipletests
-from tqdm import tqdm
+
+import annutils
+from entry import Entry
+from logo import create_logo_helper
 from visualize import Visualizer
 
 class Annotator:
@@ -43,6 +45,7 @@ class Annotator:
         # global variables
         self.result_folder_name = "results"
         self.data_folder_name = "data"
+        self.alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
         self.annotation_prefix = "_annot."
         self.plot_sequence_folder = "sequence_plots"
         self.plot_general_folder = "general_plots"
@@ -50,6 +53,7 @@ class Annotator:
         self.plot_volcano_folder = "volcano_plots"
         self.plot_piechart_folder = "piecharts"
         self.plot_logo_folder = "logos"
+        self.pdb_folder = "pdb"
 
         # input attributes
         self.infile_type = args["infile_type"]
@@ -143,8 +147,9 @@ class Annotator:
         self.plot_volcano_folder = os.path.join(self.outfolder, self.plot_volcano_folder)
         self.piechart_folder = os.path.join(self.outfolder, self.plot_piechart_folder)
         self.logo_folder = os.path.join(self.outfolder, self.plot_logo_folder)
+        self.pdb_folder = os.path.join(self.outfolder, self.pdb_folder)
 
-        self.folders = {"out": self.resultfolder, "data": self.datafolder, "sequence": self.sequence_folder, "general": self.general_folder, 
+        self.folders = {"out": self.resultfolder, "data": self.datafolder, "sequence": self.sequence_folder, "general": self.general_folder, "pdb": self.pdb_folder,
                         "volcano": self.plot_volcano_folder, "fold": self.fold_change_folder, "piechart": self.piechart_folder, "logo": self.logo_folder}
 
     def load_data(self):
@@ -272,6 +277,7 @@ class Annotator:
             os.mkdir(self.piechart_folder)
         if self.logo:
             os.mkdir(self.logo_folder)
+        os.mkdir(self.pdb_folder)
 
     def read_MEROPS(self):
         """Read MEROPS data from csv files."""
@@ -817,7 +823,6 @@ class Annotator:
         elif len(self.conditions) == 1:
             condition = list(self.conditions.keys())[0]
             self.figures[f"Logo_{condition}"] = create_logo_helper(self.annot, condition, self.pseudocounts, self.logo)
-
 
     def write_files(self):
         """Writes ouput files."""
