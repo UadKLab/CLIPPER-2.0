@@ -1,9 +1,17 @@
 import logging
 import os
 import re
+
+import gzip
+import tempfile
+
 from argparse import ArgumentParser, HelpFormatter
 from datetime import datetime
+
+import numpy as np
 import pandas as pd
+
+import pymol
 
 def initialize_logger(logfile):
     """Initializes the logger with a file handler and a console handler."""
@@ -115,6 +123,17 @@ def initialize_arguments():
     )
 
     parser.add_argument(
+        "-cs",
+        "--calcstructure",
+        type=str,
+        default=None,
+        action="store",
+        help="Annotate cleavage site solvent accessibility and secondary structure \
+            for the significant peptides in the dataset using Pymol and Alphafold models \
+                Accepted values: all/sig.",
+    )
+
+    parser.add_argument(
         "-sc",
         "--singlecpu",
         action="store_true",
@@ -188,6 +207,18 @@ def initialize_arguments():
         dest="pseudocounts",
         default=True,
         help="Add pseudocounts to normalized matrix calculation",
+    )
+
+    parser.add_argument(
+        "-clvis",
+        "--cleavagevisualization",
+        type=str,
+        default=None,
+        action="store",
+        dest="cleavagevis",
+        help="Whether to visualize significant cleavages in \
+                    sequence or both structure and sequence \
+                    Accepted values: seq/both.",
     )
 
     parser.add_argument(
@@ -295,6 +326,46 @@ def read_alphafold_accessions(accession_file: str):
     return accessions
 
 
+def get_structure_properties(acc, position, env_length=4, available_models=None):
+    """Computes the solvent accessible surface area of a peptide. Takes 
+    the UniProt accession, the position of the cleavage in the protein, and
+    a list of available models. Returns the solvent accessible surface area,
+    around the cleavage site, or None if the model is not available."""
+
+    if available_models is not None and acc not in available_models:
+        logging.warning(f"Model for {acc} not available")
+        return np.nan, np.nan
+    
+    alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
+    model_filename = f"AF-{acc}-F1-model_v4.cif.gz"
+    model_path = os.path.join(alphafold_folder_name, model_filename)
+    
+    # Load the model
+    with tempfile.NamedTemporaryFile(suffix=".cif", delete=False) as temp_cif:
+        # Open the gzipped CIF file
+        with gzip.open(model_path, 'rb') as f_in:
+            # Write the decompressed contents to the temporary file
+            temp_cif.write(f_in.read())
+        
+        temp_cif.flush()  # Ensure the file is written
+
+        pymol.cmd.delete('all')
+        pymol.cmd.load(temp_cif.name, acc)
+        pymol.cmd.select('sel', f'resi {position - (env_length - 1)}-{position + env_length} and {acc}')
+
+    # Compute the secondary structure
+    pymol.cmd.dss(acc)
+    ss_list = []
+    pymol.cmd.iterate('sel and name ca', 'ss_list.append(ss)', space=locals())
+    ss = ''.join(ss_list)
+
+    # Compute the solvent accessible surface area
+    pymol.cmd.set('dot_solvent', 1)
+    sa= pymol.cmd.get_area('sel')
+
+    return ss, sa
+
+
 def save_figures(figures, folders):
     """Saves figures to output folder."""
 
@@ -314,7 +385,9 @@ def save_figures(figures, folders):
                         outfolder = folders["volcano"]
                     else:
                         outfolder = folders["general"]
+
                     print(k, i, outfolder)
+                    
                     try:
                         if k != "Clustermap" and not k.startswith("Logo") and not k.startswith("General") and not k.startswith("Piechart"):
 

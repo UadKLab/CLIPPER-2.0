@@ -69,6 +69,7 @@ class Annotator:
         self.noexo = args["noexo"]
         self.merops = None
         self.nomerops = args["nomerops"]
+        self.calcstructure = args["calcstructure"]
 
         self.conditionfile = args["conditionfile"]
         self.stat = args["stat"]
@@ -76,8 +77,10 @@ class Annotator:
         self.significance = args["significance"]
         self.multiple_testing = 'fdr_bh'
         self.alpha = 0.05
-        
+        self.available_models = None
+
         self.plot = args["visualize"]
+        self.cleavagevis = args["cleavagevis"]
         self.logo = args["logo"]
         self.pseudocounts = args["pseudocounts"]
 
@@ -266,7 +269,7 @@ class Annotator:
         self.sanitize()
 
         os.mkdir(self.outfolder)
-        if self.stat:
+        if self.stat and self.plot and self.cleavagevis:
             os.mkdir(self.protein_folder)
         if self.plot:
             os.mkdir(self.general_folder)
@@ -339,6 +342,13 @@ class Annotator:
             self.handle_file_error(err)
 
         self.df = df
+
+    def read_condition_file(self):
+        """Parses and stores information about conditions and corresponding channels."""
+        with open(self.conditionfile, "r") as fh:
+            self.conditions = {
+                line.split()[0]: line.split()[1:] for line in fh.readlines()
+            }
 
     def handle_file_error(self, err):
         """Handles file reading errors."""
@@ -484,13 +494,6 @@ class Annotator:
         self.annot["proteoform_certainty%"] = self.df[self.patterns['acc']].apply(
             lambda x: 100 / len([i.strip() for i in x.split(';')])
         )
-
-    def read_condition_file(self):
-        """Parses and stores information about conditions and corresponding channels."""
-        with open(self.conditionfile, "r") as fh:
-            self.conditions = {
-                line.split()[0]: line.split()[1:] for line in fh.readlines()
-            }
 
     def general_conditions(self):
         """General statistics for the conditions supplied."""
@@ -755,6 +758,61 @@ class Annotator:
                             for i in same_seq_indices:
                                 self.annot.loc[i, "exopeptidase"] = "Dipeptidase_activity"
 
+    def annotate_structure(self, cutoff=0.05):
+        """Annotates secondary structure and solvent accessibility for the cleavage site"""
+
+        if self.available_models is None:
+            self.read_available_models()
+
+        self.annot["secondary_structure p4_p4prime"] = np.nan
+        self.annot["solvent_accessibility p4_p4prime"] = np.nan
+
+        if self.calcstructure == "all":
+            for i in tqdm(range(len(self.annot))):
+                # get the accession and cleavage site
+                acc = self.annot.loc[i, "query_accession"]
+                cleavage_site = self.annot.loc[i, "p1_position"]
+
+                # if the cleavage site is not nan, annotate
+                if isinstance(cleavage_site, int):
+                    # get the secondary structure and solvent accessibility of the cleavage site
+                    ss, sa = annutils.get_structure_properties(acc, cleavage_site, 4, self.available_models)
+                    # assign to the annotation dataframe
+                    self.annot.loc[i, "secondary_structure p4_p4prime"] = ss
+                    self.annot.loc[i, "solvent_accessibility p4_p4prime"] = sa
+
+        elif self.calcstructure == "sig":
+            cols = []
+            if len(self.conditions) > 1:
+                if self.stat:
+                    if self.pairwise or len(self.conditions) == 2:
+                        conditions_iter = combinations(self.conditions.keys(), 2)
+                        for pair in conditions_iter:
+                            column_name = f"Ttest: {pair[0]}_{pair[1]}"
+                            cols.append(column_name)
+                    else:
+                        column_name = "ANOVA: " + "_".join(self.conditions.keys())
+                        cols.append(column_name)
+
+                    # iterate over all columns and entries in the dataframe
+                    for column_name in cols:
+                        for i in tqdm(range(len(self.annot))):
+                            # get the accession and cleavage site
+                            acc = self.annot.loc[i, "query_accession"]
+                            cleavage_site = self.annot.loc[i, "p1_position"]
+                            p_value = self.annot.loc[i, column_name]
+
+                            # if the cleavage site is not nan, annotate
+                            if p_value <= cutoff and isinstance(cleavage_site, int) and pd.isnull(self.annot.loc[i, "secondary_structure p4_p4prime"]) and pd.isnull(self.annot.loc[i, "solvent_accessibility p4_p4prime"]):
+                                # get the secondary structure and solvent accessibility of the cleavage site
+                                ss, sa = annutils.get_structure_properties(acc, cleavage_site, 4, self.available_models)
+                                # assign to the annotation dataframe
+                                self.annot.loc[i, "secondary_structure p4_p4prime"] = ss
+                                self.annot.loc[i, "solvent_accessibility p4_p4prime"] = sa
+        
+        else:
+            raise ValueError("calcstructure argument must be either 'all' or 'sig'")
+
     def visualize(self):
         """Calls Visualizer class and stores figure objects."""
 
@@ -780,15 +838,16 @@ class Annotator:
             vis.gallery(stat=self.stat, cutoff=0.05, folder=self.general_folder)
             logging.info("Finished gallery generation.")
             
-            if self.stat:
-                self.read_available_models()
+            if self.stat and self.cleavagevis:
+                if self.available_models is None:
+                    self.read_available_models()
 
                 logging.info("Starting protein plotting...")
                 if self.nomerops is False:
-                    vis.plot_protein(cutoff=0.05, folder=self.protein_folder, merops=self.merops, alphafold=self.available_models)
+                    vis.plot_protein(cutoff=0.05, folder=self.protein_folder, merops=self.merops, alphafold=self.available_models, level=self.cleavagevis)
                     logging.info("Finished protein plotting.")
                 else:
-                    vis.plot_protein(cutoff=0.05, folder=self.protein_folder, alphafold=self.available_models)
+                    vis.plot_protein(cutoff=0.05, folder=self.protein_folder, alphafold=self.available_models, level=self.cleavagevis)
                 logging.info("Finished protein plotting.")
 
     def create_logos(self):

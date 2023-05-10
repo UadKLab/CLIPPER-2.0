@@ -11,6 +11,14 @@ And then install packages:
 
 `conda install --file requirements.txt`
 
+If successfully install, you should be able to run the following command:
+
+`python run.py -h`
+
+Example run:
+
+`python run.py -i ..\tests\HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -cs sig -stat -spw -vis -clvis both`
+
 ## Program init
 - Init function
 
@@ -73,14 +81,18 @@ And then install packages:
     - [x] Added UMAP
 - [x] Multiple testing correction
 - [ ] Protein atlas integration
-- [ ] Visualize cleavages in sequences
+- [x] Visualize cleavages in sequences
     - [x] Added sequence plots
-    - [ ] Add colormap 
-    - [ ] Merge with structure visualization
-- [ ] Visualize cleavages in structure
+    - [x] Add colormap 
+    - [x] Merge with structure visualization
+- [ ] Maybe only annotate MEROPS code in sequence visualization if it's the exact cleavage identified
+- [x] Visualize cleavages in structure
     - [x] Downloaded Alphafold EBI database
-    - [ ] Plot structures
-- [ ] Add secondary structure annotation
+    - [x] Plot structures
+- [ ] Remove peptide duplicates before plotting on seq and structure
+- [x] Add secondary structure annotation
+- [x] Add solvent accessibility annotation
+- [ ] Modify ss and sasa calculations to read each protein once
 - [ ] Gprofiler - metascape GO enrichment
 - [ ] Pathway annotation/significance
 - [ ] Protease prediction (PSSM/GOtosubstrates)

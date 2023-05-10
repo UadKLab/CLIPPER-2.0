@@ -502,7 +502,7 @@ class Visualizer:
 
         return {"UMAP": fig}
     
-    def plot_protein(self, cutoff=0.05, folder=None, merops=None, alphafold=None):
+    def plot_protein(self, cutoff=0.05, folder=None, merops=None, alphafold=None, level=None):
         """Plots significant peptides for each condition on protein sequence and structure."""
 
         if len(self.conditions) == 2 or self.pairwise:
@@ -520,7 +520,7 @@ class Visualizer:
                 for acc in tqdm(accs):
                     subframe = df[df["query_accession"] == acc]
                     if len(subframe) > 0:
-                        plot_protein_figure(pp, subframe, acc, col, merops, alphafold)
+                        plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level)
 
     
 def create_pie_chart(y, x, colors, explode):
@@ -614,10 +614,9 @@ def get_pymol_image(acc, positions, colormap, vmin, vmax, alphafold):
     """Get the image of the protein structure with the significant positions highlighted."""
     
     if acc not in alphafold:
-        logging.info(f"Alphafold model for {acc} not available.")
+        logging.warning(f"Alphafold model for {acc} not available.")
         return None
     
-    alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
     model_filename = f"AF-{acc}-F1-model_v4.cif.gz"
     model_path = os.path.join(alphafold_folder_name, model_filename)
 
@@ -668,7 +667,7 @@ def get_pymol_image(acc, positions, colormap, vmin, vmax, alphafold):
 
     return img
 
-def plot_protein_figure(pp, subframe, acc, col, merops, alphafold):
+def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level):
     """Plots the protein sequence with the significant peptides highlighted, and saves the figure to the PDF file.
     Also adds existing protein features to the figure."""
 
@@ -717,7 +716,7 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold):
     cb.set_label('Log2 Fold Change', fontsize=12)
 
     # get the pymol image of the protein structure
-    if alphafold:
+    if alphafold and level=='both':
         positions = subframe[['start_pep', 'end_pep', col_fold]].values.tolist()
         img = get_pymol_image(acc, positions, cmap, -max_fold_change, max_fold_change, alphafold)
 

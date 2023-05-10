@@ -79,6 +79,11 @@ def main(args=None):
             annotator.percentile_fold(0.05)
             logging.info("Finished fold distribution check.\n")
 
+    if args["calcstructure"]:
+        logging.info("Computing structural properties...")
+        annotator.annotate_structure(cutoff=0.05)
+        logging.info("Finished computing structural properties.")
+
     # Generate figures if specified
     if args["visualize"]:
         logging.info("Generating figures...")
