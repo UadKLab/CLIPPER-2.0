@@ -80,7 +80,7 @@ Example run:
     - [x] Added PCA
     - [x] Added UMAP
 - [x] Multiple testing correction
-- [ ] Protein atlas integration
+- [x] Protein atlas integration
 - [x] Visualize cleavages in sequences
     - [x] Added sequence plots
     - [x] Add colormap 
