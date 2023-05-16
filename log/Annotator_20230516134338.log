@@ -1,0 +1,126 @@
+2023-05-16 13:43:38,768 [INFO] Annotator started at 2023-05-16 13:43:38.
+2023-05-16 13:43:38,775 [INFO] Arguments: {'infile': '..\\tests\\Craspase_TAILS_R11_pep_pivot_1000.csv', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': None, 'singlecpu': False, 'conditionfile': '..\\tests\\cond_R11.txt', 'stat': True, 'stat_pairwise': True, 'significance': None, 'visualize': False, 'logo': None, 'pseudocounts': True, 'cleavagevis': None, 'output_name': None, 'outfile_type': 'xlsx', 'separate': False}
+2023-05-16 13:43:38,776 [INFO] Initialization successful.
+2023-05-16 13:43:38,777 [INFO] Reading file...
+2023-05-16 13:43:38,777 [INFO] Input is csv
+2023-05-16 13:43:38,817 [INFO] Read dataframe.
+2023-05-16 13:43:38,818 [INFO] Read input with 1000 peptides
+
+2023-05-16 13:43:38,819 [INFO] Input software is sm
+2023-05-16 13:43:38,824 [INFO] Converted values in [1] 1_NPO.EG.TotalQuantity (Settings), [1] 1_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,831 [INFO] Converted values in [2] 1_PO.EG.TotalQuantity (Settings), [2] 1_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,839 [INFO] Converted values in [3] 2_NPO.EG.TotalQuantity (Settings), [3] 2_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,845 [INFO] Converted values in [4] 2_PO.EG.TotalQuantity (Settings), [4] 2_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,851 [INFO] Converted values in [5] 3_NPO.EG.TotalQuantity (Settings), [5] 3_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,856 [INFO] Converted values in [6] 3_PO.EG.TotalQuantity (Settings), [6] 3_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,861 [INFO] Converted values in [7] 4_NPO.EG.TotalQuantity (Settings), [7] 4_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,870 [INFO] Converted values in [8] 4_PO.EG.TotalQuantity (Settings), [8] 4_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,876 [INFO] Converted values in [9] 5_NPO.EG.TotalQuantity (Settings), [9] 5_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,882 [INFO] Converted values in [10] 5_PO.EG.TotalQuantity (Settings), [10] 5_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,887 [INFO] Converted values in [11] 6_NPO.EG.TotalQuantity (Settings), [11] 6_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,892 [INFO] Converted values in [12] 6_PO.EG.TotalQuantity (Settings), [12] 6_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,898 [INFO] Converted values in [13] 7_NPO.EG.TotalQuantity (Settings), [13] 7_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,907 [INFO] Converted values in [14] 7_PO.EG.TotalQuantity (Settings), [14] 7_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,913 [INFO] Converted values in [15] 8_NPO.EG.TotalQuantity (Settings), [15] 8_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,919 [INFO] Converted values in [16] 8_PO.EG.TotalQuantity (Settings), [16] 8_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,924 [INFO] Converted values in [17] 9_NPO.EG.TotalQuantity (Settings), [17] 9_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,929 [INFO] Converted values in [18] 9_PO.EG.TotalQuantity (Settings), [18] 9_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,936 [INFO] Converted values in [19] 10_NPO.EG.TotalQuantity (Settings), [19] 10_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,946 [INFO] Converted values in [20] 10_PO.EG.TotalQuantity (Settings), [20] 10_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,953 [INFO] Converted values in [21] 11_NPO.EG.TotalQuantity (Settings), [21] 11_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,958 [INFO] Converted values in [22] 11_PO.EG.TotalQuantity (Settings), [22] 11_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,964 [INFO] Converted values in [23] 12_NPO.EG.TotalQuantity (Settings), [23] 12_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,975 [INFO] Converted values in [24] 12_PO.EG.TotalQuantity (Settings), [24] 12_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,982 [INFO] Converted values in [25] 13_NPO.EG.TotalQuantity (Settings), [25] 13_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,988 [INFO] Converted values in [26] 13_PO.EG.TotalQuantity (Settings), [26] 13_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:38,992 [INFO] Converted values in [27] 14_NPO.EG.TotalQuantity (Settings), [27] 14_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:39,000 [INFO] Converted values in [28] 14_PO.EG.TotalQuantity (Settings), [28] 14_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:39,008 [INFO] Converted values in [29] 15_NPO.EG.TotalQuantity (Settings), [29] 15_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:39,015 [INFO] Converted values in [30] 15_PO.EG.TotalQuantity (Settings), [30] 15_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:39,021 [INFO] Converted values in [31] 16_NPO.EG.TotalQuantity (Settings), [31] 16_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:39,025 [INFO] Converted values in [32] 16_PO.EG.TotalQuantity (Settings), [32] 16_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:39,036 [INFO] Converted values in [33] 17_NPO.EG.TotalQuantity (Settings), [33] 17_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:39,042 [INFO] Converted values in [34] 17_PO.EG.TotalQuantity (Settings), [34] 17_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:39,048 [INFO] Converted values in [35] 18_NPO.EG.TotalQuantity (Settings), [35] 18_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:39,054 [INFO] Converted values in [36] 18_PO.EG.TotalQuantity (Settings), [36] 18_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:43:39,058 [INFO] Successfully generated indexing patterns.
+2023-05-16 13:43:39,058 [INFO] Patterns are: {'acc': 'PG.ProteinAccessions', 'seq': 'PEP.StrippedSequence', 'amino': 'B|J|O|U|X|Z', 'mod': 'EG.PrecursorId', 'quant': 'EG\\.TotalQuantity', 'label': 'Dimeth', 'nterm': 'DimethNter0', 'nterm_label': '\\[DimethNter0\\]', 'lysine_label': 'K\\[DimethLys0\\]'}
+2023-05-16 13:43:39,059 [INFO] Format check complete.
+
+2023-05-16 13:43:39,062 [INFO] Starting annotation of peptides...
+2023-05-16 13:43:39,063 [INFO] Reading MEROPS data..
+2023-05-16 13:43:39,614 [INFO] Read MEROPS data
+2023-05-16 13:43:39,617 [INFO] Initialized annotation dataframe.
+

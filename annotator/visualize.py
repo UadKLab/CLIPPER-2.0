@@ -1,9 +1,10 @@
 import os
 import tempfile
-import warnings
 import gzip
 import logging
-from numba import NumbaDeprecationWarning
+import warnings
+
+warnings.filterwarnings('ignore')
 
 from tqdm import tqdm
 
@@ -25,7 +26,6 @@ from Bio.SeqFeature import SeqFeature, FeatureLocation
 from dna_features_viewer import GraphicFeature, GraphicRecord
 
 
-warnings.filterwarnings("ignore", category=NumbaDeprecationWarning)
 alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
 
 
@@ -243,20 +243,22 @@ class Visualizer:
             if lysines - labelled > 0:
                 categories = {"Free lysines": lysines - labelled,"Labelled lysines": labelled,}
                 y = np.array([categories[k] for k in categories])
-                x = [k for k in categories]
-                colors = ["violet", "olivedrab"]
-                explode = [0, 0.1]
-                figures["lysine"] = create_pie_chart(y, x, colors, explode)
+                if y.sum() > 0:
+                    x = [k for k in categories]
+                    colors = ["violet", "olivedrab"]
+                    explode = [0, 0.1]
+                    figures["lysine"] = create_pie_chart(y, x, colors, explode)
 
             # N-term pie chart
             total = len(self.df[self.patterns['mod']])
             nterm = len(self.df[self.df[self.patterns['mod']].str.contains(self.patterns['nterm'], na=False)])
             categories = {"Tryptic": total - nterm, "N-termini": nterm}
             y = np.array([categories[k] for k in categories])
-            x = [k for k in categories]
-            colors = ["salmon", "darkcyan"]
-            explode = [0, 0.1]
-            figures["nterm"] = create_pie_chart(y, x, colors, explode)
+            if y.sum() > 0:
+                x = [k for k in categories]
+                colors = ["salmon", "darkcyan"]
+                explode = [0, 0.1]
+                figures["nterm"] = create_pie_chart(y, x, colors, explode)
 
             # N-term acetylation vs labeling pie chart
             if self.software == "sm":
@@ -275,10 +277,11 @@ class Visualizer:
             
             categories = {"Acetylated": acetyl, term: labelled}
             y = np.array([categories[k] for k in categories])
-            x = [k for k in categories]
-            colors = ["teal", "saddlebrown"]
-            explode = [0, 0.1]
-            figures["modification"] = create_pie_chart(y, x, colors, explode)
+            if y.sum() > 0:
+                x = [k for k in categories]
+                colors = ["teal", "saddlebrown"]
+                explode = [0, 0.1]
+                figures["modification"] = create_pie_chart(y, x, colors, explode)
 
             # Cysteine pie chart
             cysteines = len(self.df[self.df[self.patterns['mod']].str.contains(r"C", na=False)])
@@ -286,10 +289,11 @@ class Visualizer:
             if cysteines - alkylated > 0: 
                 categories = {"Free cysteines": cysteines - alkylated,"Carbamidomethyl": alkylated,}
                 y = np.array([categories[k] for k in categories])
-                x = [k for k in categories]
-                colors = ["indianred", "cadetblue"]
-                explode = [0, 0.1]
-                figures["cysteine"] = create_pie_chart(y, x, colors, explode)
+                if y.sum() > 0:
+                    x = [k for k in categories]
+                    colors = ["indianred", "cadetblue"]
+                    explode = [0, 0.1]
+                    figures["cysteine"] = create_pie_chart(y, x, colors, explode)
 
 
         # Exopeptidase pie chart
@@ -299,10 +303,11 @@ class Visualizer:
 
             categories = {"Exopeptidase": exopep, "No activity": noexo}
             y = np.array([categories[k] for k in categories])
-            x = [k for k in categories]
-            colors = ["darkolivegreen", "mediumslateblue"]
-            explode = [0.1, 0]
-            figures["exopep"] = create_pie_chart(y, x, colors, explode)
+            if y.sum() > 0:
+                x = [k for k in categories]
+                colors = ["darkolivegreen", "mediumslateblue"]
+                explode = [0.1, 0]
+                figures["exopep"] = create_pie_chart(y, x, colors, explode)
 
         # N-term annotation pie charts
         column = self.annot["nterm_annot"].dropna()
@@ -320,22 +325,25 @@ class Visualizer:
             "within transit peptide": (column.values == "Cleavage within transit peptide range").sum(),}
 
         y = np.array([categories.pop("internal"), sum(categories.values())])
-        x = ["Internal", "Natural"]
-        explode = [0.1, 0]
-        colors = ["darkgreen","peru",]
-        figures["type"] = create_pie_chart(y, x, colors, explode)
+        if y.sum() > 0:
+            x = ["Internal", "Natural"]
+            explode = [0.1, 0]
+            colors = ["darkgreen","peru",]
+            figures["type"] = create_pie_chart(y, x, colors, explode)
 
         y = np.array([categories.pop("met removed"), categories.pop("met intact"), sum(categories.values()),])
-        x = ["Met removal", "Met intact", "Other"]
-        colors = ["crimson", "lightpink", "seagreen"]
-        explode = [0, 0.1, 0.1]
-        figures["natural"] = create_pie_chart(y, x, colors, explode)
+        if y.sum() > 0:
+            x = ["Met removal", "Met intact", "Other"]
+            colors = ["crimson", "lightpink", "seagreen"]
+            explode = [0, 0.1, 0.1]
+            figures["natural"] = create_pie_chart(y, x, colors, explode)
 
         y = np.array([categories[k] for k in categories])
-        x = [k for k in categories]
-        colors = ["steelblue", "goldenrod", "slategrey", "forestgreen", "violet", "tomato"]
-        explode = [0, 0.1, 0, 0.1, 0, 0]
-        figures["other"] = create_pie_chart(y, x, colors, explode)
+        if y.sum() > 0:
+            x = [k for k in categories]
+            colors = ["steelblue", "goldenrod", "slategrey", "forestgreen", "violet", "tomato"]
+            explode = [0, 0.1, 0, 0.1, 0, 0]
+            figures["other"] = create_pie_chart(y, x, colors, explode)
 
         return figures
 
@@ -573,14 +581,14 @@ def get_quant_values_data(columns, natural, internal):
                 data[f"{col[:-5]}_{t}_{subframe.loc[row, 'query_sequence']}"] = subframe.loc[row, col]
     return data
 
-def extract_protein_features(acc, record, merops):
+def extract_protein_features(acc, record, merops, subframe):
     """Extracts the protein features from the UniProt record and the MEROPS database."""
 
     features = []
     colors_native = {"SIGNAL":'palevioletred', "PROPEP":'peru', "TRANSIT":'darkcyan'}
 
     for feature in record.features:
-        if feature.type == "SIGNAL" or feature.type == "PROPEP" or feature.type == "TRANSIT":
+        if feature.type in ["SIGNAL", "PROPEP", "TRANSIT"]:
             start = feature.location.start.position
             end = feature.location.end.position
 
@@ -598,15 +606,24 @@ def extract_protein_features(acc, record, merops):
         cleavage_sites = merops[merops["uniprot_acc"]== acc]["p1"].values
         codes = merops[merops["uniprot_acc"]== acc]["code"].values
 
+        peptide_positions = set()
+        for _, row in subframe.iterrows():
+            try:
+                start, end = int(row['start_pep']), int(row['end_pep'])
+                peptide_positions.update(range(start, end+1))
+            except:
+                continue
+
         for site, code in zip(cleavage_sites, codes):
-            gf = GraphicFeature(
-                start=site,
-                end=site,
-                strand=1,
-                color="seashell",
-                label=code + str(site)
-            )
-            features.append(gf)
+            if site in peptide_positions:
+                gf = GraphicFeature(
+                    start=site,
+                    end=site,
+                    strand=1,
+                    color="seashell",
+                    label=code + str(site)
+                )
+                features.append(gf)
 
     return features
 
@@ -680,7 +697,7 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level):
     title = '-'.join([acc, gene, desc])
 
     # extract the protein features
-    features = extract_protein_features(acc, record, merops)
+    features = extract_protein_features(acc, record, merops, subframe)
 
     # get the significant peptides
     col_fold = col.replace('_', '/').replace('Ttest', 'Log2_fold_change')
@@ -713,7 +730,7 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level):
     # add the colorbar to the sequence plot
     cax = fig.add_axes([0.25, 0.92, 0.5, 0.02])
     cb = fig.colorbar(plt.cm.ScalarMappable(norm=norm, cmap=cmap), cax=cax, orientation='horizontal', aspect=12)
-    cb.set_label('Log2 Fold Change', fontsize=12)
+    cb.set_label(col_fold, fontsize=12)
 
     # get the pymol image of the protein structure
     if alphafold and level=='both':

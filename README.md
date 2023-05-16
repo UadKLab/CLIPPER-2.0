@@ -17,7 +17,7 @@ If successfully install, you should be able to run the following command:
 
 Example run:
 
-`python run.py -i ..\tests\HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -cs sig -stat -spw -vis -clvis both`
+`python run.py -i ..\tests\HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -cs all -sig all -stat -spw -vis -clvis both`
 
 ## Program init
 - Init function
@@ -73,9 +73,9 @@ Example run:
     - [x] Rewritten for readability and modularity, but not refactored as described above
     - [x] Clean up destination folders and structured output better
     - [ ] Clean up paths and use Path for relative paths
-- [ ] Spectronaut support
-- [ ] Dimethylation support
-    - [ ] Dimethylation support for Spectromine
+- [x] Spectronaut support
+- [x] Dimethylation support
+    - [x] Dimethylation support for Spectromine
 - [x] Dimensionality reduction (PCA & UMAP)
     - [x] Added PCA
     - [x] Added UMAP
@@ -85,7 +85,7 @@ Example run:
     - [x] Added sequence plots
     - [x] Add colormap 
     - [x] Merge with structure visualization
-- [ ] Maybe only annotate MEROPS code in sequence visualization if it's the exact cleavage identified
+- [x] Maybe only annotate MEROPS code in sequence visualization if within the peptides identified
 - [x] Visualize cleavages in structure
     - [x] Downloaded Alphafold EBI database
     - [x] Plot structures
@@ -96,7 +96,7 @@ Example run:
 - [ ] Gprofiler - metascape GO enrichment
 - [ ] Pathway annotation/significance
 - [ ] Protease prediction (PSSM/GOtosubstrates)
-- [ ] Fix condition bug in volcano plots
-    - Have not managed to recreate it yet, need to use input data with multiple (>4) conditions
+- [x] Fix condition bug in volcano plots
+    - [x] Have not managed to recreate it yet, need to use input data with multiple (>4) conditions. Did not manage even with 6 conditions.
 - [x] Static Uniprot entry lookup
     - [x] Will not be implemented

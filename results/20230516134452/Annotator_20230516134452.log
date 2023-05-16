@@ -1,0 +1,202 @@
+2023-05-16 13:44:52,254 [INFO] Annotator started at 2023-05-16 13:44:52.
+2023-05-16 13:44:52,260 [INFO] Arguments: {'infile': '..\\tests\\Craspase_TAILS_R11_pep_pivot_1000.csv', 'infile_type': 'infer', 'software': 'infer', 'level': 'nterm', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': 'all', 'singlecpu': False, 'conditionfile': '..\\tests\\cond_R11.txt', 'stat': True, 'stat_pairwise': True, 'significance': 'all', 'visualize': True, 'logo': None, 'pseudocounts': True, 'cleavagevis': None, 'output_name': None, 'outfile_type': 'xlsx', 'separate': False}
+2023-05-16 13:44:52,262 [INFO] Initialization successful.
+2023-05-16 13:44:52,262 [INFO] Reading file...
+2023-05-16 13:44:52,263 [INFO] Input is csv
+2023-05-16 13:44:52,301 [INFO] Read dataframe.
+2023-05-16 13:44:52,302 [INFO] Read input with 1000 peptides
+
+2023-05-16 13:44:52,303 [INFO] Input software is sm
+2023-05-16 13:44:52,314 [INFO] Converted values in [1] 1_NPO.EG.TotalQuantity (Settings), [1] 1_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,325 [INFO] Converted values in [2] 1_PO.EG.TotalQuantity (Settings), [2] 1_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,334 [INFO] Converted values in [3] 2_NPO.EG.TotalQuantity (Settings), [3] 2_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,341 [INFO] Converted values in [4] 2_PO.EG.TotalQuantity (Settings), [4] 2_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,352 [INFO] Converted values in [5] 3_NPO.EG.TotalQuantity (Settings), [5] 3_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,359 [INFO] Converted values in [6] 3_PO.EG.TotalQuantity (Settings), [6] 3_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,368 [INFO] Converted values in [7] 4_NPO.EG.TotalQuantity (Settings), [7] 4_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,376 [INFO] Converted values in [8] 4_PO.EG.TotalQuantity (Settings), [8] 4_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,389 [INFO] Converted values in [9] 5_NPO.EG.TotalQuantity (Settings), [9] 5_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,401 [INFO] Converted values in [10] 5_PO.EG.TotalQuantity (Settings), [10] 5_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,408 [INFO] Converted values in [11] 6_NPO.EG.TotalQuantity (Settings), [11] 6_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,423 [INFO] Converted values in [12] 6_PO.EG.TotalQuantity (Settings), [12] 6_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,434 [INFO] Converted values in [13] 7_NPO.EG.TotalQuantity (Settings), [13] 7_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,440 [INFO] Converted values in [14] 7_PO.EG.TotalQuantity (Settings), [14] 7_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,451 [INFO] Converted values in [15] 8_NPO.EG.TotalQuantity (Settings), [15] 8_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,459 [INFO] Converted values in [16] 8_PO.EG.TotalQuantity (Settings), [16] 8_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,468 [INFO] Converted values in [17] 9_NPO.EG.TotalQuantity (Settings), [17] 9_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,474 [INFO] Converted values in [18] 9_PO.EG.TotalQuantity (Settings), [18] 9_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,489 [INFO] Converted values in [19] 10_NPO.EG.TotalQuantity (Settings), [19] 10_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,505 [INFO] Converted values in [20] 10_PO.EG.TotalQuantity (Settings), [20] 10_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,521 [INFO] Converted values in [21] 11_NPO.EG.TotalQuantity (Settings), [21] 11_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,533 [INFO] Converted values in [22] 11_PO.EG.TotalQuantity (Settings), [22] 11_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,540 [INFO] Converted values in [23] 12_NPO.EG.TotalQuantity (Settings), [23] 12_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,549 [INFO] Converted values in [24] 12_PO.EG.TotalQuantity (Settings), [24] 12_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,558 [INFO] Converted values in [25] 13_NPO.EG.TotalQuantity (Settings), [25] 13_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,562 [INFO] Converted values in [26] 13_PO.EG.TotalQuantity (Settings), [26] 13_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,566 [INFO] Converted values in [27] 14_NPO.EG.TotalQuantity (Settings), [27] 14_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,569 [INFO] Converted values in [28] 14_PO.EG.TotalQuantity (Settings), [28] 14_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,576 [INFO] Converted values in [29] 15_NPO.EG.TotalQuantity (Settings), [29] 15_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,582 [INFO] Converted values in [30] 15_PO.EG.TotalQuantity (Settings), [30] 15_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,587 [INFO] Converted values in [31] 16_NPO.EG.TotalQuantity (Settings), [31] 16_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,592 [INFO] Converted values in [32] 16_PO.EG.TotalQuantity (Settings), [32] 16_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,598 [INFO] Converted values in [33] 17_NPO.EG.TotalQuantity (Settings), [33] 17_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,604 [INFO] Converted values in [34] 17_PO.EG.TotalQuantity (Settings), [34] 17_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,611 [INFO] Converted values in [35] 18_NPO.EG.TotalQuantity (Settings), [35] 18_NPO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,616 [INFO] Converted values in [36] 18_PO.EG.TotalQuantity (Settings), [36] 18_PO.EG.TotalQuantity (Settings)
+<class 'float'>    1000
+Name: count, dtype: int64
+2023-05-16 13:44:52,623 [INFO] Successfully generated indexing patterns.
+2023-05-16 13:44:52,625 [INFO] Patterns are: {'acc': 'PG.ProteinAccessions', 'seq': 'PEP.StrippedSequence', 'amino': 'B|J|O|U|X|Z', 'mod': 'EG.PrecursorId', 'quant': 'EG\\.TotalQuantity', 'label': 'Dimeth', 'nterm': 'DimethNter0', 'nterm_label': '\\[DimethNter0\\]', 'lysine_label': 'K\\[DimethLys0\\]'}
+2023-05-16 13:44:52,627 [INFO] Format check complete.
+
+2023-05-16 13:44:52,628 [INFO] Level is N-term
+2023-05-16 13:44:52,640 [INFO] Starting annotation of peptides...
+2023-05-16 13:44:52,642 [INFO] Reading MEROPS data..
+2023-05-16 13:44:53,371 [INFO] Read MEROPS data
+2023-05-16 13:44:53,373 [INFO] Initialized annotation dataframe.
+
+2023-05-16 13:45:34,947 [INFO] Finished annotation of peptides.
+
+2023-05-16 13:45:34,949 [INFO] Starting proteoform check...
+2023-05-16 13:45:34,951 [INFO] Finished proteoform check.
+2023-05-16 13:45:34,953 [INFO] Starting exopeptidase activity check...
+2023-05-16 13:45:34,993 [INFO] 1 MTKPIVFSGAQPSGELTIGNYMGALR TKPIVFSGAQPSGELTIGNYMGALR
+2023-05-16 13:45:35,034 [INFO] 2 MRHYEIVFMVHPDQSEQVPGMIER HYEIVFMVHPDQSEQVPGMIER
+2023-05-16 13:45:35,041 [INFO] 1 KAHYVLMNVEAPQEVIDELETTFR AHYVLMNVEAPQEVIDELETTFR
+2023-05-16 13:45:35,044 [INFO] 2 KAHYVLMNVEAPQEVIDELETTFR YVLMNVEAPQEVIDELETTFR
+2023-05-16 13:45:35,054 [INFO] 2 GKSELEAFEVALENVRPTVEVKSR SELEAFEVALENVRPTVEVKSR
+2023-05-16 13:45:35,060 [INFO] 2 KRGWDVKESAVMAITANELDTAR GWDVKESAVMAITANELDTAR
+2023-05-16 13:45:35,077 [INFO] 2 IVFSGAQPSGELTIGNYMGALR FSGAQPSGELTIGNYMGALR
+2023-05-16 13:45:35,081 [INFO] 1 IVFSGAQPSGELTIGNYMGALR SGAQPSGELTIGNYMGALR
+2023-05-16 13:45:35,125 [INFO] 2 IGVTKQDNTIEMASLESCIR VTKQDNTIEMASLESCIR
+2023-05-16 13:45:35,133 [INFO] 2 YNFQGNNSEGADAQTGNKTR FQGNNSEGADAQTGNKTR
+2023-05-16 13:45:35,141 [INFO] 2 ANKMQEWFESGLQQWDISR KMQEWFESGLQQWDISR
+2023-05-16 13:45:35,206 [INFO] 2 MRLNTLSPAEGSKKAGKR LNTLSPAEGSKKAGKR
+2023-05-16 13:45:35,224 [INFO] 1 MRLNTLSPAEGSKKAGKR NTLSPAEGSKKAGKR
+2023-05-16 13:45:35,260 [INFO] 1 NVEAPQEVIDELETTFR VEAPQEVIDELETTFR
+2023-05-16 13:45:35,289 [INFO] 1 GYAAVDDETTQQTMR YAAVDDETTQQTMR
+2023-05-16 13:45:35,292 [INFO] 1 GYAAVDDETTQQTMR AAVDDETTQQTMR
+2023-05-16 13:45:35,299 [INFO] 1 GYAAVDDETTQQTMR AVDDETTQQTMR
+2023-05-16 13:45:35,301 [INFO] 1 GYAAVDDETTQQTMR VDDETTQQTMR
+2023-05-16 13:45:35,320 [INFO] 1 CNPETVSTDYDTSDR NPETVSTDYDTSDR
+2023-05-16 13:45:35,335 [INFO] 1 RIESLVTPAELALR IESLVTPAELALR
+2023-05-16 13:45:35,357 [INFO] 1 GGDTAYSDDFFVGR GDTAYSDDFFVGR
+2023-05-16 13:45:35,361 [INFO] 1 GGDTAYSDDFFVGR DTAYSDDFFVGR
+2023-05-16 13:45:35,369 [INFO] 1 GGDTAYSDDFFVGR TAYSDDFFVGR
+2023-05-16 13:45:35,375 [INFO] 1 STLNLPETGFPMR TLNLPETGFPMR
+2023-05-16 13:45:35,382 [INFO] 2 STLNLPETGFPMR NLPETGFPMR
+2023-05-16 13:45:35,388 [INFO] 1 LIADGVMPSNENR IADGVMPSNENR
+2023-05-16 13:45:35,402 [INFO] 1 VGGSTYQVPVEVR GGSTYQVPVEVR
+2023-05-16 13:45:35,403 [INFO] 2 VGGSTYQVPVEVR STYQVPVEVR
+2023-05-16 13:45:35,411 [INFO] 1 REYAATQVDGQR EYAATQVDGQR
+2023-05-16 13:45:35,427 [INFO] 1 MAITANELDTAR AITANELDTAR
+2023-05-16 13:45:35,436 [INFO] 1 MSLSLWQQCLAR SLSLWQQCLAR
+2023-05-16 13:45:35,487 [INFO] 2 MQAYFDQLDR AYFDQLDR
+2023-05-16 13:45:35,495 [INFO] 1 MNEQYSALR NEQYSALR
+2023-05-16 13:45:35,518 [INFO] Finished exopeptidase activity check.
+
+2023-05-16 13:45:35,528 [INFO] Parsed condition file
+2023-05-16 13:45:35,529 [INFO] Performing general statistics annotation...
+2023-05-16 13:45:35,781 [INFO] Finished general statistics annotation.
+2023-05-16 13:45:35,782 [INFO] Performing statistical testing...
+2023-05-16 13:45:35,841 [INFO] Finished statistical testing.
+2023-05-16 13:45:35,842 [INFO] Corrected p-values for Corrected Ttest: Mut-1h_Mut-3h using fdr_bh method
+2023-05-16 13:45:35,845 [INFO] Corrected p-values for Corrected Ttest: Mut-1h_Mut-24h using fdr_bh method
+2023-05-16 13:45:35,849 [INFO] Corrected p-values for Corrected Ttest: Mut-1h_WT-1h using fdr_bh method
+2023-05-16 13:45:35,853 [INFO] Corrected p-values for Corrected Ttest: Mut-1h_WT-3h using fdr_bh method
+2023-05-16 13:45:35,856 [INFO] Corrected p-values for Corrected Ttest: Mut-1h_WT-24h using fdr_bh method
+2023-05-16 13:45:35,858 [INFO] Corrected p-values for Corrected Ttest: Mut-3h_Mut-24h using fdr_bh method
+2023-05-16 13:45:35,860 [INFO] Corrected p-values for Corrected Ttest: Mut-3h_WT-1h using fdr_bh method
+2023-05-16 13:45:35,862 [INFO] Corrected p-values for Corrected Ttest: Mut-3h_WT-3h using fdr_bh method
+2023-05-16 13:45:35,865 [INFO] Corrected p-values for Corrected Ttest: Mut-3h_WT-24h using fdr_bh method
+2023-05-16 13:45:35,868 [INFO] Corrected p-values for Corrected Ttest: Mut-24h_WT-1h using fdr_bh method
+2023-05-16 13:45:35,870 [INFO] Corrected p-values for Corrected Ttest: Mut-24h_WT-3h using fdr_bh method
+2023-05-16 13:45:35,872 [INFO] Corrected p-values for Corrected Ttest: Mut-24h_WT-24h using fdr_bh method
+2023-05-16 13:45:35,874 [INFO] Corrected p-values for Corrected Ttest: WT-1h_WT-3h using fdr_bh method
+2023-05-16 13:45:35,875 [INFO] Corrected p-values for Corrected Ttest: WT-1h_WT-24h using fdr_bh method
+2023-05-16 13:45:35,877 [INFO] Corrected p-values for Corrected Ttest: WT-3h_WT-24h using fdr_bh method
+2023-05-16 13:45:35,878 [INFO] Finished multiple testing correction.
+
+2023-05-16 13:45:35,878 [INFO] Checking fold distribution...
+2023-05-16 13:45:37,173 [INFO] Finished fold distribution check.
+
+2023-05-16 13:45:37,174 [INFO] Computing structural properties...
+2023-05-16 13:45:37,174 [INFO] Reading available AlphaFold models...
+2023-05-16 13:45:37,271 [INFO] Read available AlphaFold models.
+2023-05-16 13:47:19,307 [INFO] Finished computing structural properties.
+2023-05-16 13:47:19,307 [INFO] Generating figures...
+2023-05-16 13:47:49,163 [INFO] Starting gallery generation...
+2023-05-16 13:47:54,678 [INFO] Finished gallery generation.
+2023-05-16 13:47:54,678 [INFO] Finished generating figures.
+2023-05-16 13:47:54,679 [INFO] Writing output files...
+2023-05-16 13:48:51,681 [INFO] Finished. Wrote results to C:\Users\konka\Documents\annotator\results\20230516134452.

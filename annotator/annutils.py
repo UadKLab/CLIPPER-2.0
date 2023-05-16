@@ -96,6 +96,14 @@ def initialize_arguments():
     )
 
     parser.add_argument(
+        "-fn",
+        "--fillna",
+        action="store",
+        dest="fillna",
+        help="Value to fill empty quant rows or cells with",
+    )
+
+    parser.add_argument(
         "-st",
         "--sleeptime",
         action="store",

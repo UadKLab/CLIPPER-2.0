@@ -1,16 +1,15 @@
 import os
 import shutil
-
 import logging
-import warnings
 import concurrent.futures
-
 from itertools import combinations, permutations
+
 from pathlib import Path
 from tqdm import tqdm
 
 import numpy as np
 import pandas as pd
+from pandas.errors import ParserError
 from scipy.stats import f_oneway, rv_histogram
 from statsmodels.stats.weightstats import ttest_ind
 from statsmodels.stats.multitest import multipletests
@@ -19,6 +18,7 @@ import annutils
 from entry import Entry
 from logo import create_logo_helper
 from visualize import Visualizer
+
 
 class Annotator:
     """Annotator class for processing and analyzing peptide proteomics data. All
@@ -62,6 +62,7 @@ class Annotator:
         # filtering and sanitizing
         self.level = args["level"]
         self.dropna = args["dropna"]
+        self.fillna = args["fillna"]
 
         # annotation attributes
         self.separate = args["separate"]
@@ -156,10 +157,10 @@ class Annotator:
     def load_data(self):
         """Load the input data into a Pandas DataFrame."""
 
-        logging.info("Reading file...\n")
+        logging.info("Reading file...")
         self.read_file()
         logging.info("Read dataframe.")
-        logging.info(f"Read input with {len(self.df)} peptides")
+        logging.info(f"Read input with {len(self.df)} peptides\n")
 
     def set_software(self):
         """Set the software used to generate the input file, and generate the indexing patterns."""
@@ -184,18 +185,11 @@ class Annotator:
                     logging.critical("Invalid input. Exiting with code 5.")
                     raise TypeError("Invalid input")
 
-            logging.info(f"Input software is {self.software}")
-            self.patterns = self.get_patterns()
-            logging.info("Successfully generated indexing patterns")
-            logging.info("Format check complete\n")
-
-    def remove_empty_sequences(self):
-        """Remove rows with empty sequences."""
-        col_seq = self.patterns['seq']
-        invalid_seq = self.df[col_seq].isna()
-        if invalid_seq.any():
-            logging.info(f"Empty sequence rows: {', '.join(map(str, invalid_seq.index + 1))}")
-            self.df = self.df[~invalid_seq].reset_index(drop=True)
+        logging.info(f"Input software is {self.software}")
+        self.patterns = self.get_patterns()
+        logging.info("Successfully generated indexing patterns.")
+        logging.info(f"Patterns are: {self.patterns}")
+        logging.info("Format check complete.\n")
 
     def remove_empty_accessions(self):
         """Remove rows with empty accession numbers."""
@@ -205,6 +199,14 @@ class Annotator:
         if invalid_acc.any():
             logging.info(f"Empty accession rows: {', '.join(map(str, invalid_acc.index + 1))}")
             self.df = self.df[~invalid_acc].reset_index(drop=True)
+
+    def remove_empty_sequences(self):
+        """Remove rows with empty sequences."""
+        col_seq = self.patterns['seq']
+        invalid_seq = self.df[col_seq].isna()
+        if invalid_seq.any():
+            logging.info(f"Empty sequence rows: {', '.join(map(str, invalid_seq.index + 1))}")
+            self.df = self.df[~invalid_seq].reset_index(drop=True)
 
     def remove_invalid_alphabets(self):
         """Remove rows with invalid amino acid characters."""
@@ -218,9 +220,9 @@ class Annotator:
 
     def sanitize(self):
         """Sanitize the dataframe."""
-
-        self.remove_empty_sequences()
+        
         self.remove_empty_accessions()
+        self.remove_empty_sequences()
         self.remove_invalid_alphabets()
 
     def filter_df(self):
@@ -235,7 +237,6 @@ class Annotator:
                 pattern = self.patterns['nterm_label']
             else:
                 logging.warning("Unrecognized level argument. Falling back to all")
-                warnings.warn("Unrecognized level argument. Falling back to all...")
                 return
 
             self.df = self.df[
@@ -253,7 +254,7 @@ class Annotator:
             columns = self.df.columns[
                 self.df.columns.str.contains(pat=self.patterns['quant'])
             ]
-            self.df = self.df.dropna(subset=columns)
+            self.df = self.df.dropna(subset=columns, how="all")
             
     def prepare(self):
         """Control of arguments from user input."""
@@ -332,7 +333,11 @@ class Annotator:
         try:
             if self.infile_type == "csv":
                 logging.info("Input is csv")
-                df = pd.read_csv(self.infile, sep=";")
+                try:
+                    df = pd.read_csv(self.infile, sep=",")
+                except pd.errors.ParserError:
+                    logging.info("Failed to parse with ',', trying with ';'")
+                    df = pd.read_csv(self.infile, sep=";")
             elif self.infile_type == "excel":
                 logging.info("Input is excel")
                 df = pd.read_excel(self.infile, engine="openpyxl")
@@ -361,37 +366,43 @@ class Annotator:
         )
 
     def process_columns(self, pat):
+        
         quant = self.df.columns[self.df.columns.str.contains(pat=pat)]
+
         if len(quant) > 0:
             try:
                 columns = self.df.columns[self.df.columns.str.contains(pat)]
                 for col in columns:
-                    self.df[col] = (
-                        self.df[col].astype(str).str.replace(",", ".").astype(float)
-                    )
+                    self.df[col] = self.df[col].astype(str).str.replace(",", ".").str.strip()
+
+                    self.df[col] = pd.to_numeric(self.df[col], errors='coerce')
+                    logging.info(f"Converted values in {col} to numeric type")
+
+                    mask = (self.df[col].notna()) & pd.to_numeric(self.df[col], errors='coerce').isna()
+                    if mask.any():
+                        logging.warning(f"Could not convert the following values in column {col}")
+
+                    if self.fillna is not None:
+                        # Fill NaN values with the user-specified value
+                        self.df[col].fillna(float(self.fillna), inplace=True)
+                        logging.info(f"Filled NaN values in column '{col}' with {float(self.fillna)}")
+                    
             except:
                 logging.critical("Invalid input. Exiting with code 4.")
                 raise TypeError(
-                    f"Invalid input. Could not convert values to float. Make sure \
-                    input format {self.software} is correct and there are no string \
-                    literals in quant columns, and try again."
-                )
+                    f"Invalid input. Could not convert values to float. Make sure input format {self.software} is correct and there are no string literals in quant columns, and try again."
+                    )
             return pat
         else:
             return None
 
     def get_patterns_sm(self):
-
+        
         patterns = {}
 
         patterns['acc'] = "PG.ProteinAccessions"
         patterns['seq'] = "PEP.StrippedSequence"
-        patterns['mod'] = "P.MoleculeID"
         patterns['amino'] = "B|J|O|U|X|Z"
-        patterns['label'] = r"\[TMT"
-        patterns['nterm'] = r"N-?ter"
-        patterns['nterm_label'] = r"TMT.*_Nter"
-        patterns['lysine_label'] = r"K\[TMT.{0,3}_Lys\]"
 
         try:
             annutils.parse_acc(self.df.loc[0, patterns['acc']])
@@ -404,8 +415,48 @@ class Annotator:
                 and try again."
             )
 
+        # Identify modification column
+        if "P.MoleculeID" in self.df.columns:
+            patterns['mod'] = "P.MoleculeID"
+        elif "EG.PrecursorId" in self.df.columns:
+            patterns['mod'] = "EG.PrecursorId"
+        else:
+            logging.critical("Invalid input. Exiting with code 4.")
+            raise TypeError(
+                f"Invalid input. Please make sure input format {self.software} \
+                contains valid modification column (P.MoleculeID or EG.PrecursorId), \
+                and try again."
+            )
+
         # Check for the presence of columns and process if present
-        patterns['quant'] = self.process_columns(r"PEP\.TMT")
+        pat_tmt = r"PEP\.TMT"
+        pat_tot = r"EG\.TotalQuantity"
+        patterns['quant'] = self.process_columns(pat_tmt) or self.process_columns(pat_tot)
+
+        # Check modification type
+        pat_tmt_mod = r"\[TMT"
+        pat_dim_mod = r"Dimeth"
+
+        mod_tmt = len(self.df[self.df[patterns['mod']].str.contains(pat_tmt_mod, na=False)])
+        mod_dim = len(self.df[self.df[patterns['mod']].str.contains(pat_dim_mod, na=False)])
+
+        if mod_tmt > 0:
+            patterns['label'] = r"\[TMT"
+            patterns['nterm'] = r"N-?ter"
+            patterns['nterm_label'] = r"TMT.*_Nter"
+            patterns['lysine_label'] = r"K\[TMT.{0,3}_Lys\]"
+        elif mod_dim > 0:
+            patterns['label'] = pat_dim_mod
+            patterns['nterm'] = r"DimethNter0"
+            patterns['nterm_label'] = r"\[DimethNter0\]"
+            patterns['lysine_label'] = r"K\[DimethLys0\]"
+        else:
+            logging.critical("Invalid input. Exiting with code 4.")
+            raise TypeError(
+                f"Invalid input. Please make sure input format {self.software} \
+                contains valid modification types (TMT or Dimethyl), \
+                and try again."
+            )
 
         return patterns
 
@@ -427,8 +478,8 @@ class Annotator:
             try:
                 # if sequence column is not present, check if modifications column is present
                 annutils.parse_acc(self.df.loc[0, patterns['acc']])
+                patterns['seq'] = "Annotated Sequence"
                 annutils.parse_sequence(self.df.loc[0, patterns['mod']])
-                patterns['seq'] = patterns['mod']
                 patterns['amino'] = "\.[A-Z]*(B|J|O|U|X|Z)[A-Z]*\."
             except KeyError:
                 logging.critical("Invalid input. Exiting with code 4.")
@@ -439,11 +490,11 @@ class Annotator:
                 )
 
         # find the quant columns
-        pat_scale = r'Abundances \(?Scaled\)?.*[0-9]{3}'
-        pat_norm = r'Abundances \(?Normalized\)?.*[0-9]{3}'
-        pat_grouped = r'Abundances \(Grouped\)?.*[0-9]{3}'
-        pat_raw = r'Abundance .*[0-9]{3}'
-        pat_other = r'Abundance.*F[0-9]+:'
+        pat_scale = r'Abundances \(?Scaled\):.*'
+        pat_norm = r'Abundances \(?Normalized\):.*'
+        pat_grouped = r'Abundances \(Grouped\):.*'
+        pat_raw = r'Abundance: .*'
+        pat_other = r'Abundance.*'
         
         # Check for the presence of columns and process if present
         patterns['quant'] = self.process_columns(pat_scale) or \
@@ -571,8 +622,8 @@ class Annotator:
         """Perform a ttest or ANOVA statistical significance tests."""
         
         def perform_test(test_func, cols0, cols1, column_name, column_log):
-            values0 = self.df[cols0].values
-            values1 = self.df[cols1].values
+            values0 = np.log2(self.df[cols0].values)
+            values1 = np.log2(self.df[cols1].values)
             result = test_func(values0.T, values1.T)
             statistic, p_value = result[0], result[1]
             self.annot[column_name] = p_value

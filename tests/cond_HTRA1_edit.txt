@@ -1,2 +1,0 @@
-light 126 127N 127C
-heavy 128N 128C 129N
