@@ -1,0 +1,226 @@
+2023-05-17 11:32:44,513 [INFO] Annotator started at 2023-05-17 11:32:44.
+2023-05-17 11:32:44,522 [INFO] Arguments: {'infile': '..\\tests\\HUNTER_clean_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': 'all', 'singlecpu': False, 'conditionfile': '..\\tests\\cond_HUNTER.txt', 'stat': True, 'stat_pairwise': True, 'significance': 'all', 'visualize': True, 'logo': None, 'pseudocounts': True, 'cleavagevis': 'both', 'output_name': None, 'outfile_type': 'xlsx', 'separate': False}
+2023-05-17 11:32:44,523 [INFO] Initialization successful.
+2023-05-17 11:32:44,524 [INFO] Reading file...
+2023-05-17 11:32:44,525 [INFO] Input is excel
+2023-05-17 11:32:45,141 [INFO] Read dataframe.
+2023-05-17 11:32:45,142 [INFO] Read input with 284 peptides
+
+2023-05-17 11:32:45,148 [INFO] Input software is sm
+2023-05-17 11:32:45,157 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_127C to numeric type
+2023-05-17 11:32:45,165 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_128C to numeric type
+2023-05-17 11:32:45,175 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_129C to numeric type
+2023-05-17 11:32:45,178 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_130C to numeric type
+2023-05-17 11:32:45,187 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_131C to numeric type
+2023-05-17 11:32:45,195 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_132C to numeric type
+2023-05-17 11:32:45,204 [INFO] Successfully generated indexing patterns.
+2023-05-17 11:32:45,205 [INFO] Patterns are: {'acc': 'PG.ProteinAccessions', 'seq': 'PEP.StrippedSequence', 'amino': 'B|J|O|U|X|Z', 'mod': 'P.MoleculeID', 'quant': 'PEP\\.TMT', 'label': '\\[TMT', 'nterm': 'N-?ter', 'nterm_label': 'TMT.*_Nter', 'lysine_label': 'K\\[TMT.{0,3}_Lys\\]'}
+2023-05-17 11:32:45,209 [INFO] Format check complete.
+
+2023-05-17 11:32:45,221 [INFO] Starting annotation of peptides...
+2023-05-17 11:32:45,222 [INFO] Reading MEROPS data..
+2023-05-17 11:32:46,232 [INFO] Read MEROPS data
+2023-05-17 11:32:46,235 [INFO] Initialized annotation dataframe.
+
+2023-05-17 11:33:01,381 [WARNING] Peptide SELHIENLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-17 11:33:01,392 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-17 11:33:01,393 [WARNING] Peptide YSCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-05-17 11:33:01,415 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-17 11:33:01,443 [WARNING] Peptide ADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-17 11:33:01,444 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-17 11:33:02,646 [WARNING] Peptide SCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-05-17 11:33:12,637 [WARNING] Error retrieving Uniprot record for A0A494C169: No SwissProt record found
+2023-05-17 11:33:36,263 [INFO] Finished annotation of peptides.
+
+2023-05-17 11:33:36,264 [INFO] Starting annotation of Protein Atlas data...
+2023-05-17 11:33:36,265 [INFO] Reading Protein Atlas data..
+2023-05-17 11:33:37,333 [INFO] Read Protein Atlas data.
+2023-05-17 11:33:37,354 [WARNING] Duplicates found in 'Uniprot' column of 'protein_atlas_sub'. Dropping duplicates.
+2023-05-17 11:33:37,385 [INFO] Finished annotation of Protein Atlas data.
+
+2023-05-17 11:33:37,387 [INFO] Starting proteoform check...
+2023-05-17 11:33:37,391 [INFO] Finished proteoform check.
+2023-05-17 11:33:37,392 [INFO] Starting exopeptidase activity check...
+2023-05-17 11:33:37,433 [INFO] 2 LGLGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR LGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR
+2023-05-17 11:33:37,520 [INFO] 1 YSCVFLPEPMGTANIQLHGPPR SCVFLPEPMGTANIQLHGPPR
+2023-05-17 11:33:37,527 [INFO] 2 AEAMDLGKDPNGPTHSSTLFVR AMDLGKDPNGPTHSSTLFVR
+2023-05-17 11:33:37,541 [INFO] 2 AEAQALLSGDTQTDATSFYDR AQALLSGDTQTDATSFYDR
+2023-05-17 11:33:37,591 [INFO] 1 KACANPAAGSVILLENLR ACANPAAGSVILLENLR
+2023-05-17 11:33:37,593 [INFO] 2 KACANPAAGSVILLENLR ANPAAGSVILLENLR
+2023-05-17 11:33:37,637 [INFO] 1 AAQTSPSPKAGAATGR AQTSPSPKAGAATGR
+2023-05-17 11:33:37,642 [INFO] 1 SSGFSLEDPQTHSNR SGFSLEDPQTHSNR
+2023-05-17 11:33:37,649 [INFO] 2 SKNLKLGIHEDSTNR NLKLGIHEDSTNR
+2023-05-17 11:33:37,719 [INFO] 2 SEDFSLPAYMDR DFSLPAYMDR
+2023-05-17 11:33:37,772 [INFO] 2 SPVLHFYVR VLHFYVR
+2023-05-17 11:33:37,817 [INFO] Finished exopeptidase activity check.
+
+2023-05-17 11:33:37,826 [INFO] Parsed condition file
+2023-05-17 11:33:37,827 [INFO] Performing general statistics annotation...
+2023-05-17 11:33:37,872 [INFO] Finished general statistics annotation.
+2023-05-17 11:33:37,872 [INFO] Performing statistical testing...
+2023-05-17 11:33:37,884 [INFO] Finished statistical testing.
+2023-05-17 11:33:37,888 [INFO] Corrected p-values for Corrected Ttest: gluc_control using fdr_bh method
+2023-05-17 11:33:37,889 [INFO] Finished multiple testing correction.
+
+2023-05-17 11:33:37,890 [INFO] Checking fold distribution...
+2023-05-17 11:33:37,982 [INFO] Finished fold distribution check.
+
+2023-05-17 11:33:37,983 [INFO] Computing structural properties...
+2023-05-17 11:33:37,984 [INFO] Reading available AlphaFold models...
+2023-05-17 11:33:38,097 [INFO] Read available AlphaFold models.
+2023-05-17 11:33:49,164 [WARNING] Model for H3BMP6 not available
+2023-05-17 11:33:49,187 [WARNING] Model for A0A0C4DG17 not available
+2023-05-17 11:33:49,210 [WARNING] Model for A0A0C4DG17 not available
+2023-05-17 11:33:49,227 [WARNING] Model for A0A0C4DG17 not available
+2023-05-17 11:33:49,249 [WARNING] Model for A0A0C4DG17 not available
+2023-05-17 11:33:49,273 [WARNING] Model for A0A0C4DG17 not available
+2023-05-17 11:33:49,301 [WARNING] Model for A0A0C4DG17 not available
+2023-05-17 11:33:49,329 [WARNING] Model for A0A0C4DG17 not available
+2023-05-17 11:33:49,349 [WARNING] Model for A0A0C4DG17 not available
+2023-05-17 11:33:49,373 [WARNING] Model for C9J6D1 not available
+2023-05-17 11:33:49,401 [WARNING] Model for C9J6D1 not available
+2023-05-17 11:33:50,831 [WARNING] Model for E9PB61 not available
+2023-05-17 11:33:50,855 [WARNING] Model for E9PB61 not available
+2023-05-17 11:33:50,879 [WARNING] Model for E9PB61 not available
+2023-05-17 11:33:50,901 [WARNING] Model for E9PB61 not available
+2023-05-17 11:33:54,021 [WARNING] Model for A0A0A0MS45 not available
+2023-05-17 11:33:57,984 [WARNING] Model for E7EVA0 not available
+2023-05-17 11:33:58,019 [WARNING] Model for E7EVA0 not available
+2023-05-17 11:33:58,128 [WARNING] Model for E7EVA0 not available
+2023-05-17 11:33:58,186 [WARNING] Model for E7EVA0 not available
+2023-05-17 11:33:58,257 [WARNING] Model for E7EVA0 not available
+2023-05-17 11:34:01,221 [WARNING] Model for C9J329 not available
+2023-05-17 11:34:01,260 [WARNING] Model for C9J329 not available
+2023-05-17 11:34:03,281 [WARNING] Model for P62913-2 not available
+2023-05-17 11:34:03,340 [WARNING] Model for P62913-2 not available
+2023-05-17 11:34:03,407 [WARNING] Model for P62913-2 not available
+2023-05-17 11:34:03,457 [WARNING] Model for P62913-2 not available
+2023-05-17 11:34:03,508 [WARNING] Model for P62913-2 not available
+2023-05-17 11:34:14,416 [WARNING] Model for G3V180 not available
+2023-05-17 11:34:14,446 [WARNING] Model for G3V180 not available
+2023-05-17 11:34:23,257 [WARNING] Model for J3KRN5 not available
+2023-05-17 11:34:23,397 [WARNING] Model for A0A1B0GUB2 not available
+2023-05-17 11:34:23,582 [WARNING] Model for E5RGS9 not available
+2023-05-17 11:34:29,926 [WARNING] Model for A0A0A0MRR3 not available
+2023-05-17 11:34:33,640 [WARNING] Model for K7ELL7 not available
+2023-05-17 11:34:33,724 [WARNING] Model for K7ELL7 not available
+2023-05-17 11:34:33,863 [WARNING] Model for K7ELL7 not available
+2023-05-17 11:34:33,963 [WARNING] Model for K7ELL7 not available
+2023-05-17 11:34:34,046 [WARNING] Model for K7ELL7 not available
+2023-05-17 11:34:34,134 [WARNING] Model for H3BUP2 not available
+2023-05-17 11:34:34,217 [WARNING] Model for H3BUP2 not available
+2023-05-17 11:34:34,655 [WARNING] Model for C9J7Z4 not available
+2023-05-17 11:34:34,699 [WARNING] Model for C9JR82 not available
+2023-05-17 11:34:34,751 [WARNING] Model for C9JR82 not available
+2023-05-17 11:34:34,848 [WARNING] Model for H3BT13 not available
+2023-05-17 11:34:34,932 [WARNING] Model for H3BT13 not available
+2023-05-17 11:34:34,976 [WARNING] Model for H3BT13 not available
+2023-05-17 11:34:35,114 [WARNING] Model for P58107 not available
+2023-05-17 11:34:35,195 [WARNING] Model for P58107 not available
+2023-05-17 11:34:35,255 [WARNING] Model for P58107 not available
+2023-05-17 11:34:35,315 [WARNING] Model for P58107 not available
+2023-05-17 11:34:35,384 [WARNING] Model for P58107 not available
+2023-05-17 11:34:35,450 [WARNING] Model for P58107 not available
+2023-05-17 11:34:35,533 [WARNING] Model for P58107 not available
+2023-05-17 11:34:35,636 [WARNING] Model for P58107 not available
+2023-05-17 11:34:36,167 [WARNING] Model for A0A494BZZ2 not available
+2023-05-17 11:34:36,206 [WARNING] Model for B9A055 not available
+2023-05-17 11:34:55,892 [WARNING] Model for D6RBK3 not available
+2023-05-17 11:34:55,913 [WARNING] Model for F8WAS3 not available
+2023-05-17 11:34:55,932 [WARNING] Model for A0A2R8YF49 not available
+2023-05-17 11:34:57,438 [WARNING] Model for E9PLY5 not available
+2023-05-17 11:34:59,829 [WARNING] Model for H3BN72 not available
+2023-05-17 11:34:59,858 [WARNING] Model for H3BN72 not available
+2023-05-17 11:34:59,878 [WARNING] Model for H3BN72 not available
+2023-05-17 11:34:59,898 [WARNING] Model for H3BN72 not available
+2023-05-17 11:34:59,923 [WARNING] Model for C9J9C1 not available
+2023-05-17 11:34:59,952 [WARNING] Model for C9J9C1 not available
+2023-05-17 11:34:59,981 [WARNING] Model for A0A087WW66 not available
+2023-05-17 11:35:00,017 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,054 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,078 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,111 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,143 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,172 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,202 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,225 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,249 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,276 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,302 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,328 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,358 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,386 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,409 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,436 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,459 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,487 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,512 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,539 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,563 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,595 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,619 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,646 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,674 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,712 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,752 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,800 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,826 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,876 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,906 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,932 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,960 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:00,989 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:01,019 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:01,050 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:01,075 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:01,103 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:01,125 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:01,158 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:01,185 [WARNING] Model for A0A0U1RQF0 not available
+2023-05-17 11:35:06,729 [WARNING] Model for B4E0Y9 not available
+2023-05-17 11:35:06,749 [WARNING] Model for D6RAT0 not available
+2023-05-17 11:35:06,773 [WARNING] Model for D6RAT0 not available
+2023-05-17 11:35:06,795 [WARNING] Model for D6RAT0 not available
+2023-05-17 11:35:06,820 [WARNING] Model for D6RAT0 not available
+2023-05-17 11:35:06,842 [WARNING] Model for A0A0D9SEI7 not available
+2023-05-17 11:35:11,028 [WARNING] Model for Q01105-2 not available
+2023-05-17 11:35:11,057 [WARNING] Model for Q01105-2 not available
+2023-05-17 11:35:11,084 [WARNING] Model for Q01105-2 not available
+2023-05-17 11:35:11,089 [INFO] Finished computing structural properties.
+2023-05-17 11:35:11,091 [INFO] Generating figures...
+2023-05-17 11:35:28,690 [INFO] Starting gallery generation...
+2023-05-17 11:35:32,716 [INFO] Finished gallery generation.
+2023-05-17 11:35:32,718 [INFO] Starting protein plotting...
+2023-05-17 11:35:47,819 [WARNING] Alphafold model for A0A0C4DG17 not available.
+2023-05-17 11:35:49,612 [WARNING] Alphafold model for C9J6D1 not available.
+2023-05-17 11:36:05,034 [WARNING] Alphafold model for E9PB61 not available.
+2023-05-17 11:36:11,402 [WARNING] Alphafold model for A0A0A0MS45 not available.
+2023-05-17 11:36:21,077 [WARNING] Alphafold model for E7EVA0 not available.
+2023-05-17 11:36:24,444 [WARNING] Alphafold model for C9J329 not available.
+2023-05-17 11:36:25,037 [WARNING] Alphafold model for A0A087X2B5 not available.
+2023-05-17 11:36:28,778 [WARNING] Alphafold model for P62913-2 not available.
+2023-05-17 11:36:51,958 [WARNING] Alphafold model for E5RGS9 not available.
+2023-05-17 11:36:59,828 [WARNING] Alphafold model for K7ELL7 not available.
+2023-05-17 11:37:00,444 [WARNING] Alphafold model for H3BUP2 not available.
+2023-05-17 11:37:01,489 [WARNING] Alphafold model for H3BT13 not available.
+2023-05-17 11:37:02,222 [WARNING] Alphafold model for P58107 not available.
+2023-05-17 11:37:33,334 [WARNING] Alphafold model for F8WAS3 not available.
+2023-05-17 11:37:33,896 [WARNING] Alphafold model for A0A2R8YF49 not available.
+2023-05-17 11:37:50,017 [WARNING] Alphafold model for H3BN72 not available.
+2023-05-17 11:37:50,656 [WARNING] Alphafold model for C9J9C1 not available.
+2023-05-17 11:37:51,559 [WARNING] Alphafold model for A0A0U1RQF0 not available.
+2023-05-17 11:38:01,959 [WARNING] Alphafold model for B4E0Y9 not available.
+2023-05-17 11:38:02,782 [WARNING] Alphafold model for D6RAT0 not available.
+2023-05-17 11:38:03,387 [WARNING] Alphafold model for A0A0D9SEI7 not available.
+2023-05-17 11:38:13,936 [WARNING] Alphafold model for Q01105-2 not available.
+2023-05-17 11:38:15,082 [INFO] Finished protein plotting.
+2023-05-17 11:38:15,083 [INFO] Finished protein plotting.
+2023-05-17 11:38:15,084 [INFO] Finished generating figures.
+2023-05-17 11:38:15,084 [INFO] Writing output files...
+2023-05-17 11:38:19,853 [INFO] Skipped ('Volcano', {'gluc_control': <Axes: xlabel='Log2_fold_change: gluc/control', ylabel='- Log10_ttest: gluc_control'>, 'control_gluc': <Axes: xlabel='Log2_fold_change: control/gluc', ylabel='- Log10_ttest: gluc_control'>})
+2023-05-17 11:38:19,935 [INFO] Skipped ('Volcano', {'gluc_control': <Axes: xlabel='Log2_fold_change: gluc/control', ylabel='- Log10_ttest: gluc_control'>, 'control_gluc': <Axes: xlabel='Log2_fold_change: control/gluc', ylabel='- Log10_ttest: gluc_control'>})
+2023-05-17 11:38:21,672 [INFO] Finished. Wrote results to C:\Users\konka\Documents\clipper\results\20230517113244.
+2023-05-17 11:38:22,179 [INFO] Finished writing output files
+2023-05-17 11:38:22,179 [INFO] 
+CLIPPER 2.0 pipeline completed in 0:05:37.666662.
+

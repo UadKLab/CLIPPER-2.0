@@ -1,0 +1,19 @@
+2023-05-17 11:29:50,839 [INFO] Annotator started at 2023-05-17 11:29:50.
+2023-05-17 11:29:50,845 [INFO] Arguments: {'infile': '..\\tests\\HUNTER_clean_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': 'all', 'singlecpu': False, 'conditionfile': '..\\tests\\cond_HUNTER.txt', 'stat': True, 'stat_pairwise': True, 'significance': 'all', 'visualize': True, 'logo': None, 'pseudocounts': True, 'cleavagevis': 'both', 'output_name': None, 'outfile_type': 'xlsx', 'separate': False}
+2023-05-17 11:29:50,846 [INFO] Initialization successful.
+2023-05-17 11:29:50,848 [INFO] Reading file...
+2023-05-17 11:29:50,848 [INFO] Input is excel
+2023-05-17 11:29:51,454 [INFO] Read dataframe.
+2023-05-17 11:29:51,455 [INFO] Read input with 284 peptides
+
+2023-05-17 11:29:51,459 [INFO] Input software is sm
+2023-05-17 11:29:51,465 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_127C to numeric type
+2023-05-17 11:29:51,471 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_128C to numeric type
+2023-05-17 11:29:51,475 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_129C to numeric type
+2023-05-17 11:29:51,479 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_130C to numeric type
+2023-05-17 11:29:51,484 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_131C to numeric type
+2023-05-17 11:29:51,490 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_132C to numeric type
+2023-05-17 11:29:51,498 [INFO] Successfully generated indexing patterns.
+2023-05-17 11:29:51,499 [INFO] Patterns are: {'acc': 'PG.ProteinAccessions', 'seq': 'PEP.StrippedSequence', 'amino': 'B|J|O|U|X|Z', 'mod': 'P.MoleculeID', 'quant': 'PEP\\.TMT', 'label': '\\[TMT', 'nterm': 'N-?ter', 'nterm_label': 'TMT.*_Nter', 'lysine_label': 'K\\[TMT.{0,3}_Lys\\]'}
+2023-05-17 11:29:51,500 [INFO] Format check complete.
+

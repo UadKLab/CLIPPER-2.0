@@ -45,8 +45,13 @@ class Clipper:
         # global variables
         self.result_folder_name = "results"
         self.data_folder_name = "data"
-        self.alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
         self.annotation_prefix = "_annot."
+        self.alphafold_models_filename = "alphafold_accs.txt"
+        self.merops_filename = "cleavage.csv"
+        self.merops_name_filename = "protein_name.csv"
+        self.protein_atlas_filename = "proteinatlas.tsv"
+
+        # output folders
         self.plot_protein_folder = "protein_plots"
         self.plot_general_folder = "general_plots"
         self.plot_fold_change_folder = "fold_change_plots"
@@ -94,9 +99,9 @@ class Clipper:
         self.conditions = None
         self.figures = {}
 
-        self.basefolder = os.path.dirname(os.getcwd())
-        self.resultfolder = os.path.join(self.basefolder, self.result_folder_name)
-        self.datafolder = os.path.join(self.basefolder, self.data_folder_name)
+        self.basefolder = Path.cwd().parent.absolute()
+        self.resultfolder = self.basefolder / self.result_folder_name
+        self.datafolder = self.basefolder / self.data_folder_name
 
         logging.info("Initialization successful.")
 
@@ -133,26 +138,22 @@ class Clipper:
     def set_input_output_paths(self):
         """Set the paths to the input and output files."""
 
-        self.basefolder = os.path.dirname(os.getcwd())
-        self.resultfolder = os.path.join(self.basefolder, self.result_folder_name)
-        self.datafolder = os.path.join(self.basefolder, self.data_folder_name)
-
         if self.outname:
-            self.outfolder = os.path.join(self.resultfolder, self.outname)
+            self.outfolder = self.resultfolder / self.outname
             self.outname = self.outname + self.annotation_prefix + self.outfile_type
         else:
-            self.outfolder = os.path.join(self.resultfolder, self.timestamp)
-            self.outname = self.infile.rsplit("/", 1)[-1].rsplit("\\", 1)[-1].rsplit(".", 1)[0] + self.annotation_prefix + self.outfile_type
+            self.outfolder = self.resultfolder / self.timestamp
+            self.outname = Path(self.infile).name.rsplit(".", 1)[0] + self.annotation_prefix + self.outfile_type
 
-        self.protein_folder = os.path.join(self.outfolder, self.plot_protein_folder)
-        self.general_folder = os.path.join(self.outfolder, self.plot_general_folder)
-        self.fold_change_folder = os.path.join(self.outfolder, self.plot_fold_change_folder)
-        self.plot_volcano_folder = os.path.join(self.outfolder, self.plot_volcano_folder)
-        self.piechart_folder = os.path.join(self.outfolder, self.plot_piechart_folder)
-        self.logo_folder = os.path.join(self.outfolder, self.plot_logo_folder)
+        self.protein_folder = self.outfolder / self.plot_protein_folder
+        self.general_folder = self.outfolder / self.plot_general_folder
+        self.fold_change_folder = self.outfolder / self.plot_fold_change_folder
+        self.volcano_folder = self.outfolder / self.plot_volcano_folder
+        self.piechart_folder = self.outfolder / self.plot_piechart_folder
+        self.logo_folder = self.outfolder / self.plot_logo_folder
 
         self.folders = {"out": self.resultfolder, "data": self.datafolder, "protein": self.protein_folder, "general": self.general_folder,
-                        "volcano": self.plot_volcano_folder, "fold": self.fold_change_folder, "piechart": self.piechart_folder, "logo": self.logo_folder}
+                        "volcano": self.volcano_folder, "fold": self.fold_change_folder, "piechart": self.piechart_folder, "logo": self.logo_folder}
 
     def load_data(self):
         """Load the input data into a Pandas DataFrame."""
@@ -284,22 +285,21 @@ class Clipper:
         """Read MEROPS data from csv files."""
 
         logging.info("Reading MEROPS data..")
-        datafolder_path = Path(self.datafolder)
-        self.merops = pd.read_csv(datafolder_path / "cleavage.csv")
-        self.merops_name = pd.read_csv(datafolder_path / "protein_name.csv")
+        self.merops = pd.read_csv(self.datafolder / self.merops_filename)
+        self.merops_name = pd.read_csv(self.datafolder / self.merops_name_filename)
         self.merops_name = self.merops_name[self.merops_name.type == "real"]
 
     def read_protein_atlas(self):
         """Read Protein Atlas data from TSV file."""
 
         logging.info("Reading Protein Atlas data..")
-        datafolder_path = Path(self.datafolder)
-        self.protein_atlas = pd.read_csv(datafolder_path / "proteinatlas.tsv", sep='\t')
+        self.protein_atlas = pd.read_csv(self.datafolder / self.protein_atlas_filename, sep='\t')
+        logging.info("Read Protein Atlas data.")
 
     def read_available_models(self):
         # read available alphafold models
         logging.info("Reading available AlphaFold models...")
-        available_models = annutils.read_alphafold_accessions(os.path.join(self.datafolder, "alphafold_accs.txt"))
+        available_models = annutils.read_alphafold_accessions(self.datafolder / self.alphafold_models_filename)
         logging.info(f"Read available AlphaFold models.")
 
         self.available_models = available_models
@@ -968,7 +968,7 @@ class Clipper:
     def write_files(self):
         """Writes ouput files."""
 
-        outfile = os.path.join(self.outfolder, self.outname)
+        outfile = self.outfolder / self.outname
 
         if self.separate:
             final_df = self.annot
@@ -993,11 +993,8 @@ class Clipper:
 
         logging.info(f"Finished. Wrote results to {self.outfolder}.")
 
-        try:
-            log_basename = os.path.basename(self.logfile)
-            shutil.copy(self.logfile, os.path.join(self.outfolder, log_basename))
-        except:
-            pass
+        log_basename = os.path.basename(self.logfile)
+        shutil.copy(self.logfile, self.outfolder / log_basename)
 
         shutil.make_archive(self.outfolder, "zip", self.outfolder)
 

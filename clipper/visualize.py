@@ -3,6 +3,7 @@ import tempfile
 import gzip
 import logging
 import warnings
+from pathlib import Path
 
 warnings.filterwarnings('ignore')
 
@@ -635,7 +636,8 @@ def get_pymol_image(acc, positions, colormap, vmin, vmax, alphafold):
         return None
     
     model_filename = f"AF-{acc}-F1-model_v4.cif.gz"
-    model_path = os.path.join(alphafold_folder_name, model_filename)
+    alphafold_path = Path(alphafold_folder_name)
+    model_path = alphafold_path / model_filename
 
     with tempfile.NamedTemporaryFile(suffix=".cif", delete=False) as temp_cif:
         # Open the gzipped CIF file

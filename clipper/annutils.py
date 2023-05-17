@@ -7,6 +7,7 @@ import tempfile
 
 from argparse import ArgumentParser, HelpFormatter
 from datetime import datetime
+from pathlib import Path
 
 import numpy as np
 import pandas as pd
@@ -266,7 +267,8 @@ def initialize(arguments=None):
     """Initializes the logger and the command line arguments."""
 
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    logfile = os.path.join(os.path.dirname(os.getcwd()), f"log/Annotator_{timestamp}.log")
+    basefolder = Path.cwd().parent.absolute()
+    logfile = basefolder / f"log/Annotator_{timestamp}.log"
 
     logger = initialize_logger(logfile)
     arguments = initialize_arguments() if arguments is None else arguments
@@ -345,8 +347,9 @@ def get_structure_properties(acc, position, env_length=4, available_models=None)
         return np.nan, np.nan
     
     alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
+    alphafold_folder = Path(alphafold_folder_name)
     model_filename = f"AF-{acc}-F1-model_v4.cif.gz"
-    model_path = os.path.join(alphafold_folder_name, model_filename)
+    model_path = alphafold_folder / model_filename
     
     # Load the model
     with tempfile.NamedTemporaryFile(suffix=".cif", delete=False) as temp_cif:
@@ -399,24 +402,10 @@ def save_figures(figures, folders):
                     try:
                         if k != "Clustermap" and not k.startswith("Logo") and not k.startswith("General") and not k.startswith("Piechart"):
 
-                            figures[k][i].figure.savefig(
-                                os.path.join(outfolder, f"{k}_{i}.png"),
-                                format="png",
-                                dpi=300,
-                            )
-                            figures[k][i].figure.savefig(
-                                os.path.join(outfolder, f"{k}_{i}.svg"),
-                                format="svg",
-                            )
+                            figures[k][i].figure.savefig(outfolder / f"{k}_{i}.png", format="png", dpi=300)
+                            figures[k][i].figure.savefig(outfolder / f"{k}_{i}.svg", format="svg")
                         else:
-                            figures[k][i].savefig(
-                                os.path.join(outfolder, f"{k}_{i}.png"),
-                                                                format="png",
-                                dpi=300,
-                            )
-                            figures[k][i].savefig(
-                                os.path.join(outfolder, f"{k}_{i}.svg"),
-                                format="svg",
-                            )
+                            figures[k][i].savefig(outfolder / f"{k}_{i}.png", format="png", dpi=300)
+                            figures[k][i].savefig(outfolder / f"{k}_{i}.svg", format="svg")
                     except:
                         logging.info(f"Skipped {k, figures[k]}")
