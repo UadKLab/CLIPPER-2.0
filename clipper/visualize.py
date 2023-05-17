@@ -25,6 +25,7 @@ from Bio import SwissProt
 from Bio import Seq
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from dna_features_viewer import GraphicFeature, GraphicRecord
+from gprofiler import GProfiler
 
 
 alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
@@ -531,6 +532,27 @@ class Visualizer:
                     if len(subframe) > 0:
                         plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level)
 
+    def plot_functional_enrichment(self, cutoff=0.05):
+        """Extract the protein accessions of significant peptides for each condition."""
+
+        if len(self.conditions) == 2 or self.pairwise:
+            cols = self.annot.columns[self.annot.columns.str.startswith("Ttest:")]
+        else:
+            cols = self.annot.columns[self.annot.columns.str.startswith("ANOVA:")]
+
+        figures = {}
+        for col in cols:
+            df = self.annot[self.annot[col] < cutoff]
+            gene_names = df["name"].unique()
+            genes = [g.split('_')[0] for g in gene_names]
+
+            col_name = col.split(":")[1].strip()
+            fig = plot_enrichment_figure(genes, col_name)
+            
+            figures[col_name] = fig
+
+        return figures
+
     
 def create_pie_chart(y, x, colors, explode):
     """Creates a pie chart of the given data."""
@@ -582,6 +604,7 @@ def get_quant_values_data(columns, natural, internal):
                 data[f"{col[:-5]}_{t}_{subframe.loc[row, 'query_sequence']}"] = subframe.loc[row, col]
     return data
 
+
 def extract_protein_features(acc, record, merops, subframe):
     """Extracts the protein features from the UniProt record and the MEROPS database."""
 
@@ -627,6 +650,7 @@ def extract_protein_features(acc, record, merops, subframe):
                 features.append(gf)
 
     return features
+
 
 def get_pymol_image(acc, positions, colormap, vmin, vmax, alphafold):
     """Get the image of the protein structure with the significant positions highlighted."""
@@ -685,6 +709,7 @@ def get_pymol_image(acc, positions, colormap, vmin, vmax, alphafold):
     os.remove(tmp_file)
 
     return img
+
 
 def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level):
     """Plots the protein sequence with the significant peptides highlighted, and saves the figure to the PDF file.
@@ -746,3 +771,34 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level):
     plt.suptitle(title, x=0.02, fontsize=14, horizontalalignment='left')
     plt.savefig(pp, format="pdf")
     plt.close()
+
+
+def plot_enrichment_figure(genes, col_name, organism='hsapiens'):
+    """Perform functional enrichment analysis with gprofiler and plot the results."""
+
+    # Initialize gprofiler
+    gp = GProfiler(return_dataframe=True)
+
+    # Perform enrichment analysis
+    enrichment_results = gp.profile(organism=organism, query=genes)
+
+    # Filter significant results
+    significant_results = enrichment_results[enrichment_results['p_value'] < 0.05]
+
+    if len(significant_results) == 0:
+        return None
+
+    # Pivot data for heatmap
+    heatmap_data = significant_results.pivot(index='name', columns='source', values='p_value')
+    heatmap_data = -np.log10(heatmap_data)
+
+    # Plot heatmap
+    plt.figure(figsize=(10, 10))
+    ax = sns.heatmap(heatmap_data, cmap="Reds", square=True, cbar_kws={'label': '-log10(p-value)'})
+    ax.tick_params(axis='both', which='major', labelsize=8)
+    ax.set_title(col_name)
+    plt.subplots_adjust(left=0.2, bottom=0.2)
+    fig = ax.get_figure()
+    plt.close()
+
+    return fig

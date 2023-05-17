@@ -46,6 +46,7 @@ class Clipper:
         self.result_folder_name = "results"
         self.data_folder_name = "data"
         self.annotation_prefix = "_annot."
+
         self.alphafold_models_filename = "alphafold_accs.txt"
         self.merops_filename = "cleavage.csv"
         self.merops_name_filename = "protein_name.csv"
@@ -58,6 +59,7 @@ class Clipper:
         self.plot_volcano_folder = "volcano_plots"
         self.plot_piechart_folder = "piecharts"
         self.plot_logo_folder = "logos"
+        self.plot_enrichement_folder = "enrichment"
 
         # input attributes
         self.infile_type = args["infile_type"]
@@ -89,6 +91,7 @@ class Clipper:
         self.cleavagevis = args["cleavagevis"]
         self.logo = args["logo"]
         self.pseudocounts = args["pseudocounts"]
+        self.enrichment = args["enrichment"]
 
         # logging and file handling
         self.timestamp = args["timestamp"]
@@ -151,9 +154,11 @@ class Clipper:
         self.volcano_folder = self.outfolder / self.plot_volcano_folder
         self.piechart_folder = self.outfolder / self.plot_piechart_folder
         self.logo_folder = self.outfolder / self.plot_logo_folder
+        self.enrichment_folder = self.outfolder / self.plot_enrichement_folder
 
         self.folders = {"out": self.resultfolder, "data": self.datafolder, "protein": self.protein_folder, "general": self.general_folder,
-                        "volcano": self.volcano_folder, "fold": self.fold_change_folder, "piechart": self.piechart_folder, "logo": self.logo_folder}
+                        "volcano": self.volcano_folder, "fold": self.fold_change_folder, "piechart": self.piechart_folder, "logo": self.logo_folder,
+                        "enrichment": self.enrichment_folder}
 
     def load_data(self):
         """Load the input data into a Pandas DataFrame."""
@@ -276,10 +281,12 @@ class Clipper:
         if self.plot:
             os.mkdir(self.general_folder)
             os.mkdir(self.fold_change_folder)
-            os.mkdir(self.plot_volcano_folder)
+            os.mkdir(self.volcano_folder)
             os.mkdir(self.piechart_folder)
         if self.logo:
             os.mkdir(self.logo_folder)
+        if self.enrichment:
+            os.mkdir(self.enrichment_folder)
 
     def read_MEROPS(self):
         """Read MEROPS data from csv files."""
@@ -902,6 +909,9 @@ class Clipper:
         self.figures["PCA"]  = vis.pca_visualization()
         self.figures["UMAP"]  = vis.umap_visualization()
 
+        if self.stat and self.enrichment:
+            self.figures["Enrichment"] = vis.plot_functional_enrichment(cutoff=0.05)
+
         # if there are more than one condition, generate volcano, fold change and fold change at termini plots, and gallery of significant peptides
         if len(self.conditions) > 1:
             
@@ -924,6 +934,7 @@ class Clipper:
                 else:
                     vis.plot_protein(cutoff=0.05, folder=self.protein_folder, alphafold=self.available_models, level=self.cleavagevis)
                 logging.info("Finished protein plotting.")
+
 
     def create_logos(self):
         """Create sequence logos.

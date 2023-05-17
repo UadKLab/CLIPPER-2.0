@@ -231,6 +231,15 @@ def initialize_arguments():
     )
 
     parser.add_argument(
+        "-enr",
+        "--enrichment",
+        action="store_true",
+        dest="enrichment",
+        help="Draws heatmap plots based on conditions passed from input and statistical tests \
+                    for enrichment of GO terms and KEGG pathways with the gProfiler API",
+    )
+
+    parser.add_argument(
         "-o",
         "--output_name",
         action="store",
@@ -394,18 +403,17 @@ def save_figures(figures, folders):
                         outfolder = folders["logo"]
                     elif "Volcano" in k:
                         outfolder = folders["volcano"]
+                    elif "Enrichment" in k:
+                        outfolder = folders["enrichment"]
                     else:
                         outfolder = folders["general"]
-
-                    print(k, i, outfolder)
                     
                     try:
                         if k != "Clustermap" and not k.startswith("Logo") and not k.startswith("General") and not k.startswith("Piechart"):
-
                             figures[k][i].figure.savefig(outfolder / f"{k}_{i}.png", format="png", dpi=300)
                             figures[k][i].figure.savefig(outfolder / f"{k}_{i}.svg", format="svg")
                         else:
                             figures[k][i].savefig(outfolder / f"{k}_{i}.png", format="png", dpi=300)
                             figures[k][i].savefig(outfolder / f"{k}_{i}.svg", format="svg")
-                    except:
-                        logging.info(f"Skipped {k, figures[k]}")
+                    except Exception as e:
+                        logging.info(f"Skipped {k, figures[k]} due to error: {str(e)}")

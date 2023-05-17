@@ -72,7 +72,7 @@ Example run:
 - [ ] Refactor code (made branch annotator_refactor with a folder for refactored code)
     - [x] Rewritten for readability and modularity, but not refactored as described above
     - [x] Clean up destination folders and structured output better
-    - [ ] Clean up paths and use Path for relative paths
+    - [x] Clean up paths and use Path for relative paths
 - [x] Spectronaut support
 - [x] Dimethylation support
     - [x] Dimethylation support for Spectromine
@@ -93,7 +93,7 @@ Example run:
 - [x] Add secondary structure annotation
 - [x] Add solvent accessibility annotation
 - [ ] Modify ss and sasa calculations to read each protein once
-- [ ] Gprofiler - metascape GO enrichment
+- [x] Gprofiler - metascape GO enrichment
 - [ ] Pathway annotation/significance
 - [ ] Protease prediction (PSSM/GOtosubstrates)
 - [x] Fix condition bug in volcano plots
