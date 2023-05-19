@@ -13,6 +13,7 @@ import numpy as np
 import pandas as pd
 
 import pymol
+from reactome2py import analysis, content
 
 def initialize_logger(logfile):
     """Initializes the logger with a file handler and a console handler."""
@@ -240,6 +241,15 @@ def initialize_arguments():
     )
 
     parser.add_argument(
+        "-path",
+        "--pathway",
+        action="store_true",
+        dest="pathway",
+        help="Draws pathway plots based on conditions passed from input and statistical tests \
+            and maps detected proteins and peptides",
+    )
+
+    parser.add_argument(
         "-o",
         "--output_name",
         action="store",
@@ -385,6 +395,49 @@ def get_structure_properties(acc, position, env_length=4, available_models=None)
 
     return ss, sa
 
+
+def map_accessions(accessions):
+    """Map protein accessions to human gene names using the Reactome API."""
+
+    accessions_str = ",".join(accessions)
+    mapping = analysis.identifiers_mapping(ids=accessions_str, interactors=False, projection=True)
+
+    # Extract gene names from the mapping result, ignoring entries without a mapping
+    human_accessions = [entry['mapsTo'][0]['identifier'] for entry in mapping if entry['mapsTo']]
+
+    return human_accessions
+
+
+def get_enriched_pathways(gene_list):
+    """Get enriched pathways from Reactome using reactome2py."""
+    
+    # Use reactome2py to perform the analysis
+    gene_list_str = ",".join(gene_list)
+    res = analysis.identifiers(ids=gene_list_str)
+    
+    # Extract the token from the results
+    token = res['summary']['token']
+    
+    # Use the token to get the detailed results
+    pathways = analysis.token(token, species='Homo sapiens', sort_by='entities pValue', order='ASC', resource='TOTAL')
+    
+    return pathways
+
+
+def get_pathway_proteins(pathway_stId):
+    """Get proteins for a given pathway"""
+
+    # Get the PhysicalEntities for the pathway
+    entities = content.participants_physical_entities(id=pathway_stId)
+
+    # Filter the entities to only get the proteins
+    protein_entities = [e for e in entities if e["className"] == "Protein"]
+
+    # Extract the display names of the proteins and remove the location info
+    proteins = [p["displayName"].split(' [')[0] for p in protein_entities]
+
+    return proteins
+    
 
 def save_figures(figures, folders):
     """Saves figures to output folder."""

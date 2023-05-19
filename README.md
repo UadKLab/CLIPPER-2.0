@@ -3,21 +3,25 @@ Peptide level annotation
 
 Install **python 3.11.3**, and setup with *requirements.txt* through *conda*.
 
-Create an environment:
+Create a conda environment:
 
 `conda create --n clipper python=3.11.3`
 
-And then install packages:
+Install packages with pip:
 
-`conda install --file requirements.txt`
+`pip install -r requirements.txt`
+
+Then install pymol with conda:
+
+`conda install -c conda-forge pymol-open-source`
 
 If successfully install, you should be able to run the following command:
 
-`python run.py -h`
+`python clipper/run.py -h`
 
 Example run:
 
-`python run.py -i ..\tests\HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -cs all -sig all -stat -spw -vis -clvis both`
+`python clipper/run.py -i ..\tests\HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -cs all -sig all -stat -spw -vis -clvis both`
 
 ## Program init
 - Init function

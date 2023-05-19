@@ -27,6 +27,8 @@ from Bio.SeqFeature import SeqFeature, FeatureLocation
 from dna_features_viewer import GraphicFeature, GraphicRecord
 from gprofiler import GProfiler
 
+from annutils import map_accessions, get_enriched_pathways, get_pathway_proteins
+
 
 alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
 
@@ -552,6 +554,23 @@ class Visualizer:
             figures[col_name] = fig
 
         return figures
+    
+    def plot_pathway_enrichment(self, cutoff=0.05, folder=None):
+        """Extract the protein accessions of significant peptides for each condition."""
+
+        if len(self.conditions) == 2 or self.pairwise:
+            cols = self.annot.columns[self.annot.columns.str.startswith("Ttest:")]
+        else:
+            cols = self.annot.columns[self.annot.columns.str.startswith("ANOVA:")]
+
+        for col in cols:
+            subframe = self.annot[self.annot[col] < cutoff]
+
+            # Create a PDF file to save all figures
+            col_name = col.split(":")[1].strip()
+            pdf_path = os.path.join(folder, f"{col_name}_pathway_plots.pdf")
+            with PdfPages(pdf_path) as pp:
+                plot_pathway_figure(subframe, col_name, pp)
 
     
 def create_pie_chart(y, x, colors, explode):
@@ -802,3 +821,29 @@ def plot_enrichment_figure(genes, col_name, organism='hsapiens'):
     plt.close()
 
     return fig
+
+
+def plot_pathway_figure(subframe, col_name, pp):
+    """Perform pathway enrichment analysis with Reactome and plot the results."""
+
+    accessions = subframe["query_accession"].unique()
+    print("Accessions: ", accessions)
+    human_accesions = map_accessions(accessions)
+    print("Human accessions: ", human_accesions)
+
+    enriched_pathways = get_enriched_pathways(human_accesions)
+    pathways = enriched_pathways["pathways"]
+    significant_pathways_stIDs = [p["stId"] for p in pathways if p["entities"]["pValue"] < 0.05]
+    print("Significant pathways: ", significant_pathways_stIDs)
+    
+    for pathway_stId in significant_pathways_stIDs:
+        print("Plotting pathway: ", pathway_stId)
+        pathway_proteins = get_pathway_proteins(pathway_stId)
+        print("Pathway proteins: ", pathway_proteins)
+
+        # get the gene names of the accessions from the subframe
+        genes = subframe['name'].unique()
+        gene_names = [gene.split('_')[0] for gene in genes]
+        print("Gene list: ", gene_names)
+        matched_proteins = list(set(gene_names) & set(pathway_proteins))
+        print("Matched proteins: ", matched_proteins)
