@@ -1,7 +1,7 @@
 import logging
 import os
 import re
-
+import string
 import gzip
 import tempfile
 
@@ -14,6 +14,7 @@ import pandas as pd
 
 import pymol
 from reactome2py import analysis, content
+import networkx as nx
 
 def initialize_logger(logfile):
     """Initializes the logger with a file handler and a console handler."""
@@ -408,36 +409,81 @@ def map_accessions(accessions):
     return human_accessions
 
 
-def get_enriched_pathways(gene_list):
+def get_enriched_pathways(accs, cutoff=0.05):
     """Get enriched pathways from Reactome using reactome2py."""
-    
+
     # Use reactome2py to perform the analysis
-    gene_list_str = ",".join(gene_list)
-    res = analysis.identifiers(ids=gene_list_str)
+    query = ",".join(accs)
+    res = analysis.identifiers(ids=query)
     
     # Extract the token from the results
-    token = res['summary']['token']
+    token = res.get('summary', {}).get('token', None)
+    if token is None:
+        raise ValueError("Could not retrieve analysis token from Reactome")
     
     # Use the token to get the detailed results
-    pathways = analysis.token(token, species='Homo sapiens', sort_by='entities pValue', order='ASC', resource='TOTAL')
+    pathways = analysis.token(token, page_size='20', page='1', sort_by='ENTITIES_FDR', 
+                              order='ASC', resource='TOTAL', p_value=cutoff, include_disease=True, 
+                              min_entities=None, max_entities=None)
     
     return pathways
 
 
-def get_pathway_proteins(pathway_stId):
-    """Get proteins for a given pathway"""
+def get_proteins_and_interactors(pathway_id):
+    """Get the proteins and interactors for a pathway."""
 
-    # Get the PhysicalEntities for the pathway
-    entities = content.participants_physical_entities(id=pathway_stId)
-
-    # Filter the entities to only get the proteins
-    protein_entities = [e for e in entities if e["className"] == "Protein"]
-
-    # Extract the display names of the proteins and remove the location info
-    proteins = [p["displayName"].split(' [')[0] for p in protein_entities]
-
-    return proteins
+    path_res = content.participants_reference_entities(pathway_id)
+    proteins = [p['identifier'] for p in path_res if p['identifier'][0] in list(string.ascii_uppercase) and len(p['identifier']) == 6]
     
+    interactors_query = ','.join(proteins)
+    inter_res = content.interactors_static_accs(accs=interactors_query)
+    print(inter_res)
+    interaction_map = {}
+    for entry in inter_res['entities']:
+        acc = entry['acc']
+        if entry['count'] > 0:
+            interactors = {inter['acc'] for inter in entry['interactors']}
+            interactors_filtered = {inter for inter in interactors if inter in proteins}
+        else:
+            interactors_filtered = set()
+        
+        interaction_map[acc] = interactors_filtered
+
+    return proteins, interaction_map
+
+
+def construct_edgelists(subframe, interaction_map):
+    """Constructs the edgelists for the protein and cleavage networks."""
+
+    protein_edgelist = []
+    for source, targets in interaction_map.items():
+        if len(targets) > 0:
+            for target in targets:
+                protein_edgelist.append((source, target))
+
+    cleavage_edgelist = []
+    cleavages = []
+    for index in subframe.index:
+        peptide = '-'.join([subframe.loc[index, 'start_pep'], str(subframe.loc[index, 'end_pep'])])
+        protein = subframe.loc[index, 'query_accession']
+        cleavage = ':'.join(protein, peptide)
+        cleavages.append(cleavage)
+        cleavage_edgelist.append((protein, cleavage))
+    
+    return protein_edgelist, cleavage_edgelist, cleavages
+
+
+def construct_network(protein_edgelist, cleavage_edgelist):
+    """Constructs a network from the protein and cleavage edgelists."""
+
+    network = nx.DiGraph()
+    # protein edges
+    network.add_edges_from(protein_edgelist)
+    # cleavage edges
+    network.add_edges_from(cleavage_edgelist)
+    
+    return network
+
 
 def save_figures(figures, folders):
     """Saves figures to output folder."""

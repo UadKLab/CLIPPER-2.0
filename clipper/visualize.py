@@ -26,8 +26,9 @@ from Bio import Seq
 from Bio.SeqFeature import SeqFeature, FeatureLocation
 from dna_features_viewer import GraphicFeature, GraphicRecord
 from gprofiler import GProfiler
+import networkx as nx
 
-from annutils import map_accessions, get_enriched_pathways, get_pathway_proteins
+import annutils
 
 
 alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
@@ -558,19 +559,17 @@ class Visualizer:
     def plot_pathway_enrichment(self, cutoff=0.05, folder=None):
         """Extract the protein accessions of significant peptides for each condition."""
 
-        if len(self.conditions) == 2 or self.pairwise:
-            cols = self.annot.columns[self.annot.columns.str.startswith("Ttest:")]
-        else:
-            cols = self.annot.columns[self.annot.columns.str.startswith("ANOVA:")]
+        cols = self.annot.columns[self.annot.columns.str.startswith("Ttest:")]
 
         for col in cols:
+            col_fold = col.replace('_', '/').replace('Ttest', 'Log2_fold_change')
             subframe = self.annot[self.annot[col] < cutoff]
 
             # Create a PDF file to save all figures
             col_name = col.split(":")[1].strip()
             pdf_path = os.path.join(folder, f"{col_name}_pathway_plots.pdf")
             with PdfPages(pdf_path) as pp:
-                plot_pathway_figure(subframe, col_name, pp)
+                plot_pathway_figure(subframe, col_fold, pp, cutoff)
 
     
 def create_pie_chart(y, x, colors, explode):
@@ -823,27 +822,107 @@ def plot_enrichment_figure(genes, col_name, organism='hsapiens'):
     return fig
 
 
-def plot_pathway_figure(subframe, col_name, pp):
+def plot_pathway_figure(subframe, col_fold, pp, cutoff=0.05):
     """Perform pathway enrichment analysis with Reactome and plot the results."""
 
+    # Get the list of proteins
     accessions = subframe["query_accession"].unique()
     print("Accessions: ", accessions)
-    human_accesions = map_accessions(accessions)
-    print("Human accessions: ", human_accesions)
 
-    enriched_pathways = get_enriched_pathways(human_accesions)
+    # Get the enriched pathways
+    enriched_pathways = annutils.get_enriched_pathways(accessions, cutoff=cutoff)
     pathways = enriched_pathways["pathways"]
-    significant_pathways_stIDs = [p["stId"] for p in pathways if p["entities"]["pValue"] < 0.05]
+    print("Pathways: ", pathways)
+
+    # Get the significant pathway identifiers
+    significant_pathways_stIDs = [p["stId"] for p in pathways]
     print("Significant pathways: ", significant_pathways_stIDs)
     
+    # Plot the pathways
     for pathway_stId in significant_pathways_stIDs:
-        print("Plotting pathway: ", pathway_stId)
-        pathway_proteins = get_pathway_proteins(pathway_stId)
-        print("Pathway proteins: ", pathway_proteins)
 
-        # get the gene names of the accessions from the subframe
-        genes = subframe['name'].unique()
-        gene_names = [gene.split('_')[0] for gene in genes]
-        print("Gene list: ", gene_names)
-        matched_proteins = list(set(gene_names) & set(pathway_proteins))
-        print("Matched proteins: ", matched_proteins)
+        # Get the pathway proteins and interaction map
+        print("Plotting pathway: ", pathway_stId)
+        pathway_proteins, interaction_map = annutils.get_proteins_and_interactors(pathway_stId)
+        print("Pathway proteins: ", pathway_proteins)
+        print("Interaction map: ", interaction_map)
+
+        # Get the protein edgelist, cleavage edgelist and cleavages
+        protein_edgelist, cleavage_edgelist, cleavages = annutils.construct_edgelists(subframe, interaction_map)
+        print("Protein edgelist: ", protein_edgelist)
+        print("Cleavage edgelist: ", cleavage_edgelist)
+        print("Cleavages: ", cleavages)
+
+        # Construct the network
+        network = annutils.construct_network(pathway_proteins, cleavages, protein_edgelist, cleavage_edgelist)
+
+        # Create labels and colors for proteins and cleavages
+        protein_labels, protein_colors, cleavage_labels, cleavage_colors, protein_cmap, peptide_cmap = create_labels_colors(pathway_proteins, cleavages, subframe, accessions, col_fold)
+
+        # Plot the network
+        fig = visualize_network(network, protein_labels, protein_colors, cleavage_labels, cleavage_colors, protein_cmap, peptide_cmap, pp, col_fold)
+        fig.savefig(pp, format="pdf")
+        plt.close()
+
+        # save the network in a cyjs format
+
+
+def create_labels_colors(proteins, cleavages, subframe, accs, col_fold):
+    # Create a colormap for proteins and peptides
+    protein_cmap = plt.cm.PuOr
+    peptide_cmap = plt.cm.RdYlGn_r
+
+    # Create a color normalizer for proteins and peptides
+    protein_norm = colors.Normalize(vmin=subframe.groupby('query_accession')[col_fold].sum().min(), vmax=subframe.groupby('query_accession')[col_fold].sum().max())
+    peptide_norm = colors.Normalize(vmin=subframe[col_fold].min(), vmax=subframe[col_fold].max())
+
+    protein_labels = {}
+    protein_colors = []
+    cleavage_labels = {}
+    cleavage_colors = []
+    for prot in proteins:
+        # if protein in starting accessions, color it by summed normalized intensity of its peptides
+        if prot in accs:
+            summed_intensity = subframe.loc[subframe['query_accession'] == prot, col_fold].sum()
+            protein_colors.append(protein_cmap(protein_norm(summed_intensity)))
+            protein_labels[prot] = prot
+        # if protein in the pathway but not detected, color it grey
+        else:
+            protein_colors.append(colors.to_rgba_array('#BDB9B8'))
+            protein_labels[prot] = prot
+
+    for cleavage in cleavages:
+        index = cleavage.split(':')
+        if index[0] in proteins and index[1] in subframe.index:
+            cleavage_colors.append(peptide_cmap(peptide_norm(subframe.loc[index[1], col_fold])))
+            cleavage_labels[cleavage] = cleavage
+            
+    return protein_labels, protein_colors, cleavage_labels, cleavage_colors, protein_cmap, peptide_cmap
+
+
+def visualize_network(network, pos, proteins, protein_colors, protein_labels, cleavages, cleavage_colors, cleavage_labels, protein_edgelist, cleavage_edgelist, protein_cmap, peptide_cmap, pathways, pathways_ids, i, subframe):
+    """Visualize the network."""
+    
+    fig, ax = plt.subplots(3, 1, gridspec_kw={'height_ratios': [25, 1, 1]}, figsize=(20,20))
+    
+    all_edges = protein_edgelist + cleavage_edgelist
+    all_labels = protein_labels | cleavage_labels
+
+    prot_nodes = nx.draw_networkx_nodes(network, pos, nodelist=proteins, node_color=protein_colors, node_size=600, node_shape='o', ax=ax[0])
+    cleavage_nodes = nx.draw_networkx_nodes(network, pos, nodelist=cleavages, node_color=cleavage_colors, node_size=600, node_shape='D', ax=ax[0])
+    edges = nx.draw_networkx_edges(network, pos, edgelist=all_edges, arrowstyle="-", arrowsize=25, width=1.5, ax=ax[0])
+    labels = nx.draw_networkx_labels(network, pos, all_labels, font_size=7, font_color="black", ax=ax[0])
+    
+    # Protein color bar
+    pc_protein = plt.collections.PatchCollection(edges, cmap=protein_cmap)
+    pc_protein.set_array(np.array(subframe.groupby('Protein')['FC'].sum()))
+    plt.colorbar(pc_protein, location='bottom', ax=ax[1])
+
+    # Cleavage color bar
+    pc_cleavage = plt.collections.PatchCollection(edges, cmap=peptide_cmap)
+    pc_cleavage.set_array(np.array(subframe['FC']))
+    plt.colorbar(pc_cleavage, location='bottom', ax=ax[2])
+    
+    plt.title(pathways_ids[i] + ': ' + pathways[i])
+
+    return fig

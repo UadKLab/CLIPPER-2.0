@@ -924,7 +924,8 @@ class Clipper:
             self.figures["Enrichment"] = vis.plot_functional_enrichment(cutoff=0.05)
 
         if self.stat and self.pathway:
-            vis.plot_pathway_enrichment(cutoff=0.05, folder=self.pathway_folder)
+            if len(self.conditions) == 2 or self.pairwise:
+                vis.plot_pathway_enrichment(cutoff=0.05, folder=self.pathway_folder)
 
         # if there are more than one condition, generate volcano, fold change and fold change at termini plots, and gallery of significant peptides
         if len(self.conditions) > 1:
