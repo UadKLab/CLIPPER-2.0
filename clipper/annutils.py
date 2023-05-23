@@ -437,17 +437,18 @@ def get_proteins_and_interactors(pathway_id):
     
     interactors_query = ','.join(proteins)
     inter_res = content.interactors_static_accs(accs=interactors_query)
-    print(inter_res)
+
     interaction_map = {}
-    for entry in inter_res['entities']:
-        acc = entry['acc']
-        if entry['count'] > 0:
-            interactors = {inter['acc'] for inter in entry['interactors']}
-            interactors_filtered = {inter for inter in interactors if inter in proteins}
-        else:
-            interactors_filtered = set()
-        
-        interaction_map[acc] = interactors_filtered
+    if inter_res is not None:
+        for entry in inter_res['entities']:
+            acc = entry['acc']
+            if entry['count'] > 0:
+                interactors = {inter['acc'] for inter in entry['interactors']}
+                interactors_filtered = {inter for inter in interactors if inter in proteins}
+            else:
+                interactors_filtered = set()
+            
+            interaction_map[acc] = interactors_filtered
 
     return proteins, interaction_map
 
@@ -464,16 +465,16 @@ def construct_edgelists(subframe, interaction_map):
     cleavage_edgelist = []
     cleavages = []
     for index in subframe.index:
-        peptide = '-'.join([subframe.loc[index, 'start_pep'], str(subframe.loc[index, 'end_pep'])])
+        peptide = '-'.join([str(subframe.loc[index, 'start_pep']), str(subframe.loc[index, 'end_pep'])])
         protein = subframe.loc[index, 'query_accession']
-        cleavage = ':'.join(protein, peptide)
+        cleavage = ':'.join([protein, peptide])
         cleavages.append(cleavage)
         cleavage_edgelist.append((protein, cleavage))
     
     return protein_edgelist, cleavage_edgelist, cleavages
 
 
-def construct_network(protein_edgelist, cleavage_edgelist):
+def construct_network(protein_edgelist, cleavage_edgelist, proteins):
     """Constructs a network from the protein and cleavage edgelists."""
 
     network = nx.DiGraph()
@@ -481,7 +482,9 @@ def construct_network(protein_edgelist, cleavage_edgelist):
     network.add_edges_from(protein_edgelist)
     # cleavage edges
     network.add_edges_from(cleavage_edgelist)
-    
+    # add proteins as nodes
+    network.add_nodes_from(proteins)
+
     return network
 
 
