@@ -764,7 +764,7 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level):
             f = SeqFeature(FeatureLocation(start, end), type="peptide")
             f.qualifiers['name'] = [peptide + ' ' + '-'.join([str(start), str(end)])]
 
-            gf = GraphicFeature(start=start, end=end, strand=+1, color=color, label=f.qualifiers['name'][0])
+            gf = GraphicFeature(start=start, end=end, strand=+1, color=color, box_color=color, label=f.qualifiers['name'][0])
             features.append(gf)
 
     # create the figure
@@ -828,32 +828,24 @@ def plot_pathway_figures(subframe, col_fold, pp, cutoff=0.05):
 
     # Get the list of proteins
     accessions = subframe["query_accession"].unique()
-    print("Accessions: ", accessions)
 
     # Get the enriched pathways
     enriched_pathways = annutils.get_enriched_pathways(accessions, cutoff=cutoff)
     pathways = enriched_pathways["pathways"]
-    print("Pathways: ", pathways)
 
     # Get the significant pathway identifiers
     significant_pathways_stIDs = [p["stId"] for p in pathways]
-    print("Significant pathways: ", significant_pathways_stIDs)
+    logging.info(f"Significant pathways for {col_fold}: {significant_pathways_stIDs}")
     
     # Plot the pathways
-    for i, pathway_stId in enumerate(significant_pathways_stIDs):
+    for i, pathway_stId in tqdm(enumerate(significant_pathways_stIDs)):
 
         # Get the pathway proteins and interaction map
-        print("Plotting pathway: ", pathway_stId)
         pathway_proteins, interaction_map = annutils.get_proteins_and_interactors(pathway_stId)
-        print("Pathway proteins: ", pathway_proteins)
-        print("Interaction map: ", interaction_map)
 
         if len(interaction_map) > 0:
             # Get the protein edgelist, cleavage edgelist and cleavages
             protein_edgelist, cleavage_edgelist, cleavages = annutils.construct_edgelists(subframe, interaction_map)
-            print("Protein edgelist: ", protein_edgelist)
-            print("Cleavage edgelist: ", cleavage_edgelist)
-            print("Cleavages: ", cleavages)
 
             # Construct the network
             network = annutils.construct_network(protein_edgelist, cleavage_edgelist, pathway_proteins)
@@ -902,11 +894,21 @@ def create_labels_colors(proteins, cleavages, subframe, accs, col_fold):
             protein_labels[prot] = prot
 
     for cleavage in cleavages:
-        index = cleavage.split(':')
-        if index[0] in proteins and index[1] in subframe.index:
-            cleavage_colors.append(peptide_cmap(peptide_norm(subframe.loc[index[1], col_fold])))
+        # Split the cleavage string to get protein, position and sequence
+        prot_pos, sequence = cleavage.split(';')
+        protein, position = prot_pos.split(':')
+
+        # Query the subframe for the matching sequence
+        subframe_cleavage = subframe.loc[subframe['query_sequence'] == sequence]
+
+        if len(subframe_cleavage) > 0:
+            # Calculate the average fold change for this cleavage
+            avg_fold_change = subframe_cleavage[col_fold].mean()
+
+            # Add the color and label for this cleavage
+            cleavage_colors.append(peptide_cmap(peptide_norm(avg_fold_change)))
             cleavage_labels[cleavage] = cleavage
-            
+
     return protein_labels, protein_colors, cleavage_labels, cleavage_colors, protein_cmap, peptide_cmap
 
 
@@ -914,29 +916,42 @@ def visualize_network(network, proteins, protein_edgelist, protein_colors, prote
     """Visualize the network."""
 
     # Define positions for the nodes in the network
-    pos = nx.spring_layout(network)
+    # Try to use the Graphviz layout, otherwise default to the spring layout
+    try:
+        import pygraphviz
+        pos = nx.nx_agraph.graphviz_layout(network, prog='neato')
+    except ImportError:
+        logging.warning("pygraphviz not found, defaulting to spring layout")
+        pos = nx.spring_layout(network)
     
-    fig, ax = plt.subplots(3, 1, gridspec_kw={'height_ratios': [25, 1, 1]}, figsize=(20,20))
+    fig, ax = plt.subplots(3, 1, gridspec_kw={'height_ratios': [25, 3, 3]}, figsize=(20,20))
     
     all_edges = protein_edgelist + cleavage_edgelist
     all_labels = protein_labels | cleavage_labels
 
     prot_nodes = nx.draw_networkx_nodes(network, pos, nodelist=proteins, node_color=protein_colors, node_size=600, node_shape='o', ax=ax[0])
     cleavage_nodes = nx.draw_networkx_nodes(network, pos, nodelist=cleavages, node_color=cleavage_colors, node_size=600, node_shape='D', ax=ax[0])
-    edges = nx.draw_networkx_edges(network, pos, edgelist=all_edges, arrowstyle="-", arrowsize=25, width=1.5, ax=ax[0])
+    edges = nx.draw_networkx_edges(network, pos, edgelist=all_edges, arrowstyle="-", arrowsize=25, width=1, ax=ax[0])
     labels = nx.draw_networkx_labels(network, pos, all_labels, font_size=7, font_color="black", ax=ax[0])
-    
+
+    ax[0].axis('off')
+
     # Protein color bar
     pc_protein = collections.PatchCollection(edges, cmap=protein_cmap)
     pc_protein.set_array(np.array(subframe.groupby('query_accession')[col_fold].sum()))
-    plt.colorbar(pc_protein, location='bottom', ax=ax[1])
+    cb_protein = plt.colorbar(pc_protein, location='bottom', ax=ax[1], orientation='horizontal')
+    cb_protein.ax.xaxis.set_ticks_position('top')
+    cb_protein.ax.xaxis.set_label_position('top')
+    cb_protein.set_label(f'Protein {col_fold}', fontsize=14)
+    ax[1].axis('off') # turn off axis
 
     # Cleavage color bar
     pc_cleavage = collections.PatchCollection(edges, cmap=peptide_cmap)
     pc_cleavage.set_array(np.array(subframe[col_fold]))
-    plt.colorbar(pc_cleavage, location='bottom', ax=ax[2])
-    
-    print('Path ', pathways[i])
-    plt.title(f"{col_fold}\n{pathway_stId}: {pathways[i]['name']}\np-value: {str(pathways[i]['entities']['pValue'])}", fontsize=20)
+    cb_cleavage = plt.colorbar(pc_cleavage, location='bottom', ax=ax[2], orientation='horizontal')
+    cb_cleavage.set_label(f'Peptide {col_fold}', fontsize=14)
+    ax[2].axis('off') # turn off axis
+
+    plt.suptitle(f"{col_fold}\n{pathway_stId}: {pathways[i]['name']}\np-value: {str(pathways[i]['entities']['pValue'])}", fontsize=20)
 
     return fig

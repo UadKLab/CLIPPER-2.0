@@ -465,11 +465,15 @@ def construct_edgelists(subframe, interaction_map):
     cleavage_edgelist = []
     cleavages = []
     for index in subframe.index:
-        peptide = '-'.join([str(subframe.loc[index, 'start_pep']), str(subframe.loc[index, 'end_pep'])])
         protein = subframe.loc[index, 'query_accession']
-        cleavage = ':'.join([protein, peptide])
-        cleavages.append(cleavage)
-        cleavage_edgelist.append((protein, cleavage))
+
+        # Only include cleavages from proteins in the pathway
+        if protein in interaction_map:
+            peptide = '-'.join([str(subframe.loc[index, 'start_pep']), str(subframe.loc[index, 'end_pep'])])
+            position = ':'.join([protein, peptide])
+            cleavage = ';'.join([position, subframe.loc[index, 'query_sequence']])
+            cleavages.append(cleavage)
+            cleavage_edgelist.append((protein, cleavage))
     
     return protein_edgelist, cleavage_edgelist, cleavages
 

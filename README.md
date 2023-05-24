@@ -15,13 +15,25 @@ Then install pymol with conda:
 
 `conda install -c conda-forge pymol-open-source`
 
+Optional: You need to install graphvis (v7.1.0) separately if you want to take advantage of the layout options they provide. Then install pygraphviz:
+
+`conda install --channel conda-forge pygraphviz`
+
 If successfully installed, you should be able to run the following commands:
 
 `cd clipper`
 
 `python run.py -h`
 
-Example run:
+Example runs:
+
+`python run.py -i ..\tests\HUNTER_clean_100.xlsx`
+
+`python run.py -i ..\tests\HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -sig all -stat -spw `
+
+`python run.py -i ..\tests\HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -sig all -stat -spw -vis -path -enr`
+
+`python run.py -i ..\tests\HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -cs all -sig all -stat -spw -vis -clvis seq`
 
 `python run.py -i ..\tests\HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -cs all -sig all -stat -spw -vis -clvis both`
 
@@ -100,7 +112,7 @@ Example run:
 - [x] Add solvent accessibility annotation
 - [ ] Modify ss and sasa calculations to read each protein once
 - [x] Gprofiler - metascape GO enrichment
-- [ ] Pathway annotation/significance
+- [x] Pathway annotation/significance
 - [ ] Protease prediction (PSSM/GOtosubstrates)
 - [x] Fix condition bug in volcano plots
     - [x] Have not managed to recreate it yet, need to use input data with multiple (>4) conditions. Did not manage even with 6 conditions.
