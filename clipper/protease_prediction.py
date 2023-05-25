@@ -72,7 +72,7 @@ def read_protease_file(filepath):
     return protease_identifiers
 
 
-def create_protease_pssm(protease, df_cleavage, df_substrate, peptide_length=4, pseudocounts=False):
+def create_protease_pssm(protease, df_cleavage, df_substrate, peptide_length=8, pseudocounts=False):
     """
     Creates a PSSM for a given protease.
 
@@ -119,7 +119,7 @@ def create_protease_pssm(protease, df_cleavage, df_substrate, peptide_length=4, 
     return pssm.weighted_matrix
 
 
-def construct_pssms(protease_codes, df_cleavage, df_substrate, pssm_type):
+def construct_pssms(protease_codes, df_cleavage, df_substrate):
     """
     Given a list of protease codes, constructs PSSMs for each and returns them in a dictionary.
     
@@ -136,7 +136,7 @@ def construct_pssms(protease_codes, df_cleavage, df_substrate, pssm_type):
     pssms = {}
     for code in protease_codes:
         # Construct the PSSM
-        pssm = create_protease_pssm(code, df_cleavage, df_substrate, peptide_length=4, pseudocounts=False)
+        pssm = create_protease_pssm(code, df_cleavage, df_substrate, peptide_length=8, pseudocounts=False)
         pssms[code] = pssm
 
     return pssms
@@ -153,6 +153,7 @@ def score_peptide(peptide, matrix):
     Returns:
     float: The score of the peptide against the given PSSM.
     """
+
     # Initialize the score
     acum = 0
     
@@ -175,7 +176,7 @@ def score_proteases(pssms, peptide_sequence):
     Returns:
     str: String of protease code: score separated by '|'.
     """
-    
+
     scores = []
     for code, matrix in pssms.items():
         # Score peptide

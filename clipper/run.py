@@ -95,6 +95,11 @@ def main(args=None):
         annotator.annotate_structure(cutoff=0.05)
         logging.info("Finished computing structural properties.")
 
+    if args["proteasefile"]:
+        logging.info("Predicting protease activity...")
+        annotator.predict_protease_activity()
+        logging.info("Finished predicting protease activity.")
+
     # Generate figures if specified
     if args["visualize"]:
         logging.info("Generating figures...")

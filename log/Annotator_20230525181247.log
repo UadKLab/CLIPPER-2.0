@@ -1,0 +1,68 @@
+2023-05-25 18:12:47,530 [INFO] Annotator started at 2023-05-25 18:12:47.
+2023-05-25 18:12:47,532 [INFO] Arguments: {'infile': '..\\tests\\HUNTER_clean_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': None, 'singlecpu': False, 'conditionfile': '..\\tests\\cond_HUNTER.txt', 'stat': True, 'stat_pairwise': True, 'significance': 'all', 'visualize': False, 'logo': None, 'pseudocounts': True, 'cleavagevis': None, 'enrichment': False, 'pathway': False, 'proteasefile': '..\\tests\\proteases.txt', 'output_name': None, 'outfile_type': 'xlsx', 'separate': False}
+2023-05-25 18:12:47,533 [INFO] Initialization successful.
+2023-05-25 18:12:47,534 [INFO] Reading file...
+2023-05-25 18:12:47,534 [INFO] Input is excel
+2023-05-25 18:12:47,945 [INFO] Read dataframe.
+2023-05-25 18:12:47,947 [INFO] Read input with 284 peptides
+
+2023-05-25 18:12:47,947 [INFO] Input software is sm
+2023-05-25 18:12:47,950 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_127C to numeric type
+2023-05-25 18:12:47,952 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_128C to numeric type
+2023-05-25 18:12:47,955 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_129C to numeric type
+2023-05-25 18:12:47,959 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_130C to numeric type
+2023-05-25 18:12:47,961 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_131C to numeric type
+2023-05-25 18:12:47,963 [INFO] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_132C to numeric type
+2023-05-25 18:12:47,965 [INFO] Successfully generated indexing patterns.
+2023-05-25 18:12:47,966 [INFO] Patterns are: {'acc': 'PG.ProteinAccessions', 'seq': 'PEP.StrippedSequence', 'amino': 'B|J|O|U|X|Z', 'mod': 'P.MoleculeID', 'quant': 'PEP\\.TMT', 'label': '\\[TMT', 'nterm': 'N-?ter', 'nterm_label': 'TMT.*_Nter', 'lysine_label': 'K\\[TMT.{0,3}_Lys\\]'}
+2023-05-25 18:12:47,966 [INFO] Format check complete.
+
+2023-05-25 18:12:47,969 [INFO] Starting annotation of peptides...
+2023-05-25 18:12:47,969 [INFO] Reading MEROPS data..
+2023-05-25 18:12:49,330 [INFO] Read MEROPS data
+2023-05-25 18:12:49,335 [INFO] Initialized annotation dataframe.
+
+2023-05-25 18:13:01,611 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-25 18:13:01,658 [WARNING] Peptide SELHIENLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-25 18:13:01,676 [WARNING] Peptide YSCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-05-25 18:13:01,683 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-25 18:13:01,688 [WARNING] Peptide ADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-25 18:13:01,690 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-05-25 18:13:02,791 [WARNING] Peptide SCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-05-25 18:13:12,417 [WARNING] Error retrieving Uniprot record for A0A494C169: No SwissProt record found
+2023-05-25 18:13:33,207 [INFO] Finished annotation of peptides.
+
+2023-05-25 18:13:33,208 [INFO] Starting annotation of Protein Atlas data...
+2023-05-25 18:13:33,209 [INFO] Reading Protein Atlas data..
+2023-05-25 18:13:33,720 [INFO] Read Protein Atlas data.
+2023-05-25 18:13:33,734 [WARNING] Duplicates found in 'Uniprot' column of 'protein_atlas_sub'. Dropping duplicates.
+2023-05-25 18:13:33,757 [INFO] Finished annotation of Protein Atlas data.
+
+2023-05-25 18:13:33,761 [INFO] Starting proteoform check...
+2023-05-25 18:13:33,763 [INFO] Finished proteoform check.
+2023-05-25 18:13:33,764 [INFO] Starting exopeptidase activity check...
+2023-05-25 18:13:33,781 [INFO] 2 LGLGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR LGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR
+2023-05-25 18:13:33,818 [INFO] 1 YSCVFLPEPMGTANIQLHGPPR SCVFLPEPMGTANIQLHGPPR
+2023-05-25 18:13:33,821 [INFO] 2 AEAMDLGKDPNGPTHSSTLFVR AMDLGKDPNGPTHSSTLFVR
+2023-05-25 18:13:33,831 [INFO] 2 AEAQALLSGDTQTDATSFYDR AQALLSGDTQTDATSFYDR
+2023-05-25 18:13:33,850 [INFO] 1 KACANPAAGSVILLENLR ACANPAAGSVILLENLR
+2023-05-25 18:13:33,851 [INFO] 2 KACANPAAGSVILLENLR ANPAAGSVILLENLR
+2023-05-25 18:13:33,870 [INFO] 1 AAQTSPSPKAGAATGR AQTSPSPKAGAATGR
+2023-05-25 18:13:33,873 [INFO] 1 SSGFSLEDPQTHSNR SGFSLEDPQTHSNR
+2023-05-25 18:13:33,873 [INFO] 2 SKNLKLGIHEDSTNR NLKLGIHEDSTNR
+2023-05-25 18:13:33,908 [INFO] 2 SEDFSLPAYMDR DFSLPAYMDR
+2023-05-25 18:13:33,934 [INFO] 2 SPVLHFYVR VLHFYVR
+2023-05-25 18:13:33,955 [INFO] Finished exopeptidase activity check.
+
+2023-05-25 18:13:33,956 [INFO] Parsed condition file
+2023-05-25 18:13:33,956 [INFO] Performing general statistics annotation...
+2023-05-25 18:13:33,979 [INFO] Finished general statistics annotation.
+2023-05-25 18:13:33,979 [INFO] Performing statistical testing...
+2023-05-25 18:13:33,981 [INFO] Finished statistical testing.
+2023-05-25 18:13:33,983 [INFO] Corrected p-values for Corrected Ttest: gluc_control using fdr_bh method
+2023-05-25 18:13:33,983 [INFO] Finished multiple testing correction.
+
+2023-05-25 18:13:33,983 [INFO] Checking fold distribution...
+2023-05-25 18:13:34,038 [INFO] Finished fold distribution check.
+
+2023-05-25 18:13:34,038 [INFO] Predicting protease activity...

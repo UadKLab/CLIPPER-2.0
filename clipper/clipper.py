@@ -18,7 +18,7 @@ import annutils
 from entry import Entry
 from logo import create_logo_helper
 from visualize import Visualizer
-
+import protease_prediction as pp
 
 class Clipper:
     """Annotator class for processing and analyzing peptide proteomics data. All
@@ -50,8 +50,9 @@ class Clipper:
         self.alphafold_models_filename = "alphafold_accs.txt"
         self.merops_filename = "cleavage.csv"
         self.merops_name_filename = "protein_name.csv"
+        self.merops_sub_filename = "substrate.csv"
         self.protein_atlas_filename = "proteinatlas.tsv"
-
+        
         # output folders
         self.plot_protein_folder = "protein_plots"
         self.plot_general_folder = "general_plots"
@@ -81,6 +82,7 @@ class Clipper:
         self.calcstructure = args["calcstructure"]
 
         self.conditionfile = args["conditionfile"]
+        self.proteasefile = args["proteasefile"]
         self.stat = args["stat"]
         self.pairwise = args["stat_pairwise"]
         self.significance = args["significance"]
@@ -129,9 +131,16 @@ class Clipper:
             error_message = "Invalid condition file. Check if the path exists, and try again."
             logging.critical("Exit with code 6.")
             raise TypeError(error_message)
+        
+        if self.proteasefile is not None and not os.path.exists(self.proteasefile):
+            error_message = "Invalid protease file. Check if the path exists, and try again."
+            logging.critical("Exit with code 7.")
+            raise TypeError(error_message)
             
-        if not self.conditionfile.endswith(".txt"):
+        if self.conditionfile and not self.conditionfile.endswith(".txt"):
             self.raise_invalid_file_format_error("condition file")
+        if self.proteasefile and not self.proteasefile.endswith(".txt"):
+            self.raise_invalid_file_format_error("protease file")
 
     def raise_invalid_file_format_error(self, file_type):
         """Raise an error if the input or output file format is invalid."""
@@ -299,13 +308,23 @@ class Clipper:
                 if self.pathway:
                     os.mkdir(self.pathway_folder)
 
+    def read_condition_file(self):
+        """Parses and stores information about conditions and corresponding channels."""
+        with open(self.conditionfile, "r") as fh:
+            self.conditions = {
+                line.split()[0]: line.split()[1:] for line in fh.readlines()
+            }
+
     def read_MEROPS(self):
         """Read MEROPS data from csv files."""
 
         logging.info("Reading MEROPS data..")
         self.merops = pd.read_csv(self.datafolder / self.merops_filename)
+
         self.merops_name = pd.read_csv(self.datafolder / self.merops_name_filename)
         self.merops_name = self.merops_name[self.merops_name.type == "real"]
+
+        self.merops_sub = pd.read_csv(self.datafolder / self.merops_sub_filename)
 
     def read_protein_atlas(self):
         """Read Protein Atlas data from TSV file."""
@@ -373,11 +392,13 @@ class Clipper:
 
         self.df = df
 
-    def read_condition_file(self):
-        """Parses and stores information about conditions and corresponding channels."""
-        with open(self.conditionfile, "r") as fh:
-            self.conditions = {
-                line.split()[0]: line.split()[1:] for line in fh.readlines()
+
+    def read_protease_file(self):
+        """Parses and stores information about proteases."""
+
+        with open(self.proteasefile, "r") as fh:
+            self.proteases = {
+                line.strip() for line in fh.readlines()
             }
 
     def handle_file_error(self, err):
@@ -850,6 +871,28 @@ class Clipper:
                             logging.info(f"2 {seq} {pep}")
                             for i in same_seq_indices:
                                 self.annot.loc[i, "exopeptidase"] = "Dipeptidase_activity"
+
+    def predict_protease_activity(self):
+        """
+        Reads the protease list file, constructs PSSMs, scores a given peptide and returns a string of protease code and scores.
+        """
+
+        self.annot["predicted_protease_activity"] = np.nan
+
+        # Read the list of proteases
+        protease_codes = pp.read_protease_file(self.proteasefile)
+        logging.info(f"Protease codes: {protease_codes}")
+
+        # Create PSSM for each protease and store in a dictionary
+        pssms = pp.construct_pssms(protease_codes, self.merops, self.merops_sub)
+
+        for i in tqdm(range(len(self.annot))):
+            # Get the peptide sequence
+            cleavage = self.annot.loc[i, "p4_p4prime"]
+            # Score the peptide with each PSSM
+            if isinstance(cleavage, str) and len(cleavage) == 8 and not '-' in cleavage:
+                scores = pp.score_proteases(pssms, cleavage)
+                self.annot.loc[i, "predicted_protease_activity"] = scores
 
     def annotate_structure(self, cutoff=0.05):
         """Annotates secondary structure and solvent accessibility for the cleavage site"""

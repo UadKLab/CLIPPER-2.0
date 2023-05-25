@@ -251,6 +251,16 @@ def initialize_arguments():
     )
 
     parser.add_argument(
+        "-pf",
+        "--proteasefile",
+        action="store",
+        type=str,
+        default=None,
+        dest="proteasefile",
+        help="Protease MEROPS identifiers to predict activity of. Using weighted PSSM",
+    )
+
+    parser.add_argument(
         "-o",
         "--output_name",
         action="store",
