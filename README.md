@@ -87,7 +87,7 @@ Example runs:
 - write files
 
 ## To do list:
-- [ ] Refactor code (made branch annotator_refactor with a folder for refactored code)
+- [x] Refactor code (made branch annotator_refactor with a folder for refactored code)
     - [x] Rewritten for readability and modularity, but not refactored as described above
     - [x] Clean up destination folders and structured output better
     - [x] Clean up paths and use Path for relative paths
@@ -113,8 +113,13 @@ Example runs:
 - [ ] Modify ss and sasa calculations to read each protein once
 - [x] Gprofiler - metascape GO enrichment
 - [x] Pathway annotation/significance
-- [ ] Protease prediction (PSSM/GOtosubstrates)
+- [x] Protease prediction (PSSM/GOtosubstrates)
 - [x] Fix condition bug in volcano plots
     - [x] Have not managed to recreate it yet, need to use input data with multiple (>4) conditions. Did not manage even with 6 conditions.
 - [x] Static Uniprot entry lookup
     - [x] Will not be implemented
+- [ ] Update and prepare for publication
+- [ ] Write doc strings and prepare documentation
+- [ ] Write tests
+- [ ] Update application and website
+- [ ] Figure out hosting

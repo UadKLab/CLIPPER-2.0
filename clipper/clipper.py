@@ -705,20 +705,25 @@ class Clipper:
 
             # Remove NaN values before performing multiple testing correction
             pvals_no_nan = pvals[not_nan]
-            corrected_pvals_no_nan = multipletests(pvals_no_nan, alpha=self.alpha, method=self.multiple_testing)[1]
 
-            # Save the corrected p-values back to their original index positions
-            corrected_pvals = np.empty_like(pvals)
-            corrected_pvals[:] = np.nan
-            corrected_pvals[not_nan] = corrected_pvals_no_nan
+            # Check if there are p-values to correct
+            if len(pvals_no_nan) > 0:
+                corrected_pvals_no_nan = multipletests(pvals_no_nan, alpha=self.alpha, method=self.multiple_testing)[1]
 
-            # Insert the corrected p-value columns next to the original p-value columns
-            original_column_idx = self.annot.columns.get_loc(original_column_name)
-            self.annot.insert(original_column_idx + 2, column_name, corrected_pvals)
-            self.annot.insert(original_column_idx + 3, column_log, np.log10(corrected_pvals))
+                # Save the corrected p-values back to their original index positions
+                corrected_pvals = np.empty_like(pvals)
+                corrected_pvals[:] = np.nan
+                corrected_pvals[not_nan] = corrected_pvals_no_nan
 
-            logging.info(f"Corrected p-values for {column_name} using {self.multiple_testing} method")
-        
+                # Insert the corrected p-value columns next to the original p-value columns
+                original_column_idx = self.annot.columns.get_loc(original_column_name)
+                self.annot.insert(original_column_idx + 2, column_name, corrected_pvals)
+                self.annot.insert(original_column_idx + 3, column_log, np.log10(corrected_pvals))
+
+                logging.info(f"Corrected p-values for {column_name} using {self.multiple_testing} method")
+            else:
+                logging.warning(f"No p-values to correct for {column_name}")
+
         if self.pairwise:
             col_stat = 'Ttest'
             for pair in combinations(self.conditions.keys(), 2):
