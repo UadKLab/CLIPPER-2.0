@@ -36,16 +36,10 @@ def main(args=None):
         annotator.annotate()
     logging.info("Finished annotation of peptides.\n")
 
-    print(annotator.df.shape)
-    print(annotator.annot.shape)
-
     # Annotate Protein Atlas data
     logging.info("Starting annotation of Protein Atlas data...")
     annotator.annotate_protein_atlas()
     logging.info("Finished annotation of Protein Atlas data.\n")
-
-    print(annotator.df.shape)
-    print(annotator.annot.shape)
 
     # Perform proteoform check
     logging.info("Starting proteoform check...")
