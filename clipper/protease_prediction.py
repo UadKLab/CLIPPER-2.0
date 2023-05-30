@@ -5,13 +5,33 @@ import re
 from alphabet import alphabet, background, blosum62
 
 class PSSM:
-    def __init__(
-        self,
-        sequences: list,
-        pseudocounts=False,
-    ):
-        """Expects clean aligned sequences consisting only of amino acid strict
-        alphabet."""
+
+    """
+    A class to represent a Position-Specific Scoring Matrix (PSSM).
+    
+    Attributes
+    ----------
+    sequences : list
+        A list of peptide sequences.
+    pseudocounts : bool
+        If True, applies pseudocounts when computing the normalized matrix.
+
+    Methods
+    -------
+    initialize_matrix():
+        Initializes all matrices.
+    make_count_matrix():
+        Initializes the count matrix.
+    make_frequency_matrix():
+        Computes the frequency matrix.
+    make_normalized_matrix():
+        Computes the pseudocount matrix and combines it with the frequency matrix.
+    make_weighted_matrix():
+        Computes the weighted matrix from the normalized matrix.
+    """
+        
+    def __init__(self, sequences: list, pseudocounts=False):
+        """Expects clean aligned sequences consisting only of amino acid strict alphabet."""
 
         self.sequences = sequences
         self.alphabet = alphabet
@@ -56,14 +76,19 @@ class PSSM:
 
 
 def read_protease_file(filepath):
+
     """
-    Reads a file with MEROPS identifiers (one per line) and returns a list of identifiers.
+    Reads a file with protease identifiers and returns a list of identifiers.
+    
+    Parameters
+    ----------
+    filepath : str
+        The path to the file containing the protease identifiers.
 
-    Parameters:
-    filepath (str): The path to the file containing the protease identifiers.
-
-    Returns:
-    list: A list of protease identifiers.
+    Returns
+    -------
+    list
+        A list of protease identifiers.
     """
 
     with open(filepath, 'r') as f:
@@ -73,18 +98,27 @@ def read_protease_file(filepath):
 
 
 def create_protease_pssm(protease, df_cleavage, df_substrate, peptide_length=8, pseudocounts=False):
+    
     """
     Creates a PSSM for a given protease.
+    
+    Parameters
+    ----------
+    protease : str
+        The identifier of the protease.
+    df_cleavage : pd.DataFrame
+        The dataframe of the MEROPS cleavage dataset.
+    df_substrate : pd.DataFrame
+        The dataframe of the MEROPS substrate dataset.
+    peptide_length : int, optional
+        The length of the peptides to consider for the PSSM (default is 8).
+    pseudocounts : bool, optional
+        If true, uses pseudocounts in PSSM creation (default is False).
 
-    Parameters:
-    protease (str): The identifier of the protease to create a PSSM for.
-    df_cleavage (pd.DataFrame): The dataframe of the MEROPS cleavage file.
-    df_substrate (pd.DataFrame): The dataframe of the MEROPS substrate file.
-    peptide_length (int): The length of the peptides to consider for the PSSM.
-    pseudocounts (bool): If true, uses pseudocounts in PSSM creation.
-
-    Returns:
-    PSSM: A PSSM object for the given protease.
+    Returns
+    -------
+    list
+        A PSSM represented as a list of dictionaries, each containing the score for each amino acid at a position.
     """
     
     # Center position of the peptide
@@ -120,17 +154,23 @@ def create_protease_pssm(protease, df_cleavage, df_substrate, peptide_length=8, 
 
 
 def construct_pssms(protease_codes, df_cleavage, df_substrate):
+    
     """
-    Given a list of protease codes, constructs PSSMs for each and returns them in a dictionary.
+    Constructs PSSMs for each protease code and returns them in a dictionary.
     
-    Parameters:
-    protease_codes (list): List of protease codes.
-    df_cleavage (pd.DataFrame): Dataframe from the cleavage.txt file.
-    df_substrate (pd.DataFrame): Dataframe from the substrate.txt file.
-    pssm_type (str): Type of PSSM matrix to be constructed.
-    
-    Returns:
-    dict: Dictionary of PSSMs keyed by protease code.
+    Parameters
+    ----------
+    protease_codes : list
+        List of protease codes.
+    df_cleavage : pd.DataFrame
+        The dataframe of the cleavage dataset.
+    df_substrate : pd.DataFrame
+        The dataframe of the substrate dataset.
+
+    Returns
+    -------
+    dict
+        Dictionary of PSSMs, with each key being a protease code and the value being the corresponding PSSM.
     """
 
     pssms = {}
@@ -143,15 +183,21 @@ def construct_pssms(protease_codes, df_cleavage, df_substrate):
 
 
 def score_peptide(peptide, matrix):
+
     """
-    Scores a peptide sequence against a Position-Specific Scoring Matrix (PSSM).
+    Scores a peptide sequence against a PSSM.
 
-    Parameters:
-    peptide (str): The peptide sequence to be scored.
-    matrix (list of dicts): The PSSM used for scoring.
+    Parameters
+    ----------
+    peptide : str
+        The peptide sequence to be scored.
+    matrix : list of dicts
+        The PSSM used for scoring.
 
-    Returns:
-    float: The score of the peptide against the given PSSM.
+    Returns
+    -------
+    float
+        The score of the peptide against the given PSSM.
     """
 
     # Initialize the score
@@ -166,15 +212,21 @@ def score_peptide(peptide, matrix):
 
 
 def score_proteases(pssms, peptide_sequence):
-    """
-    Given a dictionary of PSSMs, scores a given peptide sequence against each PSSM.
-    
-    Parameters:
-    pssms (dict): Dictionary of PSSMs keyed by protease code.
-    peptide_sequence (str): Amino acid sequence of the peptide to score.
 
-    Returns:
-    str: String of protease code: score separated by '|'.
+    """
+    Scores a peptide sequence against each PSSM in a given dictionary.
+    
+    Parameters
+    ----------
+    pssms : dict
+        Dictionary of PSSMs, with each key being a protease code and the value being the corresponding PSSM.
+    peptide_sequence : str
+        Amino acid sequence of the peptide to score.
+
+    Returns
+    -------
+    str
+        String containing the protease code and score for each PSSM, separated by '|'.
     """
 
     scores = []

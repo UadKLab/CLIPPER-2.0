@@ -36,6 +36,41 @@ alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biol
 
 
 class Visualizer:
+
+    """
+    A class to visualize various aspects of proteomic data.
+
+    This class provides methods to plot general statistics, create a volcano plot, plot CV values, 
+    plot fold changes, fold termini, heatmaps, clustermaps, and pie charts of the data. It also 
+    includes methods to generate a gallery of significant peptides, and to visualize the results 
+    of PCA, UMAP, protein sequence and structure, functional enrichment, and pathway enrichment.
+
+    Attributes:
+        df (pandas.DataFrame): A dataframe containing the proteomic data.
+        annot (str): The annotation.
+        conditions (list): A list of conditions.
+        software (str): The software used for the proteomic analysis.
+        patterns (dict): A dictionary of patterns.
+        pairwise (bool): A flag to indicate whether to perform pairwise analysis.
+
+    Methods:
+        general: Plots general statistics for the dataset.
+        volcano: Creates a volcano plot for each condition pair.
+        cv_plot: Creates a plot of CV values for all conditions.
+        fold_plot: Creates a plot of fold changes of all peptides in the dataset for all conditions.
+        fold_termini: Creates a plot of fold changes for internal and n-terminal peptides across all conditions.
+        heatmap: Generates a heatmap of all quantification columns in the DataFrame.
+        clustermap: Generates a clustermap of all quantification columns in the DataFrame.
+        generate_pie_charts: Generates a series of pie charts for different peptide categories based on the DataFrame.
+        gallery: Generates a PDF gallery of significant peptides from the DataFrame based on a given cutoff.
+        get_significant_indices: Returns the indices of significant peptides in the DataFrame based on a given cutoff.
+        pca_visualization: Performs Principal Component Analysis (PCA) on the quantification columns of the DataFrame and generates a visualization of the results.
+        umap_visualization: Performs Uniform Manifold Approximation and Projection (UMAP) on the quantification columns of the DataFrame and generates a visualization of the results.
+        plot_protein: Plots significant peptides for each condition on protein sequence and structure.
+        plot_functional_enrichment: Performs a functional enrichment analysis and generates a bar plot of the results.
+        plot_pathway_enrichment: Performs a pathway enrichment analysis and generates pathway plots for significant peptides.
+    """
+        
     def __init__(self, df, annot, conditions, software, patterns, pairwise=False):
 
         self.df = df
@@ -46,7 +81,15 @@ class Visualizer:
         self.pairwise = pairwise
 
     def general(self):
-        """Plots general statistics for the dataset"""
+
+        """
+        Plots general statistics for the dataset.
+
+        Returns
+        -------
+        dict
+            A dictionary with a key "general" and a value of a matplotlib Figure object of the plot.
+        """
 
         acc_col = self.patterns['acc']
         seq_col = self.patterns['seq']
@@ -105,7 +148,15 @@ class Visualizer:
         return {"general": fig}
 
     def volcano(self):
-        """Creates a volcano plot for each condition pair."""
+
+        """
+        Creates a volcano plot for each condition pair.
+
+        Returns
+        -------
+        dict
+            A dictionary with each key being a condition pair and the value being a corresponding matplotlib Figure object of the plot.
+        """
 
         columns_fold = self.annot.columns[self.annot.columns.str.contains("Log2_fold_change:")]
         columns_ttest = self.annot.columns[self.annot.columns.str.contains("Log10_ttest:")]
@@ -146,7 +197,15 @@ class Visualizer:
         return figures
 
     def cv_plot(self):
-        """Creates a plot of CV values for all conditions."""
+
+        """
+        Creates a plot of CV values for all conditions.
+
+        Returns
+        -------
+        dict
+            A dictionary with a key "cv_plot" and a value of a matplotlib Figure object of the CV plot.
+        """
 
         colors = sns.color_palette("husl", len(self.conditions))
 
@@ -165,7 +224,15 @@ class Visualizer:
             return {"cv_plot": g}
 
     def fold_plot(self):
-        """Creates a plot of fold changes of all peptides in the dataset for all conditions."""
+
+        """
+        Creates a plot of fold changes of all peptides in the dataset for all conditions.
+
+        Returns
+        -------
+        dict
+            A dictionary with each key being a condition and the value being a corresponding matplotlib Figure object of the plot.
+        """
 
         columns = self.annot.columns[self.annot.columns.str.contains("Log2_fold_change:")]
         figures = {}
@@ -181,8 +248,15 @@ class Visualizer:
         return figures
 
     def fold_termini(self):
-        """Creates a plot of fold changes for internal and n-terminal peptides
-        across all conditions."""
+
+        """
+        Creates a plot of fold changes for internal and n-terminal peptides across all conditions.
+
+        Returns
+        -------
+        dict
+            A dictionary with each key being a condition appended with 'internal_nterm' or 'natural_nterm' and the value being a corresponding matplotlib Figure object of the plot.
+        """
 
         columns = self.annot.columns[self.annot.columns.str.contains("Log2_fold_change:")]
         figures = {}
@@ -211,7 +285,16 @@ class Visualizer:
         return figures
 
     def heatmap(self):
-        """Heatmap of all quantification columns"""
+
+        """
+        Generate a heatmap of all quantification columns in the DataFrame.
+        
+        The heatmap uses logarithmic scaling with base 10. Zero values in the data are replaced with np.nan.
+        Heatmap does not display y-tick labels for clarity.
+        
+        Returns:
+            dict: A dictionary with "heatmap" as a key and the seaborn heatmap figure as the value.
+        """
 
         columns = self.df.columns[self.df.columns.str.contains(self.patterns['quant'])]
 
@@ -225,7 +308,16 @@ class Visualizer:
             return {"heatmap": fig}
 
     def clustermap(self):
-        """Heatmap of all quantification columns"""
+
+        """
+        Generate a clustermap of all quantification columns in the DataFrame.
+
+        The clustermap uses logarithmic scaling with base 10. Zero values in the data are replaced with np.nan.
+        Clustermap does not display y-tick labels for clarity.
+        
+        Returns:
+            dict: A dictionary with "clustermap" as a key and the seaborn clustermap figure as the value.
+        """
 
         columns = self.df.columns[self.df.columns.str.contains(self.patterns['quant'])]
 
@@ -238,7 +330,16 @@ class Visualizer:
             return {"clustermap": fig.fig}
     
     def generate_pie_charts(self):
-        """Generates pie charts for the different peptide categories."""
+        """
+        Generate a series of pie charts for different peptide categories based on the DataFrame. 
+        
+        Pie charts represent characteristics such as the proportion of lysines that are labelled, 
+        the proportion of N-termini that are acetylated, etc. The specific pie charts created 
+        depend on the peptide modifications and annotations present in the data. 
+
+        Returns:
+            dict: A dictionary where keys are the names of the pie charts and values are the generated figures.
+        """
 
         figures = {}  
         
@@ -354,7 +455,17 @@ class Visualizer:
         return figures
 
     def gallery(self, stat=False, cutoff=0.05, folder=None):
-        """Generate a gallery of the significant peptides."""
+
+        """
+        Generate a PDF gallery of significant peptides from the DataFrame based on a given cutoff.
+        
+        Args:
+            stat (bool): A boolean flag to specify if the peptides to consider are statistically significant.
+            cutoff (float): A threshold for determining the significance of peptides.
+            folder (str): A string representing the path to the folder where the gallery PDF will be saved.
+
+        Note: If the folder does not exist, it will be created.
+        """
 
         indices = self.get_significant_indices(stat, cutoff)
         accs = self.annot.loc[indices, "query_accession"].unique()
@@ -393,6 +504,18 @@ class Visualizer:
         pp.close()
 
     def get_significant_indices(self, stat, cutoff):
+
+        """
+        Returns the indices of significant peptides in the DataFrame based on a given cutoff.
+        
+        Args:
+            stat (bool): A boolean flag to specify if the peptides to consider are statistically significant.
+            cutoff (float): A threshold for determining the significance of peptides.
+        
+        Returns:
+            list: A list of indices of the significant peptides.
+        """
+            
         if stat:
             if len(self.conditions) == 2 or self.pairwise:
                 cols = self.annot.columns[self.annot.columns.str.startswith("Ttest:")]
@@ -410,10 +533,18 @@ class Visualizer:
                 ind = self.annot[self.annot[col].str.contains("significant", na=False)].index
                 indices += list(ind)
             indices = list(set(indices))
+
         return indices
     
     def pca_visualization(self):
-        """Perform PCA on the quantification columns and visualize the results."""
+
+        """
+        Performs Principal Component Analysis (PCA) on the quantification columns of the DataFrame 
+        and generates a visualization of the results.
+        
+        Returns:
+            dict: A dictionary with the key "PCA" and the value is the PCA figure.
+        """
 
         # Get data and perform PCA on quantification columns
         data_columns = self.df.columns[self.df.columns.str.contains(self.patterns['quant'])]
@@ -465,7 +596,14 @@ class Visualizer:
         return {"PCA": fig}
 
     def umap_visualization(self):
-        """Perform UMAP on the quantification columns and visualize the results."""
+
+        """
+        Performs Uniform Manifold Approximation and Projection (UMAP) on the quantification columns 
+        of the DataFrame and generates a visualization of the results.
+        
+        Returns:
+            dict: A dictionary with the key "UMAP" and the value is the UMAP figure.
+        """
 
         # Get data and perform UMAP on quantification columns
         data_columns = self.df.columns[self.df.columns.str.contains(self.patterns['quant'])]
@@ -517,7 +655,19 @@ class Visualizer:
         return {"UMAP": fig}
     
     def plot_protein(self, cutoff=0.05, folder=None, merops=None, alphafold=None, level=None):
-        """Plots significant peptides for each condition on protein sequence and structure."""
+
+        """
+        Plots significant peptides for each condition on protein sequence and structure.
+        
+        Args:
+            cutoff (float): A threshold for determining the significance of peptides.
+            folder (str): A string representing the path to the folder where the plots will be saved.
+            merops (str): A string specifying the MEROPS database identifier for the protein.
+            alphafold (str): A string specifying the AlphaFold model identifier for the protein.
+            level (str): A string specifying the level of detail to include in the plot.
+
+        Note: If the folder does not exist, it will be created.
+        """
 
         if len(self.conditions) == 2 or self.pairwise:
             cols = self.annot.columns[self.annot.columns.str.startswith("Ttest:")]
@@ -537,7 +687,16 @@ class Visualizer:
                         plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level)
 
     def plot_functional_enrichment(self, cutoff=0.05):
-        """Extract the protein accessions of significant peptides for each condition."""
+
+        """
+        Performs a functional enrichment analysis and generates a bar plot of the results.
+        
+        Args:
+            cutoff (float): A threshold for determining the significance of peptides.
+        
+        Returns:
+            dict: A dictionary where the keys are condition names and the values are the corresponding figures.
+        """
 
         if len(self.conditions) == 2 or self.pairwise:
             cols = self.annot.columns[self.annot.columns.str.startswith("Ttest:")]
@@ -558,7 +717,16 @@ class Visualizer:
         return figures
     
     def plot_pathway_enrichment(self, cutoff=0.05, folder=None):
-        """Extract the protein accessions of significant peptides for each condition."""
+
+        """
+        Performs a pathway enrichment analysis and generates pathway plots for significant peptides.
+        
+        Args:
+            cutoff (float): A threshold for determining the significance of peptides.
+            folder (str): A string representing the path to the folder where the pathway plots will be saved.
+
+        Note: If the folder does not exist, it will be created.
+        """
 
         cols = self.annot.columns[self.annot.columns.str.startswith("Ttest:")]
 
@@ -574,7 +742,26 @@ class Visualizer:
 
     
 def create_pie_chart(y, x, colors, explode):
-    """Creates a pie chart of the given data."""
+
+    """
+    Creates a pie chart of the given data.
+    
+    Parameters
+    ----------
+    y : pandas.Series or numpy.array
+        The values for each pie slice.
+    x : list
+        The labels for each pie slice.
+    colors : list
+        The colors for each pie slice.
+    explode : list
+        Specifies the fraction of the radius with which to offset each pie slice.
+        
+    Returns
+    -------
+    matplotlib.figure.Figure
+        The created figure object.
+    """
 
     porcent = 100.0 * y / y.sum()
     patches, texts = plt.pie(y, explode=explode, colors=colors, startangle=90, normalize=True)
@@ -592,7 +779,27 @@ def create_pie_chart(y, x, colors, explode):
 
 
 def generate_bar_plot(ax, data, palette, title, xticklabels_rotation=90):
-    """Generate a bar plot with the given data and parameters."""
+
+    """
+    Generate a bar plot with the given data and parameters.
+
+    Parameters
+    ----------
+    ax : matplotlib.axes.Axes
+        The matplotlib axes to draw on.
+    data : dict
+        The data to plot.
+    palette : list or dict
+        The colors to use for the bars.
+    title : str
+        The title of the plot.
+    xticklabels_rotation : int, optional
+        The rotation angle of the x tick labels.
+
+    Returns
+    -------
+    None
+    """
 
     names = [k for k in data.keys()]
     values = [v for v in data.values()]
@@ -602,7 +809,24 @@ def generate_bar_plot(ax, data, palette, title, xticklabels_rotation=90):
 
 
 def get_mean_values_data(columns, natural, internal):
-    """Get the mean values for the given columns in the natural and internal dataframes."""
+        
+    """
+    Get the mean values for the given columns in the natural and internal dataframes.
+
+    Parameters
+    ----------
+    columns : list
+        The columns to compute the mean of.
+    natural : pandas.DataFrame
+        The dataframe representing the natural data.
+    internal : pandas.DataFrame
+        The dataframe representing the internal data.
+
+    Returns
+    -------
+    dict
+        A dictionary with the column names as keys and the computed means as values.
+    """
 
     type_term = ["natural", "internal"]
     data = {}
@@ -613,7 +837,24 @@ def get_mean_values_data(columns, natural, internal):
 
 
 def get_quant_values_data(columns, natural, internal):
-    """Get the quant values for the given columns in the natural and internal dataframes."""
+
+    """
+    Get the quant values for the given columns in the natural and internal dataframes.
+
+    Parameters
+    ----------
+    columns : list
+        The columns to get the values of.
+    natural : pandas.DataFrame
+        The dataframe representing the natural data.
+    internal : pandas.DataFrame
+        The dataframe representing the internal data.
+
+    Returns
+    -------
+    dict
+        A dictionary with the column names as keys and the retrieved values as values.
+    """
 
     type_term = ["natural", "internal"]
     data = {}
@@ -625,7 +866,26 @@ def get_quant_values_data(columns, natural, internal):
 
 
 def extract_protein_features(acc, record, merops, subframe):
-    """Extracts the protein features from the UniProt record and the MEROPS database."""
+
+    """
+    Extracts the protein features from the UniProt record and the MEROPS database.
+
+    Parameters
+    ----------
+    acc : str
+        The UniProt accession number.
+    record : Bio.SeqRecord.SeqRecord
+        The UniProt record.
+    merops : pandas.DataFrame
+        The MEROPS database dataframe.
+    subframe : pandas.DataFrame
+        The subframe representing the relevant data.
+
+    Returns
+    -------
+    list
+        A list of GraphicFeature objects representing the extracted features.
+    """
 
     features = []
     colors_native = {"SIGNAL":'palevioletred', "PROPEP":'peru', "TRANSIT":'darkcyan'}
@@ -649,30 +909,56 @@ def extract_protein_features(acc, record, merops, subframe):
         cleavage_sites = merops[merops["uniprot_acc"]== acc]["p1"].values
         codes = merops[merops["uniprot_acc"]== acc]["code"].values
 
-        peptide_positions = set()
+        peptide_starts = set()
         for _, row in subframe.iterrows():
             try:
-                start, end = int(row['start_pep']), int(row['end_pep'])
-                peptide_positions.update(range(start, end+1))
+                start = int(row['start_pep'])
+                peptide_starts.add(start)
             except:
                 continue
 
         for site, code in zip(cleavage_sites, codes):
-            if site in peptide_positions:
+            site = int(site) + 1 #account for MEROPS p1 indexing (shifted by 1 to convert to p1')
+            label = f"{code}: {str(site-1)}-{str(site)}"
+            # Check if the cleavage site matches the start of a peptide
+            if site in peptide_starts:
                 gf = GraphicFeature(
                     start=site,
                     end=site,
                     strand=1,
                     color="seashell",
-                    label=code + str(site)
+                    label=label
                 )
                 features.append(gf)
 
-    return features
+        return features
 
 
 def get_pymol_image(acc, positions, colormap, vmin, vmax, alphafold):
-    """Get the image of the protein structure with the significant positions highlighted."""
+
+    """
+    Get the image of the protein structure with the significant positions highlighted.
+
+    Parameters
+    ----------
+    acc : str
+        The UniProt accession number.
+    positions : list
+        The positions to highlight.
+    colormap : matplotlib.colors.Colormap
+        The colormap to use for highlighting.
+    vmin : float
+        The minimum value of the colormap.
+    vmax : float
+        The maximum value of the colormap.
+    alphafold : dict
+        The AlphaFold data.
+
+    Returns
+    -------
+    numpy.array or None
+        The image data, or None if the AlphaFold model is not available.
+    """
     
     if acc not in alphafold:
         logging.warning(f"Alphafold model for {acc} not available.")
@@ -731,8 +1017,23 @@ def get_pymol_image(acc, positions, colormap, vmin, vmax, alphafold):
 
 
 def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level):
-    """Plots the protein sequence with the significant peptides highlighted, and saves the figure to the PDF file.
-    Also adds existing protein features to the figure."""
+
+    """
+    Plots the protein sequence and structure with the significant peptides highlighted, and saves the figure to the PDF file.
+    Also adds existing protein features to the figure.
+
+    Args:
+        pp (PdfPages object): Object to which the figure is saved.
+        subframe (DataFrame): DataFrame containing peptide information.
+        acc (str): UniProt Accession of the protein of interest.
+        col (str): Column name in the DataFrame to be considered for the plot.
+        merops (str): Identifier for the MEROPS database.
+        alphafold (bool): If True, use AlphaFold to create protein structure. 
+        level (str): Level of detail in the plot.
+
+    Returns:
+        None. The function saves a figure to the PDF file represented by `pp`.
+    """
 
     # get the protein record from UniProt
     record = SwissProt.read(ExPASy.get_sprot_raw(acc))
@@ -747,6 +1048,10 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level):
 
     # get the significant peptides
     col_fold = col.replace('_', '/').replace('Ttest', 'Log2_fold_change')
+
+    # Collapse duplicate peptides and take the mean of fold changes
+    subframe = subframe.groupby(['query_sequence', 'start_pep', 'end_pep']).agg({col_fold: 'mean'}).reset_index()
+
     fold_changes = subframe[col_fold].values
 
     # Create a colormap centered at 0
@@ -788,12 +1093,24 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level):
     
     ax2.axis('off')
     plt.suptitle(title, x=0.02, fontsize=14, horizontalalignment='left')
+    plt.subplots_adjust()
     plt.savefig(pp, format="pdf")
     plt.close()
 
 
 def plot_enrichment_figure(genes, col_name, organism='hsapiens'):
-    """Perform functional enrichment analysis with gprofiler and plot the results."""
+
+    """
+    Perform functional enrichment analysis with gprofiler and plot the results.
+
+    Args:
+        genes (list): List of gene names to be considered for enrichment analysis.
+        col_name (str): Column name to be displayed in the heatmap title.
+        organism (str): Organism to be considered for enrichment analysis. Default is 'hsapiens' (Homo sapiens).
+
+    Returns:
+        fig (Figure object): The generated figure, or None if no significant results were found.
+    """
 
     # Initialize gprofiler
     gp = GProfiler(return_dataframe=True)
@@ -824,7 +1141,19 @@ def plot_enrichment_figure(genes, col_name, organism='hsapiens'):
 
 
 def plot_pathway_figures(subframe, col_fold, pp, cutoff=0.05):
-    """Perform pathway enrichment analysis with Reactome and plot the results."""
+
+    """
+    Perform pathway enrichment analysis with Reactome and plot the results.
+
+    Args:
+        subframe (DataFrame): DataFrame containing peptide information.
+        col_fold (str): Column name representing fold changes in the DataFrame.
+        pp (PdfPages object): Object to which the figure is saved.
+        cutoff (float): P-value cutoff for pathway enrichment. Default is 0.05.
+
+    Returns:
+        None. The function saves a figure to the PDF file represented by `pp`.
+    """
 
     # Get the list of proteins
     accessions = subframe["query_accession"].unique()
@@ -867,7 +1196,20 @@ def plot_pathway_figures(subframe, col_fold, pp, cutoff=0.05):
 
 
 def create_labels_colors(proteins, cleavages, subframe, accs, col_fold):
-    """Create labels and colors for proteins and cleavages."""
+
+    """
+    Create labels and colors for proteins and cleavages.
+
+    Args:
+        proteins (list): List of protein identifiers.
+        cleavages (list): List of cleavage site identifiers.
+        subframe (DataFrame): DataFrame containing peptide information.
+        accs (list): List of protein accessions considered in the study.
+        col_fold (str): Column name representing fold changes in the DataFrame.
+
+    Returns:
+        Tuple containing label and color information for proteins and cleavages.
+    """
 
     # Create a colormap for proteins and peptides
     protein_cmap = plt.cm.PuOr
@@ -913,7 +1255,33 @@ def create_labels_colors(proteins, cleavages, subframe, accs, col_fold):
 
 
 def visualize_network(network, proteins, protein_edgelist, protein_colors, protein_labels, protein_cmap, cleavages, cleavage_edgelist, cleavage_colors, cleavage_labels, peptide_cmap, col_fold, subframe, pathway_stId, pathways, i):
-    """Visualize the network."""
+    
+    """
+    Visualize the protein-cleavage network using matplotlib and networkx. 
+    The network is represented as a graph with two types of nodes (proteins and cleavages) 
+    and edges between them. 
+
+    Args:
+        network (networkx.classes.graph.Graph): Graph object representing the protein-cleavage network.
+        proteins (list): List of protein identifiers.
+        protein_edgelist (list): List of tuples representing edges between proteins.
+        protein_colors (list): List of colors for the protein nodes.
+        protein_labels (dict): Dictionary mapping proteins to their labels.
+        protein_cmap (matplotlib.colors.Colormap): Colormap for proteins.
+        cleavages (list): List of cleavage site identifiers.
+        cleavage_edgelist (list): List of tuples representing edges between cleavage sites.
+        cleavage_colors (list): List of colors for the cleavage nodes.
+        cleavage_labels (dict): Dictionary mapping cleavages to their labels.
+        peptide_cmap (matplotlib.colors.Colormap): Colormap for cleavages.
+        col_fold (str): Column name representing fold changes in the DataFrame.
+        subframe (DataFrame): DataFrame containing peptide information.
+        pathway_stId (str): ID of the pathway to be visualized.
+        pathways (list): List of pathways.
+        i (int): Index of the current pathway in the `pathways` list.
+
+    Returns:
+        fig (matplotlib.figure.Figure): The generated figure.
+    """
 
     # Define positions for the nodes in the network
     # Try to use the Graphviz layout, otherwise default to the spring layout

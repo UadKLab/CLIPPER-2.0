@@ -12,12 +12,24 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from tqdm import tqdm
+
 import pymol
 from reactome2py import analysis, content
 import networkx as nx
 
+
 def initialize_logger(logfile):
-    """Initializes the logger with a file handler and a console handler."""
+    
+    """
+    Initializes the logger with a file handler and a console handler.
+    
+    Parameters:
+    logfile (str): The name of the file to log output messages to.
+    
+    Returns:
+    logger (logging.RootLogger): A logger with two handlers - one for console output and one for file output.
+    """
 
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
@@ -37,8 +49,15 @@ def initialize_logger(logfile):
 
     return logger
 
+
 def initialize_arguments():
-    """Initializes a parser instance and adds arguments for annotator."""
+
+    """
+    Initializes a parser instance and adds arguments for the annotator.
+    
+    Returns:
+    args (dict): A dictionary containing all of the command line arguments provided by the user.
+    """
 
     parser = ArgumentParser(
         prog="CLIPPER 2.0",
@@ -294,7 +313,16 @@ def initialize_arguments():
 
 
 def initialize(arguments=None):
-    """Initializes the logger and the command line arguments."""
+
+    """
+    Initializes the logger and the command line arguments.
+    
+    Parameters:
+    arguments (dict, optional): Command line arguments parsed into a dictionary. Defaults to None.
+    
+    Returns:
+    arguments (dict): Initialized arguments with logger and timestamp information.
+    """
 
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     basefolder = Path.cwd().parent.absolute()
@@ -312,8 +340,16 @@ def initialize(arguments=None):
 
 
 def parse_arguments(parser):
-    """Parses arguments, returns a dictionary with all key value argument
-    pairs."""
+
+    """
+    Parses arguments, returns a dictionary with all key value argument pairs.
+    
+    Parameters:
+    parser (ArgumentParser): ArgumentParser object with defined command-line arguments.
+    
+    Returns:
+    arg_dict (dict): Dictionary containing all the command-line arguments parsed.
+    """
 
     args = parser.parse_args()
     logging.info("Arguments parsed")
@@ -323,7 +359,16 @@ def parse_arguments(parser):
 
 
 def parse_sequence(seq: str):
-    """Parses peptide sequence from annotated sequence input."""
+
+    """
+    Parses peptide sequence from annotated sequence input.
+    
+    Parameters:
+    seq (str): Annotated sequence input string.
+    
+    Returns:
+    str: Peptide sequence.
+    """
 
     if not seq:
         return None
@@ -336,7 +381,16 @@ def parse_sequence(seq: str):
 
 
 def parse_acc(acc_string: str):
-    """Parses and selects the first accession for a list of uniprot ids."""
+
+    """
+    Parses and selects the first accession for a list of uniprot ids.
+    
+    Parameters:
+    acc_string (str): String with list of uniprot ids.
+    
+    Returns:
+    str: The first uniprot id in the list.
+    """
 
     if not acc_string:
         return None
@@ -349,7 +403,17 @@ def parse_acc(acc_string: str):
 
 
 def map_dict(annot_df_row: pd.core.series.Series, annot_dict: dict):
-    """Maps values to annotation dataframe row."""
+
+    """
+    Maps values to annotation dataframe row.
+    
+    Parameters:
+    annot_df_row (pd.core.series.Series): DataFrame row where the values will be mapped.
+    annot_dict (dict): Dictionary with values to be mapped.
+    
+    Returns:
+    pd.core.series.Series: DataFrame row with mapped values.
+    """
 
     for key in annot_dict:
         annot_df_row.loc[key] = annot_dict[key]
@@ -358,7 +422,16 @@ def map_dict(annot_df_row: pd.core.series.Series, annot_dict: dict):
 
 
 def read_alphafold_accessions(accession_file: str):
-    """Reads accessions from a file and returns a list of accessions."""
+
+    """
+    Reads accessions from a file and returns a list of accessions.
+    
+    Parameters:
+    accession_file (str): Name of the file containing accessions.
+    
+    Returns:
+    list: List of accessions.
+    """
 
     with open(accession_file, "r") as f:
         accessions = f.read().splitlines()
@@ -366,49 +439,74 @@ def read_alphafold_accessions(accession_file: str):
     return accessions
 
 
-def get_structure_properties(acc, position, env_length=4, available_models=None):
-    """Computes the solvent accessible surface area of a peptide. Takes 
-    the UniProt accession, the position of the cleavage in the protein, and
-    a list of available models. Returns the solvent accessible surface area,
-    around the cleavage site, or None if the model is not available."""
+def get_structure_properties(acc_cleavage_sites, env_length=4, available_models=None):
 
-    if available_models is not None and acc not in available_models:
-        logging.warning(f"Model for {acc} not available")
-        return np.nan, np.nan
+    """
+    Computes the solvent accessible surface area of a peptide.
     
+    Parameters:
+    acc_cleavage_sites (dict): A dictionary of UniProt accession and cleavage sites.
+    env_length (int, optional): Length of the environment around the cleavage site.
+    available_models (list, optional): A list of available models. 
+
+    Returns:
+    dict: A dictionary with the solvent accessible surface area around the cleavage site,
+    or None if the model is not available.
+    """
+
+    structure_properties = {}
     alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
     alphafold_folder = Path(alphafold_folder_name)
-    model_filename = f"AF-{acc}-F1-model_v4.cif.gz"
-    model_path = alphafold_folder / model_filename
-    
-    # Load the model
-    with tempfile.NamedTemporaryFile(suffix=".cif", delete=False) as temp_cif:
-        # Open the gzipped CIF file
-        with gzip.open(model_path, 'rb') as f_in:
-            # Write the decompressed contents to the temporary file
-            temp_cif.write(f_in.read())
-        
-        temp_cif.flush()  # Ensure the file is written
 
-        pymol.cmd.delete('all')
-        pymol.cmd.load(temp_cif.name, acc)
-        pymol.cmd.select('sel', f'resi {position - (env_length - 1)}-{position + env_length} and {acc}')
+    for acc, cleavage_sites_indices in tqdm(acc_cleavage_sites.items()):
+        if available_models is not None and acc not in available_models:
+            logging.warning(f"Model for {acc} not available")
+            continue
 
-    # Compute the secondary structure
-    pymol.cmd.dss(acc)
-    ss_list = []
-    pymol.cmd.iterate('sel and name ca', 'ss_list.append(ss)', space=locals())
-    ss = ''.join(ss_list)
+        # Load the model
+        model_filename = f"AF-{acc}-F1-model_v4.cif.gz"
+        model_path = alphafold_folder / model_filename
 
-    # Compute the solvent accessible surface area
-    pymol.cmd.set('dot_solvent', 1)
-    sa= pymol.cmd.get_area('sel')
+        with tempfile.NamedTemporaryFile(suffix=".cif", delete=False) as temp_cif:
+            # Open the gzipped CIF file
+            with gzip.open(model_path, 'rb') as f_in:
+                # Write the decompressed contents to the temporary file
+                temp_cif.write(f_in.read())
+            
+            temp_cif.flush()  # Ensure the file is written
 
-    return ss, sa
+            pymol.cmd.delete('all')
+            pymol.cmd.load(temp_cif.name, acc)
+
+            for index, cleavage_site in cleavage_sites_indices:
+                pymol.cmd.select('sel', f'resi {cleavage_site - (env_length - 1)}-{cleavage_site + env_length} and {acc}')
+
+                # Compute the secondary structure
+                pymol.cmd.dss(acc)
+                ss_list = []
+                pymol.cmd.iterate('sel and name ca', 'ss_list.append(ss)', space=locals())
+                ss = ''.join(ss_list)
+
+                # Compute the solvent accessible surface area
+                pymol.cmd.set('dot_solvent', 1)
+                sa= pymol.cmd.get_area('sel')
+
+                structure_properties[(acc, cleavage_site)] = (index, ss, sa)
+
+    return structure_properties
 
 
 def map_accessions(accessions):
-    """Map protein accessions to human gene names using the Reactome API."""
+
+    """
+    Map protein accessions to human gene names using the Reactome API.
+    
+    Parameters:
+    accessions (list): A list of protein accessions.
+
+    Returns:
+    list: A list of human gene names corresponding to the input accessions.
+    """
 
     accessions_str = ",".join(accessions)
     mapping = analysis.identifiers_mapping(ids=accessions_str, interactors=False, projection=True)
@@ -420,7 +518,17 @@ def map_accessions(accessions):
 
 
 def get_enriched_pathways(accs, cutoff=0.05):
-    """Get enriched pathways from Reactome using reactome2py."""
+
+    """
+    Get enriched pathways from Reactome using reactome2py.
+    
+    Parameters:
+    accs (list): A list of protein accessions.
+    cutoff (float, optional): The P-value cutoff for pathway enrichment.
+
+    Returns:
+    dict: A dictionary of enriched pathways and associated statistics.
+    """
 
     # Use reactome2py to perform the analysis
     query = ",".join(accs)
@@ -440,7 +548,16 @@ def get_enriched_pathways(accs, cutoff=0.05):
 
 
 def get_proteins_and_interactors(pathway_id):
-    """Get the proteins and interactors for a pathway."""
+
+    """
+    Get the proteins and interactors for a pathway.
+    
+    Parameters:
+    pathway_id (str): A Reactome pathway ID.
+
+    Returns:
+    tuple: A tuple with two lists, one of proteins and one of interaction maps.
+    """
 
     path_res = content.participants_reference_entities(pathway_id)
     proteins = [p['identifier'] for p in path_res if p['identifier'][0] in list(string.ascii_uppercase) and len(p['identifier']) == 6]
@@ -464,7 +581,17 @@ def get_proteins_and_interactors(pathway_id):
 
 
 def construct_edgelists(subframe, interaction_map):
-    """Constructs the edgelists for the protein and cleavage networks."""
+
+    """
+    Constructs the edgelists for the protein and cleavage networks.
+    
+    Parameters:
+    subframe (pd.DataFrame): A pandas DataFrame with sub-frame data.
+    interaction_map (dict): An interaction map.
+
+    Returns:
+    tuple: A tuple with three elements - protein edgelist, cleavage edgelist, and cleavages.
+    """
 
     protein_edgelist = []
     for source, targets in interaction_map.items():
@@ -489,7 +616,18 @@ def construct_edgelists(subframe, interaction_map):
 
 
 def construct_network(protein_edgelist, cleavage_edgelist, proteins):
-    """Constructs a network from the protein and cleavage edgelists."""
+
+    """
+    Constructs a network from the protein and cleavage edgelists.
+    
+    Parameters:
+    protein_edgelist (list): A list of tuples representing edges between proteins.
+    cleavage_edgelist (list): A list of tuples representing edges from proteins to cleavages.
+    proteins (list): A list of protein identifiers.
+
+    Returns:
+    nx.DiGraph: A NetworkX directed graph object representing the network.
+    """
 
     network = nx.DiGraph()
     # protein edges
@@ -503,7 +641,17 @@ def construct_network(protein_edgelist, cleavage_edgelist, proteins):
 
 
 def save_figures(figures, folders):
-    """Saves figures to output folder."""
+    
+    """
+    Saves figures to output folder.
+    
+    Parameters:
+    figures (dict): A dictionary containing matplotlib figure objects.
+    folders (dict): A dictionary containing output folder paths.
+
+    Returns:
+    None
+    """
 
     for k in figures:
         if figures[k] is not None:

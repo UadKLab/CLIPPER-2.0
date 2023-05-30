@@ -107,10 +107,10 @@ Example runs:
 - [x] Visualize cleavages in structure
     - [x] Downloaded Alphafold EBI database
     - [x] Plot structures
-- [ ] Remove peptide duplicates before plotting on seq and structure
+- [x] Remove peptide duplicates before plotting on seq and structure
 - [x] Add secondary structure annotation
 - [x] Add solvent accessibility annotation
-- [ ] Modify ss and sasa calculations to read each protein once
+- [x] Modify ss and sasa calculations to read each protein once
 - [x] Gprofiler - metascape GO enrichment
 - [x] Pathway annotation/significance
 - [x] Protease prediction (PSSM/GOtosubstrates)
@@ -119,7 +119,7 @@ Example runs:
 - [x] Static Uniprot entry lookup
     - [x] Will not be implemented
 - [ ] Update and prepare for publication
-- [ ] Write doc strings and prepare documentation
+- [x] Write doc strings and prepare documentation
 - [ ] Write tests
 - [ ] Update application and website
 - [ ] Figure out hosting

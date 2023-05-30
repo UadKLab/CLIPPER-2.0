@@ -40,7 +40,15 @@ class Clipper:
     """
 
     def __init__(self, args):
-        """Initialize the Annotator class, and set the attributes from the arguments."""
+
+        """
+        Initialize the Annotator class and set the attributes from the provided arguments.
+
+        Parameters
+        ----------
+        args : dict
+            A dictionary of arguments for setting various internal attributes related to input, output, data handling, and visualization parameters.
+        """ 
 
         # global variables
         self.result_folder_name = "results"
@@ -113,7 +121,10 @@ class Clipper:
         logging.info("Initialization successful.")
 
     def validate_input_output_formats(self):
-        """Validate the input and output file formats."""
+
+        """
+        Validate the input and output file formats based on their file extensions.
+        """
 
         if self.infile_type == "infer":
             if self.infile.endswith(".csv"):
@@ -143,14 +154,24 @@ class Clipper:
             self.raise_invalid_file_format_error("protease file")
 
     def raise_invalid_file_format_error(self, file_type):
-        """Raise an error if the input or output file format is invalid."""
+
+        """
+        Raise an error if the input or output file format is invalid.
+
+        Parameters
+        ----------
+        file_type : str
+            The type of the file that caused the error, e.g., "input", "output".
+        """
 
         error_message = f"Invalid {file_type} format. Please select a valid {file_type} format and try again."
         logging.critical(f"{error_message}. Exiting with code 1.")
         raise TypeError(error_message)
     
     def set_input_output_paths(self):
-        """Set the paths to the input and output files."""
+        """
+        Set the paths for the input and output files, and for the folders where different types of plots will be saved.
+        """
 
         if self.outname:
             self.outfolder = self.resultfolder / self.outname
@@ -173,7 +194,9 @@ class Clipper:
                         "enrichment": self.enrichment_folder, "pathway": self.pathway_folder}
 
     def load_data(self):
-        """Load the input data into a Pandas DataFrame."""
+        """
+        Load the input data into a Pandas DataFrame.
+        """
 
         logging.info("Reading file...")
         self.read_file()
@@ -181,7 +204,10 @@ class Clipper:
         logging.info(f"Read input with {len(self.df)} peptides\n")
 
     def set_software(self):
-        """Set the software used to generate the input file, and generate the indexing patterns."""
+        """
+        Identify the software used to generate the input file, based on the structure of the data.
+        Generate the indexing patterns according to the identified software.
+        """
 
         if self.software == "infer":
             try:
@@ -210,7 +236,10 @@ class Clipper:
         logging.info("Format check complete.\n")
 
     def remove_empty_accessions(self):
-        """Remove rows with empty accession numbers."""
+
+        """
+        Remove rows from the dataframe that contain empty accession numbers.
+        """
 
         col_acc = self.patterns['acc']
         invalid_acc = self.df[col_acc].isna()
@@ -219,7 +248,11 @@ class Clipper:
             self.df = self.df[~invalid_acc].reset_index(drop=True)
 
     def remove_empty_sequences(self):
-        """Remove rows with empty sequences."""
+
+        """
+        Remove rows from the dataframe that contain empty sequences.
+        """
+
         col_seq = self.patterns['seq']
         invalid_seq = self.df[col_seq].isna()
         if invalid_seq.any():
@@ -227,7 +260,10 @@ class Clipper:
             self.df = self.df[~invalid_seq].reset_index(drop=True)
 
     def remove_invalid_alphabets(self):
-        """Remove rows with invalid amino acid characters."""
+            
+        """
+        Remove rows from the dataframe that contain invalid amino acid characters.
+        """
 
         col_seq = self.patterns['seq']
         pattern = self.patterns['amino']
@@ -237,14 +273,23 @@ class Clipper:
             self.df = self.df[~invalid_alphabet].reset_index(drop=True)
 
     def sanitize(self):
-        """Sanitize the dataframe."""
+
+        """
+        Apply all sanitization steps to the dataframe:
+        - Remove rows with empty accessions
+        - Remove rows with empty sequences
+        - Remove rows with invalid amino acid characters
+        """
         
         self.remove_empty_accessions()
         self.remove_empty_sequences()
         self.remove_invalid_alphabets()
 
     def filter_df(self):
-        """Uses --level to remove peptides not in desired level."""
+
+        """
+        Filters the dataframe based on the level (nterm/quant) provided by the user.
+        """
 
         try:
             if self.level == "nterm":
@@ -275,7 +320,10 @@ class Clipper:
             self.df = self.df.dropna(subset=columns, how="all")
             
     def prepare(self):
-        """Control of arguments from user input."""
+
+        """
+        Perform a series of preparatory steps based on user input, including validation, data loading, software setting, and folder creation.
+        """
 
         self.validate_input_output_formats()
         self.set_input_output_paths()
@@ -289,7 +337,10 @@ class Clipper:
         self.make_folders()
 
     def make_folders(self):
-        """Create output folders."""
+
+        """
+        Creates necessary output folders in the specified directory.
+        """
 
         os.mkdir(self.outfolder)
 
@@ -309,14 +360,21 @@ class Clipper:
                     os.mkdir(self.pathway_folder)
 
     def read_condition_file(self):
-        """Parses and stores information about conditions and corresponding channels."""
+            
+        """
+        Reads and parses the condition file, storing information about conditions and corresponding channels.
+        """
+
         with open(self.conditionfile, "r") as fh:
             self.conditions = {
                 line.split()[0]: line.split()[1:] for line in fh.readlines()
             }
 
     def read_MEROPS(self):
-        """Read MEROPS data from csv files."""
+
+        """
+        Read the MEROPS data from csv files and store them in dataframes.
+        """
 
         logging.info("Reading MEROPS data..")
         self.merops = pd.read_csv(self.datafolder / self.merops_filename)
@@ -327,13 +385,21 @@ class Clipper:
         self.merops_sub = pd.read_csv(self.datafolder / self.merops_sub_filename)
 
     def read_protein_atlas(self):
-        """Read Protein Atlas data from TSV file."""
+
+        """
+        Read the Protein Atlas data from a TSV file and store it in a dataframe.
+        """
 
         logging.info("Reading Protein Atlas data..")
         self.protein_atlas = pd.read_csv(self.datafolder / self.protein_atlas_filename, sep='\t')
         logging.info("Read Protein Atlas data.")
 
     def read_available_models(self):
+
+        """
+        Read the available AlphaFold models from the specified directory.
+        """
+            
         # read available alphafold models
         logging.info("Reading available AlphaFold models...")
         available_models = annutils.read_alphafold_accessions(self.datafolder / self.alphafold_models_filename)
@@ -342,8 +408,15 @@ class Clipper:
         self.available_models = available_models
 
     def initialize_annotation(self, length: int):
-        """Initialize a dataframe with empty annotation columns, same size as
-        input df."""
+
+        """
+        Initialize a dataframe with empty annotation columns, with the same number of rows as the input dataframe.
+        
+        Parameters
+        ----------
+        length : int
+            The number of rows in the input dataframe.
+        """
 
         self.annot = pd.DataFrame(
             columns=[
@@ -373,7 +446,11 @@ class Clipper:
             self.annot.drop(["protease_merops_code", "protease_merops_name"], axis=1, inplace=True)
 
     def read_file(self):
-        """Reads input file, returns dataframe object."""
+            
+        """
+        Reads the input file and returns a dataframe object. Supports CSV and Excel file formats.
+        """
+
         try:
             if self.infile_type == "csv":
                 logging.info("Input is csv")
@@ -392,9 +469,11 @@ class Clipper:
 
         self.df = df
 
-
     def read_protease_file(self):
-        """Parses and stores information about proteases."""
+
+        """
+        Reads information about proteases from a specified file.
+        """
 
         with open(self.proteasefile, "r") as fh:
             self.proteases = {
@@ -402,7 +481,12 @@ class Clipper:
             }
 
     def handle_file_error(self, err):
-        """Handles file reading errors."""
+
+        """
+        Handles file reading errors by logging the error and raising an appropriate exception.
+        Args:
+            err (Exception): The error raised during file reading.
+        """
 
         logging.critical(f"Could not read file due to error: {err}")
         logging.critical("Exit with code 2")
@@ -412,7 +496,15 @@ class Clipper:
         )
 
     def process_columns(self, pat):
-        
+
+        """
+        Processes a specified column in the dataframe based on a pattern. Converts strings to numeric values and fills NaNs.
+        Args:
+            pat (str): A string pattern to identify the column(s) of interest.
+        Returns:
+            str: The pattern if column(s) matching the pattern exist, else None.
+        """
+            
         quant = self.df.columns[self.df.columns.str.contains(pat=pat)]
 
         if len(quant) > 0:
@@ -443,6 +535,14 @@ class Clipper:
             return None
 
     def get_patterns_sm(self):
+            
+        """
+        Returns column patterns specific to 'sm' software.
+        Raises:
+            TypeError: If the input does not meet certain criteria.
+        Returns:
+            dict: A dictionary of column name patterns.
+        """
         
         patterns = {}
 
@@ -508,6 +608,14 @@ class Clipper:
 
     def get_patterns_pd(self):
 
+        """
+        Returns column patterns specific to 'pd' software.
+        Raises:
+            TypeError: If the input does not meet certain criteria.
+        Returns:
+            dict: A dictionary of column name patterns.
+        """
+
         patterns = {}
 
         patterns['acc'] = "Master Protein Accessions"
@@ -572,7 +680,13 @@ class Clipper:
         return patterns
 
     def get_patterns(self):
-        """Returns column patterns to be used for indexing."""
+        """
+        Returns column patterns based on the software used. This is determined by the 'software' attribute of the class.
+        Raises:
+            TypeError: If the 'software' attribute is not recognized.
+        Returns:
+            dict: A dictionary of column name patterns.
+        """
 
         patterns = {}
 
@@ -587,13 +701,24 @@ class Clipper:
         return patterns
 
     def proteoform_check(self):
-        """Computes probability of proteoforms based on master accession column"""
+
+        """
+        Computes the probability of proteoforms based on the master accession column in the dataframe.
+        The probabilities are stored in the dataframe under a new column "proteoform_certainty%".
+        """
+            
         self.annot["proteoform_certainty%"] = self.df[self.patterns['acc']].apply(
             lambda x: 100 / len([i.strip() for i in x.split(';')])
         )
 
     def general_conditions(self):
-        """General statistics for the conditions supplied."""
+
+        """
+        Generates general statistics for the conditions supplied. If no conditions are given, default
+        conditions are used. The method computes mean, standard deviation and coefficient of variation (CV)
+        for each condition and stores them in the dataframe. It also computes fold changes and log2 fold 
+        changes between each pair of conditions.
+        """
 
         if not self.conditions:
             self.conditions = {
@@ -630,7 +755,12 @@ class Clipper:
                 self.annot[column_log] = log_fold_change
 
     def percentile_fold(self, percentile):
-        """Checks fold change distribution and marks rows above a certain percentile."""
+
+        """
+        Checks fold change distribution and marks rows above a certain percentile.
+        Args:
+            percentile (float): The percentile above which rows will be marked.
+        """
 
         left_cutoff = percentile
         right_cutoff = 1 - percentile
@@ -665,7 +795,11 @@ class Clipper:
                 self.annot[f"Fold {pair[0]}/{pair[1]} significance"] = subframe[column].apply(classify_fold_change)
 
     def condition_statistics(self):
-        """Perform a ttest or ANOVA statistical significance tests."""
+
+        """
+        Performs t-test or ANOVA statistical significance tests based on the number of conditions.
+        The test results are stored in the dataframe.
+        """
         
         def perform_test(test_func, cols0, cols1, column_name, column_log):
             values0 = np.log2(self.df[cols0].values)
@@ -693,7 +827,11 @@ class Clipper:
                 perform_test(test_func, *cols_per_condition, column_name, column_log)
 
     def correct_multiple_testing(self):
-        """Correct p-values for multiple testing."""
+
+        """
+        Corrects p-values for multiple testing using the chosen method.
+        The corrected p-values are stored in the dataframe.
+        """
             
         if not self.multiple_testing or len(self.conditions) < 2:
             logging.info("No multiple testing correction performed")
@@ -741,7 +879,14 @@ class Clipper:
             perform_correction(pvals, column_name, column_log, original_column_name)
 
     def process_entry(self, loc):
-        """Process a single entry and return the annotation."""
+
+        """
+        Process a single entry and return the annotation.
+        Args:
+            loc (int): The location (index) of the entry in the dataframe.
+        Returns:
+            dict: A dictionary of annotation results.
+        """
 
         acc = annutils.parse_acc(self.df.loc[loc, self.patterns['acc']])
         if self.patterns['seq'] == 'Annotated Sequence':
@@ -766,8 +911,11 @@ class Clipper:
             return {"name": "HTTPError, not found"}
         
     def annotate(self):
-        """Main function that calls all other functions apart from exopeptidase
-        and write_file."""
+
+        """
+        Function that calls all other annotating functions.
+        This function processes and annotates all entries in the dataframe.
+        """
 
         length = len(self.df)
         if self.nomerops is False:
@@ -781,11 +929,21 @@ class Clipper:
             self.annot.loc[loc] = self.process_entry(loc)
     
     def entry_annotate(self, loc):
-        """Single entry annotation function used with multiple threading."""
+
+        """
+        Single entry annotation function used with multiple threading.
+        Args:
+            loc (int): The location (index) of the entry in the dataframe.
+        """
+
         self.annot.loc[loc] = self.process_entry(loc)
 
     def threaded_annotate(self):
-        """Annotation with multiple threading. Uses all available cores."""
+
+        """
+        Annotation function using multiple threading. This function utilizes all available cores to
+        process and annotate entries in the dataframe.
+        """
 
         length = len(self.df)
         batch_length = min(os.cpu_count(), length)
@@ -806,7 +964,13 @@ class Clipper:
                 executor.map(self.entry_annotate, batch)
 
     def annotate_protein_atlas(self):
-        """Annotate specific columns from Protein Atlas."""
+
+        """
+        Annotates specific columns from Protein Atlas.
+        
+        This function reads from the protein atlas dataframe, selects specific columns, and merges 
+        this data with the existing annotations based on 'Uniprot' identifier. 
+        """
 
         self.read_protein_atlas()
         
@@ -823,8 +987,14 @@ class Clipper:
         self.annot.drop(columns='Uniprot', inplace=True)
 
     def exopeptidase(self):
-        """Annotate dipeptidase and aminopeptidase activity by checking
-        sequences for rugging patterns."""
+
+        """
+        Annotates dipeptidase and aminopeptidase activity by checking sequences for ragged patterns.
+        
+        It checks for sequences that end with a ragged pattern and have a similar sequence in the 
+        dataframe with the last amino acid removed. Such sequences are annotated for aminopeptidase 
+        and dipeptidase activity.
+        """
 
         # keep track of sequences that have been checked
         cleared = set()
@@ -879,7 +1049,11 @@ class Clipper:
 
     def predict_protease_activity(self):
         """
-        Reads the protease list file, constructs PSSMs, scores a given peptide and returns a string of protease code and scores.
+        Predicts the protease activity for a given peptide sequence.
+
+        This function reads the list of proteases from a file, constructs Position Specific Scoring
+        Matrices (PSSMs) for each protease, and scores a given peptide sequence based on these PSSMs.
+        The output is a string of protease code and scores.
         """
 
         self.annot["predicted_protease_activity"] = np.nan
@@ -900,7 +1074,19 @@ class Clipper:
                 self.annot.loc[i, "predicted_protease_activity"] = scores
 
     def annotate_structure(self, cutoff=0.05):
-        """Annotates secondary structure and solvent accessibility for the cleavage site"""
+
+        """
+        Annotates secondary structure and solvent accessibility for the cleavage site.
+        
+        This function checks if the secondary structure and solvent accessibility of the cleavage 
+        site are available in the precalculated model data. If not, it calculates these properties 
+        either for all sequences or for those sequences that are significantly different depending on 
+        the 'calcstructure' attribute of the object. The significant difference is determined based 
+        on a t-test or ANOVA.
+        
+        Args:
+            cutoff (float): The cutoff value for determining significant difference. Default is 0.05.
+        """
 
         if self.available_models is None:
             self.read_available_models()
@@ -909,18 +1095,26 @@ class Clipper:
         self.annot["solvent_accessibility p4_p4prime"] = np.nan
 
         if self.calcstructure == "all":
-            for i in tqdm(range(len(self.annot))):
+            # Create a dictionary where each accession is a key and the value is a list of tuples
+            # Each tuple contains the index of the cleavage site in the annot dataframe and the cleavage site position
+            acc_cleavage_sites = {}
+            for i in range(len(self.annot)):
                 # get the accession and cleavage site
                 acc = self.annot.loc[i, "query_accession"]
                 cleavage_site = self.annot.loc[i, "p1_position"]
 
-                # if the cleavage site is not nan, annotate
+                # if the cleavage site is not nan, add it to the dictionary
                 if isinstance(cleavage_site, int):
-                    # get the secondary structure and solvent accessibility of the cleavage site
-                    ss, sa = annutils.get_structure_properties(acc, cleavage_site, 4, self.available_models)
-                    # assign to the annotation dataframe
-                    self.annot.loc[i, "secondary_structure p4_p4prime"] = ss
-                    self.annot.loc[i, "solvent_accessibility p4_p4prime"] = sa
+                    # Append the index and cleavage site to the list of the corresponding accession
+                    acc_cleavage_sites.setdefault(acc, []).append((i, cleavage_site))
+
+            # get the secondary structure and solvent accessibility of all cleavage sites
+            structure_properties = annutils.get_structure_properties(acc_cleavage_sites, 4, self.available_models)
+
+            # assign to the annotation dataframe
+            for (acc, cleavage_site), (index, ss, sa) in structure_properties.items():
+                self.annot.loc[index, "secondary_structure p4_p4prime"] = ss
+                self.annot.loc[index, "solvent_accessibility p4_p4prime"] = sa
 
         elif self.calcstructure == "sig":
             cols = []
@@ -937,25 +1131,41 @@ class Clipper:
 
                     # iterate over all columns and entries in the dataframe
                     for column_name in cols:
-                        for i in tqdm(range(len(self.annot))):
+                        subframe = self.annot[self.annot[column_name] <= cutoff]
+                        acc_cleavage_sites = {}
+                        for i, row in subframe.iterrows():  # use .iterrows() to keep track of the original index
                             # get the accession and cleavage site
-                            acc = self.annot.loc[i, "query_accession"]
-                            cleavage_site = self.annot.loc[i, "p1_position"]
-                            p_value = self.annot.loc[i, column_name]
+                            acc = row["query_accession"]
+                            cleavage_site = row["p1_position"]
 
-                            # if the cleavage site is not nan, annotate
-                            if p_value <= cutoff and isinstance(cleavage_site, int) and pd.isnull(self.annot.loc[i, "secondary_structure p4_p4prime"]) and pd.isnull(self.annot.loc[i, "solvent_accessibility p4_p4prime"]):
-                                # get the secondary structure and solvent accessibility of the cleavage site
-                                ss, sa = annutils.get_structure_properties(acc, cleavage_site, 4, self.available_models)
-                                # assign to the annotation dataframe
-                                self.annot.loc[i, "secondary_structure p4_p4prime"] = ss
-                                self.annot.loc[i, "solvent_accessibility p4_p4prime"] = sa
-        
+                            # if the cleavage site is not nan, add it to the dictionary
+                            if isinstance(cleavage_site, int):
+                                # Append the original index and cleavage site to the list of the corresponding accession
+                                acc_cleavage_sites.setdefault(acc, []).append((i, cleavage_site))
+
+                        # get the secondary structure and solvent accessibility of all cleavage sites
+                        structure_properties = annutils.get_structure_properties(acc_cleavage_sites, 4, self.available_models)
+
+                        for (acc, cleavage_site), (index, ss, sa) in structure_properties.items():
+                            # if the cleavage site is not nan (has not been annotated in previous iterations), annotate
+                            if isinstance(cleavage_site, int) and pd.isnull(self.annot.loc[i, "secondary_structure p4_p4prime"]) and pd.isnull(self.annot.loc[i, "solvent_accessibility p4_p4prime"]):
+                                self.annot.loc[index, "secondary_structure p4_p4prime"] = ss
+                                self.annot.loc[index, "solvent_accessibility p4_p4prime"] = sa
+
         else:
             raise ValueError("calcstructure argument must be either 'all' or 'sig'")
 
     def visualize(self):
-        """Calls Visualizer class and stores figure objects."""
+
+        """
+        Calls the Visualizer class to create various plots, and stores these as figure objects.
+        
+        The Visualizer class is used to create a series of visualizations such as general statistics,
+        CV plot, pie charts, heatmap, clustermap, PCA, and UMAP visualizations. These figures are 
+        stored for later usage. Furthermore, if statistical and enrichment/pathway analyses are 
+        carried out, additional figures are created. For multiple conditions, the method also generates
+        volcano plots, fold change plots, galleries of significant peptides, and protein plots.
+        """
 
         # initialize Visualizer class, and generate figures for general statistics, CV plot, pie charts, heatmap and clustermap
         vis = Visualizer(self.df, self.annot, self.conditions, self.software, self.patterns, self.pairwise)
@@ -1000,11 +1210,15 @@ class Clipper:
 
 
     def create_logos(self):
-        """Create sequence logos.
 
-        Based on logomaker package, bioconductor matrix calculation
-        manual and algorithms in bioinformatics DTU course for PSSM
-        construction
+        """
+        Creates sequence logos using the logomaker package.
+        
+        This method constructs sequence logos for each condition or pair of conditions based on
+        statistical results and fold changes. These logos are created with the help of a helper 
+        function that calculates Position Specific Scoring Matrices (PSSMs) using the logomaker 
+        package, Bioconductor matrix calculation principles, and material from the DTU course 
+        Algorithms in Bioinformatics. The logos are then stored and later written in figure files.
         """
 
         if len(self.conditions) > 1:
@@ -1040,7 +1254,15 @@ class Clipper:
             self.figures[f"Logo_{condition}"] = create_logo_helper(self.annot, condition, self.pseudocounts, self.logo)
 
     def write_files(self):
-        """Writes ouput files."""
+
+        """
+        Writes the output files to the specified location.
+        
+        This function exports the final data, which can be either the annotations alone or the merged 
+        dataset of original data and annotations, to the desired format (csv, tsv, xlsx, json, or pkl). 
+        It also saves any generated figures to the corresponding folders. At the end of the execution, 
+        the logfile is copied to the output folder, and the output folder is compressed into a zip file.
+        """
 
         outfile = self.outfolder / self.outname
 
