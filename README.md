@@ -7,7 +7,7 @@ Advanced peptide-level annotation software
 
 This document will guide you through the process of setting up and using CLIPPER 2.0, an advanced tool for peptide annotation and analysis of proteomics data utilizing various databases and visualization tools.
 
-Please note that CLIPPER 2.0 is currently in beta, and we welcome any bug reports or feature requests at konka@dtu.dk.
+Please note that CLIPPER 2.0 is currently in beta, and we welcome any bug reports or feature requests at konka@dtu.dk or alemol@dtu.dk.
 
 ## Prerequisites
 
@@ -25,19 +25,19 @@ conda create --n clipper python=3.11.3
 2. Install packages with *pip*:
 
 ```bash
-pip install -r requirements.txt`
+pip install -r requirements.txt
 ```
 
 3. To take advantage of the secondary structure calculation and structure plotting, install *pymol* with *conda*:
 
 ```bash
-conda install -c conda-forge pymol-open-source`
+conda install -c conda-forge pymol-open-source
 ```
 
 4. (Optional) To enable additional layout features, install Graphviz (v7.1.0) separately. Then install *pygraphviz*:
 
 ```bash
-conda install --channel conda-forge pygraphviz`
+conda install --channel conda-forge pygraphviz
 ```
 
 Verify your installation by running the following commands:
