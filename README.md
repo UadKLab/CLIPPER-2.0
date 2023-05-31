@@ -1,29 +1,85 @@
 # CLIPPER 2.0
 Peptide level annotation
 
-Install **python 3.11.3**, and setup with *requirements.txt* through *conda*.
+Install **python 3.11.3**, and setup with *requirements.txt* through *pip*.
 
 Create a conda environment:
 
 `conda create --n clipper python=3.11.3`
 
-Install packages with pip:
+Install packages with *pip*:
 
 `pip install -r requirements.txt`
 
-Then install pymol with conda:
+Then install *pymol* with *conda*:
 
 `conda install -c conda-forge pymol-open-source`
 
-Optional: You need to install graphvis (v7.1.0) separately if you want to take advantage of the layout options they provide. Then install pygraphviz:
+Optional: You need to install *graphvis* (v7.1.0) separately if you want to take advantage of the layout options they provide. Then install *pygraphviz*:
 
-`conda install --channel conda-forge pygraphviz`
+`conda install --channel conda-forge pygrap0hviz`
 
 If successfully installed, you should be able to run the following commands:
 
 `cd clipper`
 
 `python run.py -h`
+
+Output and available arguments:
+
+```
+usage: CLIPPER 2.0 [-h] -i INFILE [-it INFILE_TYPE] [-sw SOFTWARE] [-l LEVEL] [-dn] [-fn FILLNA] [-st SLEEPTIME] [-nx] [-nm] [-cs CALCSTRUCTURE] [-sc] [-cf CONDITIONFILE] [-stat] [-spw] [-sig SIGNIFICANCE] [-vis]
+                   [-logo LOGO] [-psc PSEUDOCOUNTS] [-clvis CLEAVAGEVIS] [-enr] [-path] [-pf PROTEASEFILE] [-o OUTPUT_NAME] [-ot OUTFILE_TYPE] [-sep]
+
+Peptide annotation and analysis of proteomics data utilizing databases and visulization tools
+
+options:
+  -h, --help            show this help message and exit
+  -i INFILE, --infile INFILE
+                        Input peptide group result file
+  -it INFILE_TYPE, --infiletype INFILE_TYPE
+                        File type of input file. Accepted values: excel/csv/infer
+  -sw SOFTWARE, --software SOFTWARE
+                        Software the data were analyzed with. Accepted values: pd/sm/infer
+  -l LEVEL, --level LEVEL
+                        Filtering on specified level of N-termini, or labelled N-termini. Accepted values: all/nterm/quant.
+  -dn, --dropna         Flag to indicate whether to filter for empty quant rows
+  -fn FILLNA, --fillna FILLNA
+                        Value to fill empty quant rows or cells with
+  -st SLEEPTIME, --sleeptime SLEEPTIME
+                        Float that determine intervals between Biopython queries to Uniprot
+  -nx, --noexo          Do not check for dipeptidase or aminopeptidase activity
+  -nm, --nomerops       Do not check for cleavage site annotation in MEROPS database
+  -cs CALCSTRUCTURE, --calcstructure CALCSTRUCTURE
+                        Annotate cleavage site solvent accessibility and secondary structure for the significant peptides in the dataset using Pymol and Alphafold models Accepted values: all/sig.
+  -sc, --singlecpu      Use a single process instead of threading for annotation
+  -cf CONDITIONFILE, --conditionfile CONDITIONFILE
+                        Map labels to conditions. Adds columns for fold change for each pairwise comparison, average and CV of each condition to the dataframe. Each line must start with the condition name followed by the     
+                        channels used, separated by a single space
+  -stat, --statistic    Performs statistical significance testing. Student T-test for two conditions, ANOVA from three or more
+  -spw, --stat_pairwise
+                        Performs statistical significance t-test for all conditions pairwise
+  -sig SIGNIFICANCE, --significance SIGNIFICANCE
+                        Performs fold change distribution significance check for all conditions pairwise Accepted values: all/nterm.
+  -vis, --visualize     Draws various plots based on conditions passed from input and statistical tests
+  -logo LOGO, --logo LOGO
+                        Draws various logo plots based on all peptides or condition significant peptides. Values supported: [all|prob|pssm|shannon|kbl]
+  -psc PSEUDOCOUNTS, --pseudocounts PSEUDOCOUNTS
+                        Add pseudocounts to normalized matrix calculation
+  -clvis CLEAVAGEVIS, --cleavagevisualization CLEAVAGEVIS
+                        Whether to visualize significant cleavages in sequence or both structure and sequence Accepted values: seq/both.
+  -enr, --enrichment    Draws heatmap plots based on conditions passed from input and statistical tests for enrichment of GO terms and KEGG pathways with the gProfiler API
+  -path, --pathway      Draws pathway plots based on conditions passed from input and statistical tests and maps detected proteins and peptides
+  -pf PROTEASEFILE, --proteasefile PROTEASEFILE
+                        Protease MEROPS identifiers to predict activity of. Using weighted PSSM
+  -o OUTPUT_NAME, --output_name OUTPUT_NAME
+                        File name of output folder and annotated output file
+  -ot OUTFILE_TYPE, --outfile_type OUTFILE_TYPE
+                        File type of output file Accepted values: xlsx/csv/tsv/pkl/json
+  -sep, --separate      Whether to merge or keep annotation as a separate file. False by default
+
+Not extensively tested, this tool is still in beta version. Contact konka@dtu.dk for bug reports and requests.
+```
 
 Example runs:
 
