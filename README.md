@@ -47,7 +47,7 @@ cd clipper
 python run.py -h
 ```
 
-##Usage
+## Usage
 
 You can use CLIPPER 2.0 by executing the 'run.py' script with specific arguments.
 
@@ -63,7 +63,7 @@ For a complete list of available arguments and their description, run:
 python run.py -h
 ```
 
-###Output and available arguments:
+### Output and available arguments:
 
 ```
 usage: CLIPPER 2.0 [-h] -i INFILE [-it INFILE_TYPE] [-sw SOFTWARE] [-l LEVEL] [-dn] [-fn FILLNA] [-st SLEEPTIME] [-nx] [-nm] [-cs CALCSTRUCTURE] [-sc] [-cf CONDITIONFILE] [-stat] [-spw] [-sig SIGNIFICANCE] [-vis]
@@ -119,7 +119,7 @@ options:
 Not extensively tested, this tool is still in beta version. Contact konka@dtu.dk for bug reports and requests.
 ```
 
-##Input files
+## Input files
 
 ###Condition file (optional, but required for statistical tests and most visualizations)
 The condition file is a text file where each line represents a condition. The first string on the line is the name of the condition, and the rest of the strings, space-separated, are columns corresponding to that condition.
@@ -144,7 +144,7 @@ MEROPSProteaseCode2
 ...
 ```
 
-##Examples
+## Examples
 
 Here are some examples of how you can use CLIPPER 2.0:
 
