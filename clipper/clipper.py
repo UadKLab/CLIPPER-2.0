@@ -1,4 +1,5 @@
 import os
+import re
 import shutil
 import logging
 import concurrent.futures
@@ -201,7 +202,7 @@ class Clipper:
         logging.info("Reading file...")
         self.read_file()
         logging.info("Read dataframe.")
-        logging.info(f"Read input with {len(self.df)} peptides\n")
+        logging.info(f"Read input with {len(self.df)} peptides.\n")
 
     def set_software(self):
         """
@@ -231,21 +232,27 @@ class Clipper:
 
         logging.info(f"Input software is {self.software}")
         self.patterns = self.get_patterns()
-        logging.info("Successfully generated indexing patterns.")
-        logging.info(f"Patterns are: {self.patterns}")
+        logging.info("Successfully generated indexing patterns. See logfile for details.")
+        logging.debug(f"Patterns are: {self.patterns}")
         logging.info("Format check complete.\n")
 
     def remove_empty_accessions(self):
 
         """
-        Remove rows from the dataframe that contain empty accession numbers.
+        Remove rows from the dataframe that contain empty accession numbers and prints affecte lines to log.
         """
 
         col_acc = self.patterns['acc']
         invalid_acc = self.df[col_acc].isna()
+
         if invalid_acc.any():
-            logging.info(f"Empty accession rows: {', '.join(map(str, invalid_acc.index + 1))}")
             self.df = self.df[~invalid_acc].reset_index(drop=True)
+            logging.warning(f'There were rows with no accession numbers in the loaded file, please check the log file for further information')
+
+        for i, k in enumerate(invalid_acc):
+            if k:
+                logging.debug(f"Empty accession rows: {str(i + 1)}")
+        
 
     def remove_empty_sequences(self):
 
@@ -514,7 +521,7 @@ class Clipper:
                     self.df[col] = self.df[col].astype(str).str.replace(",", ".").str.strip()
 
                     self.df[col] = pd.to_numeric(self.df[col], errors='coerce')
-                    logging.info(f"Converted values in {col} to numeric type")
+                    logging.debug(f"Converted values in {col} to numeric type")
 
                     mask = (self.df[col].notna()) & pd.to_numeric(self.df[col], errors='coerce').isna()
                     if mask.any():
@@ -524,6 +531,7 @@ class Clipper:
                         # Fill NaN values with the user-specified value
                         self.df[col].fillna(float(self.fillna), inplace=True)
                         logging.info(f"Filled NaN values in column '{col}' with {float(self.fillna)}")
+                logging.info('Finished converting quantification values to floats.')
                     
             except:
                 logging.critical("Invalid input. Exiting with code 4.")
@@ -794,6 +802,7 @@ class Clipper:
 
                 self.annot[f"Fold {pair[0]}/{pair[1]} significance"] = subframe[column].apply(classify_fold_change)
 
+    '''
     def condition_statistics(self):
 
         """
@@ -801,7 +810,9 @@ class Clipper:
         The test results are stored in the dataframe.
         """
         
-        def perform_test(test_func, cols0, cols1, column_name, column_log):
+        def perform_test(test_func, column_name, column_log, conds):
+            #number_of_conditions = len(conds)
+            #if number_of_conditions == 2:
             values0 = np.log2(self.df[cols0].values)
             values1 = np.log2(self.df[cols1].values)
             result = test_func(values0.T, values1.T)
@@ -824,7 +835,95 @@ class Clipper:
                 column_name = f"{'Ttest' if len(self.conditions) == 2 else 'ANOVA'}: {'_'.join(conditions)}"
                 column_log = f"Log10_{column_name}"
                 cols_per_condition = [self.df.columns[self.df.columns.str.contains("|".join(self.conditions[cond])) & self.df.columns.str.contains(self.patterns['quant'])] for cond in conditions]
+                for i in cols_per_condition:
+                    print(i)
+                print(self.df[cols_per_condition[0]])
                 perform_test(test_func, *cols_per_condition, column_name, column_log)
+
+    '''
+    '''
+    def condition_statistics(self):
+
+        """
+        Performs t-test or ANOVA statistical significance tests based on the number of conditions.
+        The test results are stored in the dataframe.
+        """
+        """
+        conditions = list(self.conditions.keys())
+        cols_per_condition = [self.df.columns[self.df.columns.str.contains("|".join(self.conditions[cond])) & self.df.columns.str.contains(self.patterns['quant'])] for cond in conditions]
+        """
+
+        
+        def perform_test(test_func, cols0, cols1, column_name, column_log):
+            #number_of_conditions = len(conds)
+            #if number_of_conditions == 2:
+            values0 = np.log2(self.df[cols0].values)
+            values1 = np.log2(self.df[cols1].values)
+            result = test_func(values0.T, values1.T)
+            statistic, p_value = result[0], result[1]
+            self.annot[column_name] = p_value
+            self.annot[column_log] = np.log10(p_value)
+        
+        print(self.conditions)
+
+        if self.pairwise:
+            for pair in combinations(self.conditions.keys(), 2):
+                column_name = f"Ttest: {pair[0]}_{pair[1]}"
+                column_log = f"Log10_ttest: {pair[0]}_{pair[1]}"
+                cols0 = self.df.columns[self.df.columns.str.contains("|".join(self.conditions[pair[0]])) & self.df.columns.str.contains(self.patterns['quant'])]
+                cols1 = self.df.columns[self.df.columns.str.contains("|".join(self.conditions[pair[1]])) & self.df.columns.str.contains(self.patterns['quant'])]
+                perform_test(ttest_ind, cols0, cols1, column_name, column_log)
+
+        else:
+            conditions = list(self.conditions.keys())
+            if len(self.conditions) >= 2:
+                test_func = ttest_ind if len(self.conditions) == 2 else f_oneway
+                column_name = f"{'Ttest' if len(self.conditions) == 2 else 'ANOVA'}: {'_'.join(conditions)}"
+                column_log = f"Log10_{column_name}"
+                cols_per_condition = [self.df.columns[self.df.columns.str.contains("|".join(self.conditions[cond])) & self.df.columns.str.contains(self.patterns['quant'])] for cond in conditions]
+                print(self.conditions)
+                # for i in cols_per_condition:
+                #    for k in i:
+                #        print(k)
+                #print(self.df[cols_per_condition[0]])
+                perform_test(test_func, *cols_per_condition, column_name, column_log)    
+    '''
+
+    def condition_statistics(self):
+        """
+        Performs t-test or ANOVA statistical significance tests based on the number of conditions.
+        The test results are stored in the dataframe.
+        """
+
+        def perform_test(test_func, column_name, column_log, cols_per_condition, vals_per_condition):
+            result = test_func(*vals_per_condition)
+            statistic, p_value = result[0], result[1]
+            self.annot[column_name] = p_value
+            self.annot[column_log] = np.log10(p_value)
+
+        if self.pairwise: # NOT WORKING
+            for pair in combinations(self.conditions.keys(), 2):
+                column_name = f"Independent T-test: {pair[0]}_{pair[1]}"
+                column_log = f"Log10_pvalue: {pair[0]}_{pair[1]}"
+                cols0 = self.df.columns[self.df.columns.str.contains("|".join(self.conditions[pair[0]])) & self.df.columns.str.contains(self.patterns['quant'])]
+                cols1 = self.df.columns[self.df.columns.str.contains("|".join(self.conditions[pair[1]])) & self.df.columns.str.contains(self.patterns['quant'])]
+                perform_test(ttest_ind, cols0, cols1, column_name=column_name, column_log=column_log)
+
+        else:
+            conditions = list(self.conditions.keys())
+            if len(conditions) >= 2:
+                test_func = ttest_ind if len(conditions) == 2 else f_oneway
+                column_name = f"{'Independent T-test' if len(conditions) == 2 else 'ANOVA'}: {'_'.join(conditions)}"
+                column_log = f"Log10_pvalue_{column_name}"
+                cols_per_condition = []
+                vals_per_condition = []
+                for cond in conditions:
+                    replicates = []
+                    for replicate in self.conditions[cond]:
+                        replicates.extend([column for column in self.df.columns if re.search(replicate, column) and re.search(self.patterns['quant'], column)])
+                    cols_per_condition.append(replicates)
+                    vals_per_condition.append(np.log2(self.df[replicates]).T)
+                perform_test(test_func, column_name, column_log, cols_per_condition, vals_per_condition)
 
     def correct_multiple_testing(self):
 

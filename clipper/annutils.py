@@ -30,6 +30,24 @@ def initialize_logger(logfile):
     Returns:
     logger (logging.RootLogger): A logger with two handlers - one for console output and one for file output.
     """
+    
+
+    """
+    log_format = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
+    logger = logging.getLogger(__name__)
+
+    console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
+    console_handler.setFormatter(log_format)
+    logger.addHandler(console_handler)
+
+    file_handler = logging.FileHandler(logfile)
+    file_handler.setLevel(logging.DEBUG)
+    file_handler.setFormatter(log_format)
+    logger.addHandler(file_handler)
+
+    logger.info(f"Annotator started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.")
+    """
 
     logger = logging.getLogger()
     logger.setLevel(logging.INFO)
@@ -38,14 +56,21 @@ def initialize_logger(logfile):
 
     file_handler = logging.FileHandler(logfile)
     file_handler.setFormatter(formatter)
+    file_handler.setLevel(logging.DEBUG)
+    logger.addHandler(file_handler)
 
     console_handler = logging.StreamHandler()
+    console_handler.setLevel(logging.INFO)
     console_handler.setFormatter(formatter)
+    logger.addHandler(console_handler)
 
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
 
+    logger.setLevel(logging.DEBUG)
+
     logger.info(f"Annotator started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.")
+
 
     return logger
 
@@ -331,7 +356,11 @@ def initialize(arguments=None):
     logger = initialize_logger(logfile)
     arguments = initialize_arguments() if arguments is None else arguments
 
-    logger.info(f"Arguments: {arguments}")
+    logger.debug(f"Arguments: {arguments}")
+    print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[0:-3]} [INFO] The arguments you have provided are:')
+    for argument, value in arguments.items():
+        print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[0:-3]} [INFO] - {argument}: {value}')
+    print('')
 
     arguments["timestamp"] = timestamp
     arguments["logfile"] = logfile
@@ -455,7 +484,7 @@ def get_structure_properties(acc_cleavage_sites, env_length=4, available_models=
     """
 
     structure_properties = {}
-    alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
+    alphafold_folder_name = r"/Volumes/Bio-Temp/Protease-Systems-Biology-temp/Kostas/CLIPPER/Datasets/Alphafold"
     alphafold_folder = Path(alphafold_folder_name)
 
     for acc, cleavage_sites_indices in tqdm(acc_cleavage_sites.items()):
@@ -542,7 +571,7 @@ def get_enriched_pathways(accs, cutoff=0.05):
     # Use the token to get the detailed results
     pathways = analysis.token(token, page_size='20', page='1', sort_by='ENTITIES_FDR', 
                               order='ASC', resource='TOTAL', p_value=cutoff, include_disease=True, 
-                              min_entities=None, max_entities=None)
+                              n_entities=None, max_entities=None)
     
     return pathways
 

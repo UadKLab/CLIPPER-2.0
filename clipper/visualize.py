@@ -32,7 +32,7 @@ import networkx as nx
 import annutils
 
 
-alphafold_folder_name = r"\\ait-pdfs\services\BIO\Bio-Temp\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
+alphafold_folder_name = r"/Volumes/Bio-Temp/Protease-Systems-Biology-temp/Kostas/CLIPPER/Datasets/Alphafold"
 
 
 class Visualizer:
