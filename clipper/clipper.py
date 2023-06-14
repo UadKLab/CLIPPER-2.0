@@ -119,7 +119,7 @@ class Clipper:
         self.resultfolder = self.basefolder / self.result_folder_name
         self.datafolder = self.basefolder / self.data_folder_name
 
-        logging.info("Initialization successful.")
+        logging.info("Startup complete!\n")
 
     def validate_input_output_formats(self):
 
@@ -202,7 +202,7 @@ class Clipper:
         logging.info("Reading file...")
         self.read_file()
         logging.info("Read dataframe.")
-        logging.info(f"Read input with {len(self.df)} peptides.\n")
+        logging.info(f"Read input with {len(self.df)} peptides.")
 
     def set_software(self):
         """
@@ -232,14 +232,14 @@ class Clipper:
 
         logging.info(f"Input software is {self.software}")
         self.patterns = self.get_patterns()
-        logging.info("Successfully generated indexing patterns. See logfile for details.")
         logging.debug(f"Patterns are: {self.patterns}")
+        logging.info(f"Successfully generated indexing patterns for {self.software} input. See logfile for the found patterns.")
         logging.info("Format check complete.\n")
 
     def remove_empty_accessions(self):
 
         """
-        Remove rows from the dataframe that contain empty accession numbers and prints affecte lines to log.
+        Remove rows from the dataframe that contain empty accession numbers and writes affected lines to log.
         """
 
         col_acc = self.patterns['acc']
@@ -336,12 +336,15 @@ class Clipper:
         self.set_input_output_paths()
         self.load_data()
         self.set_software()
+        self.make_folders()
+        logging.info("Initialization complete!\n")
+
+        logging.info("Filtering and sanitizing input...")
 
         if self.level != "all":
             self.filter_df()
 
         self.sanitize()
-        self.make_folders()
 
     def make_folders(self):
 
@@ -719,7 +722,7 @@ class Clipper:
             lambda x: 100 / len([i.strip() for i in x.split(';')])
         )
 
-    def general_conditions(self):
+    def general_conditions(self):   # LATER: What is this used for? Not distinguishing N and C tags? Why is it necessary?
 
         """
         Generates general statistics for the conditions supplied. If no conditions are given, default
@@ -802,93 +805,6 @@ class Clipper:
 
                 self.annot[f"Fold {pair[0]}/{pair[1]} significance"] = subframe[column].apply(classify_fold_change)
 
-    '''
-    def condition_statistics(self):
-
-        """
-        Performs t-test or ANOVA statistical significance tests based on the number of conditions.
-        The test results are stored in the dataframe.
-        """
-        
-        def perform_test(test_func, column_name, column_log, conds):
-            #number_of_conditions = len(conds)
-            #if number_of_conditions == 2:
-            values0 = np.log2(self.df[cols0].values)
-            values1 = np.log2(self.df[cols1].values)
-            result = test_func(values0.T, values1.T)
-            statistic, p_value = result[0], result[1]
-            self.annot[column_name] = p_value
-            self.annot[column_log] = np.log10(p_value)
-
-        if self.pairwise:
-            for pair in combinations(self.conditions.keys(), 2):
-                column_name = f"Ttest: {pair[0]}_{pair[1]}"
-                column_log = f"Log10_ttest: {pair[0]}_{pair[1]}"
-                cols0 = self.df.columns[self.df.columns.str.contains("|".join(self.conditions[pair[0]])) & self.df.columns.str.contains(self.patterns['quant'])]
-                cols1 = self.df.columns[self.df.columns.str.contains("|".join(self.conditions[pair[1]])) & self.df.columns.str.contains(self.patterns['quant'])]
-                perform_test(ttest_ind, cols0, cols1, column_name, column_log)
-
-        else:
-            conditions = list(self.conditions.keys())
-            if len(self.conditions) >= 2:
-                test_func = ttest_ind if len(self.conditions) == 2 else f_oneway
-                column_name = f"{'Ttest' if len(self.conditions) == 2 else 'ANOVA'}: {'_'.join(conditions)}"
-                column_log = f"Log10_{column_name}"
-                cols_per_condition = [self.df.columns[self.df.columns.str.contains("|".join(self.conditions[cond])) & self.df.columns.str.contains(self.patterns['quant'])] for cond in conditions]
-                for i in cols_per_condition:
-                    print(i)
-                print(self.df[cols_per_condition[0]])
-                perform_test(test_func, *cols_per_condition, column_name, column_log)
-
-    '''
-    '''
-    def condition_statistics(self):
-
-        """
-        Performs t-test or ANOVA statistical significance tests based on the number of conditions.
-        The test results are stored in the dataframe.
-        """
-        """
-        conditions = list(self.conditions.keys())
-        cols_per_condition = [self.df.columns[self.df.columns.str.contains("|".join(self.conditions[cond])) & self.df.columns.str.contains(self.patterns['quant'])] for cond in conditions]
-        """
-
-        
-        def perform_test(test_func, cols0, cols1, column_name, column_log):
-            #number_of_conditions = len(conds)
-            #if number_of_conditions == 2:
-            values0 = np.log2(self.df[cols0].values)
-            values1 = np.log2(self.df[cols1].values)
-            result = test_func(values0.T, values1.T)
-            statistic, p_value = result[0], result[1]
-            self.annot[column_name] = p_value
-            self.annot[column_log] = np.log10(p_value)
-        
-        print(self.conditions)
-
-        if self.pairwise:
-            for pair in combinations(self.conditions.keys(), 2):
-                column_name = f"Ttest: {pair[0]}_{pair[1]}"
-                column_log = f"Log10_ttest: {pair[0]}_{pair[1]}"
-                cols0 = self.df.columns[self.df.columns.str.contains("|".join(self.conditions[pair[0]])) & self.df.columns.str.contains(self.patterns['quant'])]
-                cols1 = self.df.columns[self.df.columns.str.contains("|".join(self.conditions[pair[1]])) & self.df.columns.str.contains(self.patterns['quant'])]
-                perform_test(ttest_ind, cols0, cols1, column_name, column_log)
-
-        else:
-            conditions = list(self.conditions.keys())
-            if len(self.conditions) >= 2:
-                test_func = ttest_ind if len(self.conditions) == 2 else f_oneway
-                column_name = f"{'Ttest' if len(self.conditions) == 2 else 'ANOVA'}: {'_'.join(conditions)}"
-                column_log = f"Log10_{column_name}"
-                cols_per_condition = [self.df.columns[self.df.columns.str.contains("|".join(self.conditions[cond])) & self.df.columns.str.contains(self.patterns['quant'])] for cond in conditions]
-                print(self.conditions)
-                # for i in cols_per_condition:
-                #    for k in i:
-                #        print(k)
-                #print(self.df[cols_per_condition[0]])
-                perform_test(test_func, *cols_per_condition, column_name, column_log)    
-    '''
-
     def condition_statistics(self):
         """
         Performs t-test or ANOVA statistical significance tests based on the number of conditions.
@@ -900,30 +816,36 @@ class Clipper:
             statistic, p_value = result[0], result[1]
             self.annot[column_name] = p_value
             self.annot[column_log] = np.log10(p_value)
+            
 
-        if self.pairwise: # NOT WORKING
+        conditions = list(self.conditions.keys())
+        if len(conditions) >= 2:
+            test_func = ttest_ind if len(conditions) == 2 else f_oneway
+            column_name = f"{'Independent T-test' if len(conditions) == 2 else 'ANOVA'}: {'/'.join(conditions)}"
+            column_log = f"Log10 pvalue: {column_name}"
+            cols_per_condition = []
+            vals_per_condition = []
+            for cond in conditions:
+                replicates = []
+                for replicate in self.conditions[cond]:
+                    replicates.extend([column for column in self.df.columns if re.search(replicate, column) and re.search(self.patterns['quant'], column)])
+                cols_per_condition.append(replicates)
+                vals_per_condition.append(np.log2(self.df[replicates]).T)
+            perform_test(test_func, column_name, column_log, cols_per_condition, vals_per_condition)
+
+        if self.pairwise and len(conditions) > 2:
             for pair in combinations(self.conditions.keys(), 2):
-                column_name = f"Independent T-test: {pair[0]}_{pair[1]}"
-                column_log = f"Log10_pvalue: {pair[0]}_{pair[1]}"
-                cols0 = self.df.columns[self.df.columns.str.contains("|".join(self.conditions[pair[0]])) & self.df.columns.str.contains(self.patterns['quant'])]
-                cols1 = self.df.columns[self.df.columns.str.contains("|".join(self.conditions[pair[1]])) & self.df.columns.str.contains(self.patterns['quant'])]
-                perform_test(ttest_ind, cols0, cols1, column_name=column_name, column_log=column_log)
-
-        else:
-            conditions = list(self.conditions.keys())
-            if len(conditions) >= 2:
-                test_func = ttest_ind if len(conditions) == 2 else f_oneway
-                column_name = f"{'Independent T-test' if len(conditions) == 2 else 'ANOVA'}: {'_'.join(conditions)}"
-                column_log = f"Log10_pvalue_{column_name}"
+                column_name = f"Independent T-test: {pair[0]}/{pair[1]}"
+                column_log = f"Log10 pvalue: {pair[0]}/{pair[1]}"
                 cols_per_condition = []
                 vals_per_condition = []
-                for cond in conditions:
+                for cond in pair:
                     replicates = []
                     for replicate in self.conditions[cond]:
                         replicates.extend([column for column in self.df.columns if re.search(replicate, column) and re.search(self.patterns['quant'], column)])
                     cols_per_condition.append(replicates)
                     vals_per_condition.append(np.log2(self.df[replicates]).T)
-                perform_test(test_func, column_name, column_log, cols_per_condition, vals_per_condition)
+                perform_test(ttest_ind, column_name, column_log, cols_per_condition, vals_per_condition)
 
     def correct_multiple_testing(self):
 
@@ -957,23 +879,23 @@ class Clipper:
                 self.annot.insert(original_column_idx + 2, column_name, corrected_pvals)
                 self.annot.insert(original_column_idx + 3, column_log, np.log10(corrected_pvals))
 
-                logging.info(f"Corrected p-values for {column_name} using {self.multiple_testing} method")
+                logging.debug(f"Corrected p-values for {column_name} using {self.multiple_testing} method")
             else:
                 logging.warning(f"No p-values to correct for {column_name}")
 
         if self.pairwise:
-            col_stat = 'Ttest'
+            col_stat = 'Independent T-test'
             for pair in combinations(self.conditions.keys(), 2):
-                column_name = f"Corrected {col_stat}: {pair[0]}_{pair[1]}"
-                column_log = f"Log10_{column_name}"
-                original_column_name = f"{col_stat}: {pair[0]}_{pair[1]}"
+                column_name = f"Corrected {col_stat}: {pair[0]}/{pair[1]}"
+                column_log = f"Log10_pvalue_{column_name}"
+                original_column_name = f"{col_stat}: {pair[0]}/{pair[1]}"
                 pvals = self.annot[original_column_name].values
                 perform_correction(pvals, column_name, column_log, original_column_name)
         else:
-            col_stat = 'Ttest' if len(self.conditions) == 2 else 'ANOVA'
-            column_name = f"Corrected {col_stat}: {'_'.join(self.conditions.keys())}"
-            column_log = f"Log10_{column_name}"
-            original_column_name = f"{col_stat}: {'_'.join(self.conditions.keys())}"
+            col_stat = 'Independent T-test' if len(self.conditions) == 2 else 'ANOVA'
+            column_name = f"Corrected {col_stat}: {'/'.join(self.conditions.keys())}"
+            column_log = f"Log10_pvalue_{column_name}"
+            original_column_name = f"{col_stat}: {'/'.join(self.conditions.keys())}"
             pvals = self.annot[original_column_name].values
             perform_correction(pvals, column_name, column_log, original_column_name)
 
@@ -1024,6 +946,7 @@ class Clipper:
         self.initialize_annotation(length)
         logging.info("Initialized annotation dataframe.\n")
 
+        logging.info("Fetching information from Uniprot...")
         for loc in tqdm(range(length)):
             self.annot.loc[loc] = self.process_entry(loc)
     
@@ -1103,6 +1026,8 @@ class Clipper:
         sequences = self.annot["query_sequence"].dropna()
         sequences.sort_values(key=lambda x: x.str.len(), kind="mergesort", ascending=False, inplace=True)
 
+        #print(f'Sequences: {sequences}')
+
         for seq in tqdm(sequences):
             if seq not in cleared:
                 # check if sequence ends with ragged pattern. If so, check if the same sequence
@@ -1123,10 +1048,12 @@ class Clipper:
                         same_seq_indices = self.annot[self.annot["query_sequence"] == pep].index
                         
                         # if there is a ragged pattern, annotate as such
+                        exopeptidase_activity = False
                         if pep == compare[1:]:
                             cleared.add(pep)
                             compare = pep
-                            logging.info(f"1 {seq} {pep}")
+                            logging.debug(f"1 {seq} {pep}")
+                            exopeptidase_activity = True
                             # if the ragged pattern originated from dipetidase activity, annotate as such
                             if rag_flag and len(pep) == lpep - 1:
                                 for i in same_seq_indices:
@@ -1142,9 +1069,13 @@ class Clipper:
                             compare = pep
                             rag_flag = True
                             lpep = len(pep)
-                            logging.info(f"2 {seq} {pep}")
+                            logging.debug(f"2 {seq} {pep}")
+                            exopeptidase_activity = True
                             for i in same_seq_indices:
                                 self.annot.loc[i, "exopeptidase"] = "Dipeptidase_activity"
+
+                        if exopeptidase_activity:
+                            logging.info("Exopeptidase activity was found, check logfile or output for more details on exact peptide sequences")
 
     def predict_protease_activity(self):
         """
@@ -1172,7 +1103,7 @@ class Clipper:
                 scores = pp.score_proteases(pssms, cleavage)
                 self.annot.loc[i, "predicted_protease_activity"] = scores
 
-    def annotate_structure(self, cutoff=0.05):
+    def annotate_structure(self, cutoff):
 
         """
         Annotates secondary structure and solvent accessibility for the cleavage site.
@@ -1196,6 +1127,7 @@ class Clipper:
         if self.calcstructure == "all":
             # Create a dictionary where each accession is a key and the value is a list of tuples
             # Each tuple contains the index of the cleavage site in the annot dataframe and the cleavage site position
+
             acc_cleavage_sites = {}
             for i in range(len(self.annot)):
                 # get the accession and cleavage site
@@ -1208,6 +1140,7 @@ class Clipper:
                     acc_cleavage_sites.setdefault(acc, []).append((i, cleavage_site))
 
             # get the secondary structure and solvent accessibility of all cleavage sites
+
             structure_properties = annutils.get_structure_properties(acc_cleavage_sites, 4, self.available_models)
 
             # assign to the annotation dataframe
@@ -1222,10 +1155,10 @@ class Clipper:
                     if self.pairwise or len(self.conditions) == 2:
                         conditions_iter = combinations(self.conditions.keys(), 2)
                         for pair in conditions_iter:
-                            column_name = f"Ttest: {pair[0]}_{pair[1]}"
+                            column_name = f"Independent T-test: {pair[0]}/{pair[1]}"
                             cols.append(column_name)
                     else:
-                        column_name = "ANOVA: " + "_".join(self.conditions.keys())
+                        column_name = "ANOVA: " + "/".join(self.conditions.keys())
                         cols.append(column_name)
 
                     # iterate over all columns and entries in the dataframe
@@ -1254,7 +1187,7 @@ class Clipper:
         else:
             raise ValueError("calcstructure argument must be either 'all' or 'sig'")
 
-    def visualize(self):
+    def visualize(self, cutoff):
 
         """
         Calls the Visualizer class to create various plots, and stores these as figure objects.
@@ -1268,7 +1201,7 @@ class Clipper:
 
         # initialize Visualizer class, and generate figures for general statistics, CV plot, pie charts, heatmap and clustermap
         vis = Visualizer(self.df, self.annot, self.conditions, self.software, self.patterns, self.pairwise)
-        
+        print("THIS IS VIS!!!!!!!!!!!!")
         self.figures["General"] = vis.general()
         self.figures["CV"] = vis.cv_plot()
         self.figures["Piechart"] = vis.generate_pie_charts()
@@ -1278,11 +1211,11 @@ class Clipper:
         self.figures["UMAP"]  = vis.umap_visualization()
 
         if self.stat and self.enrichment:
-            self.figures["Enrichment"] = vis.plot_functional_enrichment(cutoff=0.05)
+            self.figures["Enrichment"] = vis.plot_functional_enrichment(cutoff = cutoff)
 
         if self.stat and self.pathway:
             if len(self.conditions) == 2 or self.pairwise:
-                vis.plot_pathway_enrichment(cutoff=0.05, folder=self.pathway_folder)
+                vis.plot_pathway_enrichment(cutoff = cutoff, folder=self.pathway_folder)
 
         # if there are more than one condition, generate volcano, fold change and fold change at termini plots, and gallery of significant peptides
         if len(self.conditions) > 1:
@@ -1292,19 +1225,19 @@ class Clipper:
             self.figures["Fold_nterm"] = vis.fold_termini()
 
             logging.info("Starting gallery generation...")
-            vis.gallery(stat=self.stat, cutoff=0.05, folder=self.general_folder)
+            vis.gallery(cutoff=cutoff, stat=self.stat, folder=self.general_folder)
             logging.info("Finished gallery generation.")
             
-            if self.stat and self.cleavagevis:
+            if self.stat and self.cleavagevis and self.pairwise:
                 if self.available_models is None:
                     self.read_available_models()
 
                 logging.info("Starting protein plotting...")
                 if self.nomerops is False:
-                    vis.plot_protein(cutoff=0.05, folder=self.protein_folder, merops=self.merops, alphafold=self.available_models, level=self.cleavagevis)
+                    vis.plot_protein(cutoff=cutoff, folder=self.protein_folder, merops=self.merops, alphafold=self.available_models, level=self.cleavagevis)
                     logging.info("Finished protein plotting.")
                 else:
-                    vis.plot_protein(cutoff=0.05, folder=self.protein_folder, alphafold=self.available_models, level=self.cleavagevis)
+                    vis.plot_protein(cutoff=cutoff, folder=self.protein_folder, alphafold=self.available_models, level=self.cleavagevis)
                 logging.info("Finished protein plotting.")
 
 
@@ -1325,7 +1258,7 @@ class Clipper:
             for pair in conditions_iter:
                 if self.stat: 
                     try:
-                        column_name_test = f"Log10_ttest: {pair[0]}_{pair[1]}"
+                        column_name_test = f"Log10_pvalue: {pair[0]}/{pair[1]}"
                         column_name_fold = f"Log2_fold_change: {pair[0]}/{pair[1]}"
                         column_test = self.annot[column_name_test]
                         column_fold = self.annot[column_name_fold]

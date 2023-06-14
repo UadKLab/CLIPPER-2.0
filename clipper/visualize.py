@@ -71,7 +71,7 @@ class Visualizer:
         plot_pathway_enrichment: Performs a pathway enrichment analysis and generates pathway plots for significant peptides.
     """
         
-    def __init__(self, df, annot, conditions, software, patterns, pairwise=False):
+    def __init__(self, df: pd.DataFrame, annot: str, conditions: list, software: str, patterns: dict, pairwise: bool=False) -> None:
 
         self.df = df
         self.annot = annot
@@ -80,7 +80,7 @@ class Visualizer:
         self.patterns = patterns
         self.pairwise = pairwise
 
-    def general(self):
+    def general(self) -> dict:
 
         """
         Plots general statistics for the dataset.
@@ -147,7 +147,7 @@ class Visualizer:
 
         return {"general": fig}
 
-    def volcano(self):
+    def volcano(self) -> dict:
 
         """
         Creates a volcano plot for each condition pair.
@@ -159,7 +159,7 @@ class Visualizer:
         """
 
         columns_fold = self.annot.columns[self.annot.columns.str.contains("Log2_fold_change:")]
-        columns_ttest = self.annot.columns[self.annot.columns.str.contains("Log10_ttest:")]
+        columns_ttest = self.annot.columns[self.annot.columns.str.contains("Log10_pvalue:")]
         figures = {}
 
         for test in columns_ttest:
@@ -196,7 +196,7 @@ class Visualizer:
 
         return figures
 
-    def cv_plot(self):
+    def cv_plot(self) -> dict:
 
         """
         Creates a plot of CV values for all conditions.
@@ -454,7 +454,7 @@ class Visualizer:
 
         return figures
 
-    def gallery(self, stat=False, cutoff=0.05, folder=None):
+    def gallery(self, cutoff, stat=False, folder=None):
 
         """
         Generate a PDF gallery of significant peptides from the DataFrame based on a given cutoff.
@@ -518,7 +518,7 @@ class Visualizer:
             
         if stat:
             if len(self.conditions) == 2 or self.pairwise:
-                cols = self.annot.columns[self.annot.columns.str.startswith("Ttest:")]
+                cols = self.annot.columns[self.annot.columns.str.startswith("Independent T-test:")]
             else:
                 cols = self.annot.columns[self.annot.columns.str.startswith("ANOVA:")]
             indices = []
@@ -654,7 +654,7 @@ class Visualizer:
 
         return {"UMAP": fig}
     
-    def plot_protein(self, cutoff=0.05, folder=None, merops=None, alphafold=None, level=None):
+    def plot_protein(self, cutoff, folder=None, merops=None, alphafold=None, level=None):
 
         """
         Plots significant peptides for each condition on protein sequence and structure.
@@ -668,9 +668,9 @@ class Visualizer:
 
         Note: If the folder does not exist, it will be created.
         """
-
+        
         if len(self.conditions) == 2 or self.pairwise:
-            cols = self.annot.columns[self.annot.columns.str.startswith("Ttest:")]
+            cols = self.annot.columns[self.annot.columns.str.startswith("Independent T-test:")]
         else:
             cols = self.annot.columns[self.annot.columns.str.startswith("ANOVA:")]
 
@@ -679,14 +679,15 @@ class Visualizer:
             accs = df["query_accession"].unique()
 
             # Create a PDF file to save all figures
-            pdf_path = os.path.join(folder, f"{col[7:]}_sequence_plots.pdf")
+            condition_name = col.split(":")[1].strip()
+            pdf_path = os.path.join(folder, f"{condition_name.replace('/', '_')}_sequence_plots.pdf")
             with PdfPages(pdf_path) as pp:
                 for acc in tqdm(accs):
                     subframe = df[df["query_accession"] == acc]
                     if len(subframe) > 0:
                         plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level)
 
-    def plot_functional_enrichment(self, cutoff=0.05):
+    def plot_functional_enrichment(self, cutoff):
 
         """
         Performs a functional enrichment analysis and generates a bar plot of the results.
@@ -699,7 +700,7 @@ class Visualizer:
         """
 
         if len(self.conditions) == 2 or self.pairwise:
-            cols = self.annot.columns[self.annot.columns.str.startswith("Ttest:")]
+            cols = self.annot.columns[self.annot.columns.str.startswith("Independent T-test:")]
         else:
             cols = self.annot.columns[self.annot.columns.str.startswith("ANOVA:")]
 
@@ -708,15 +709,17 @@ class Visualizer:
             df = self.annot[self.annot[col] < cutoff]
             gene_names = df["name"].unique()
             genes = [g.split('_')[0] for g in gene_names]
-
             col_name = col.split(":")[1].strip()
-            fig = plot_enrichment_figure(genes, col_name)
-            
-            figures[col_name] = fig
+
+            if genes:
+                fig = plot_enrichment_figure(genes, col_name)
+                figures[col_name] = fig
+            else:
+                logging.warning(f'Statistics found no significant differentially abundant peptides with a cutoff value <{cutoff} for conditions {col_name}. No functional enrichment plots will be made for this comparison.')
 
         return figures
     
-    def plot_pathway_enrichment(self, cutoff=0.05, folder=None):
+    def plot_pathway_enrichment(self, cutoff, folder=None):
 
         """
         Performs a pathway enrichment analysis and generates pathway plots for significant peptides.
@@ -728,17 +731,17 @@ class Visualizer:
         Note: If the folder does not exist, it will be created.
         """
 
-        cols = self.annot.columns[self.annot.columns.str.startswith("Ttest:")]
+        cols = self.annot.columns[self.annot.columns.str.startswith("Independent T-test:")]
 
         for col in cols:
-            col_fold = col.replace('_', '/').replace('Ttest', 'Log2_fold_change')
+            col_fold = col.replace('Independent T-test', 'Log2_fold_change') # LATER: Does the conversion of _ to / prohibit the use of underscores in condition naming? Convert to / in creation process
             subframe = self.annot[self.annot[col] < cutoff]
 
             # Create a PDF file to save all figures
-            col_name = col.split(":")[1].strip()
-            pdf_path = os.path.join(folder, f"{col_name}_pathway_plots.pdf")
+            condition_name = col.split(":")[1].strip()
+            pdf_path = os.path.join(folder, f"{condition_name.replace('/', '_')}_pathway_plots.pdf")
             with PdfPages(pdf_path) as pp:
-                plot_pathway_figures(subframe, col_fold, pp, cutoff)
+                plot_pathway_figures(subframe, col_fold, condition_name, pp, cutoff)
 
     
 def create_pie_chart(y, x, colors, explode):
@@ -1020,7 +1023,7 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level):
 
     """
     Plots the protein sequence and structure with the significant peptides highlighted, and saves the figure to the PDF file.
-    Also adds existing protein features to the figure.
+    Also adds existing protein features to the figure. ONLY FOR PAIRWAISE COMPARISONS.
 
     Args:
         pp (PdfPages object): Object to which the figure is saved.
@@ -1047,11 +1050,10 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level):
     features = extract_protein_features(acc, record, merops, subframe)
 
     # get the significant peptides
-    col_fold = col.replace('_', '/').replace('Ttest', 'Log2_fold_change')
+    col_fold = col.replace('Independent T-test', 'Log2_fold_change')
 
     # Collapse duplicate peptides and take the mean of fold changes
     subframe = subframe.groupby(['query_sequence', 'start_pep', 'end_pep']).agg({col_fold: 'mean'}).reset_index()
-
     fold_changes = subframe[col_fold].values
 
     # Create a colormap centered at 0
@@ -1109,7 +1111,7 @@ def plot_enrichment_figure(genes, col_name, organism='hsapiens'):
         organism (str): Organism to be considered for enrichment analysis. Default is 'hsapiens' (Homo sapiens).
 
     Returns:
-        fig (Figure object): The generated figure, or None if no significant results were found.
+        fig (Figure object): The generated figure, or None if no significant results were found.    # LATER: Add type of figure?
     """
 
     # Initialize gprofiler
@@ -1140,7 +1142,7 @@ def plot_enrichment_figure(genes, col_name, organism='hsapiens'):
     return fig
 
 
-def plot_pathway_figures(subframe, col_fold, pp, cutoff=0.05):
+def plot_pathway_figures(subframe, col_fold, condition_name, pp, cutoff):
 
     """
     Perform pathway enrichment analysis with Reactome and plot the results.
@@ -1159,40 +1161,41 @@ def plot_pathway_figures(subframe, col_fold, pp, cutoff=0.05):
     accessions = subframe["query_accession"].unique()
 
     # Get the enriched pathways
-    enriched_pathways = annutils.get_enriched_pathways(accessions, cutoff=cutoff)
-    pathways = enriched_pathways["pathways"]
+    if list(accessions):
+        enriched_pathways = annutils.get_enriched_pathways(accessions, cutoff=cutoff)
+        pathways = enriched_pathways["pathways"]
 
-    # Get the significant pathway identifiers
-    significant_pathways_stIDs = [p["stId"] for p in pathways]
-    logging.info(f"Significant pathways for {col_fold}: {significant_pathways_stIDs}")
-    
-    # Plot the pathways
-    for i, pathway_stId in tqdm(enumerate(significant_pathways_stIDs)):
+        # Get the significant pathway identifiers
+        significant_pathways_stIDs = [p["stId"] for p in pathways]
+        logging.info(f"Significant pathways for {col_fold}: {significant_pathways_stIDs}")
+        
+        # Plot the pathways
+        for i, pathway_stId in tqdm(enumerate(significant_pathways_stIDs)):
 
-        # Get the pathway proteins and interaction map
-        pathway_proteins, interaction_map = annutils.get_proteins_and_interactors(pathway_stId)
+            # Get the pathway proteins and interaction map
+            pathway_proteins, interaction_map = annutils.get_proteins_and_interactors(pathway_stId)
 
-        if len(interaction_map) > 0:
-            # Get the protein edgelist, cleavage edgelist and cleavages
-            protein_edgelist, cleavage_edgelist, cleavages = annutils.construct_edgelists(subframe, interaction_map)
+            if len(interaction_map) > 0:
+                # Get the protein edgelist, cleavage edgelist and cleavages
+                protein_edgelist, cleavage_edgelist, cleavages = annutils.construct_edgelists(subframe, interaction_map)
 
-            # Construct the network
-            network = annutils.construct_network(protein_edgelist, cleavage_edgelist, pathway_proteins)
+                # Construct the network
+                network = annutils.construct_network(protein_edgelist, cleavage_edgelist, pathway_proteins)
 
-            # Create labels and colors for proteins and cleavages
-            protein_labels, protein_colors, cleavage_labels, cleavage_colors, protein_cmap, peptide_cmap = create_labels_colors(pathway_proteins, 
-                                                                                                                                cleavages, subframe, accessions, col_fold)
+                # Create labels and colors for proteins and cleavages
+                protein_labels, protein_colors, cleavage_labels, cleavage_colors, protein_cmap, peptide_cmap = create_labels_colors(pathway_proteins, 
+                                                                                                                                    cleavages, subframe, accessions, col_fold)
 
-            # Plot the network
-            fig = visualize_network(network, pathway_proteins, protein_edgelist, protein_colors, protein_labels, protein_cmap, cleavages, cleavage_edgelist,
-                                    cleavage_colors, cleavage_labels, peptide_cmap, col_fold, subframe, pathway_stId, pathways, i)
-            fig.savefig(pp, format="pdf")
-            plt.close()
+                # Plot the network
+                fig = visualize_network(network, pathway_proteins, protein_edgelist, protein_colors, protein_labels, protein_cmap, cleavages, cleavage_edgelist,
+                                        cleavage_colors, cleavage_labels, peptide_cmap, col_fold, subframe, pathway_stId, pathways, i)
+                fig.savefig(pp, format="pdf")
+                plt.close()
 
-        else:
-            logging.warning(f"No interaction map found for pathway: {pathway_stId}")
-
-        # save the network in a cyjs format
+            else:
+                logging.warning(f"No interaction map found for pathway: {pathway_stId}")
+    else:
+        logging.warning(f'Statistics found no significant differentially abundant peptides with a cutoff value <{cutoff} for conditions {condition_name}. No pathway enrichment plots will be made for this comparison.')
 
 
 def create_labels_colors(proteins, cleavages, subframe, accs, col_fold):
@@ -1296,12 +1299,13 @@ def visualize_network(network, proteins, protein_edgelist, protein_colors, prote
     
     all_edges = protein_edgelist + cleavage_edgelist
     all_labels = protein_labels | cleavage_labels
+    
 
     prot_nodes = nx.draw_networkx_nodes(network, pos, nodelist=proteins, node_color=protein_colors, node_size=600, node_shape='o', ax=ax[0])
     cleavage_nodes = nx.draw_networkx_nodes(network, pos, nodelist=cleavages, node_color=cleavage_colors, node_size=600, node_shape='D', ax=ax[0])
     edges = nx.draw_networkx_edges(network, pos, edgelist=all_edges, arrowstyle="-", arrowsize=25, width=1, ax=ax[0])
     labels = nx.draw_networkx_labels(network, pos, all_labels, font_size=7, font_color="black", ax=ax[0])
-
+    
     ax[0].axis('off')
 
     # Protein color bar
@@ -1311,6 +1315,7 @@ def visualize_network(network, proteins, protein_edgelist, protein_colors, prote
     cb_protein.ax.xaxis.set_ticks_position('top')
     cb_protein.ax.xaxis.set_label_position('top')
     cb_protein.set_label(f'Protein {col_fold}', fontsize=14)
+    
     ax[1].axis('off') # turn off axis
 
     # Cleavage color bar

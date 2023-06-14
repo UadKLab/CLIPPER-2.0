@@ -19,19 +19,27 @@ class Entry:
         self.seq = seq
         self.record: Optional[SwissProt.Record] = None
         self.annot: Dict[str, str] = {}
+        self.missing_uniprot_records = []
 
     def get_record(self, sleep_time: float = 0.5) -> None:
         time.sleep(sleep_time)
         self.record = self._retrieve_uniprot_record()
 
     def _retrieve_uniprot_record(self) -> Optional[SwissProt.Record]:
-        try:
-            handle = ExPASy.get_sprot_raw(self.acc)
-            record = SwissProt.read(handle)
-            return record
-        except Exception as e:
-            logging.warning(f"Error retrieving Uniprot record for {self.acc}: {str(e)}")
-            return None
+        tries = 0
+        while tries < 5:
+            try:
+                handle = ExPASy.get_sprot_raw(self.acc,)
+                record = SwissProt.read(handle)
+                return record
+            except Exception as e:
+                if tries == 4:
+                    tries += 1
+                    logging.warning(f"Error retrieving Uniprot record for {self.acc}: {str(e)}")
+                    return None
+                else:
+                    tries += 1
+                    continue
 
     def parse_general(self) -> None:
         if not self.record:

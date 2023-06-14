@@ -3,7 +3,7 @@ import logging
 from datetime import timedelta
 
 from clipper import Clipper
-from annutils import initialize
+from annutils import initialize, write_terminal_headers
 
 
 def main(args=None):
@@ -29,7 +29,8 @@ def main(args=None):
     annotator.prepare()
 
     # Perform peptide annotation
-    logging.info("Starting annotation of peptides...")
+    logging.debug("Starting annotation of peptides...")
+    write_terminal_headers("PEPTIDE ANNOTATION")
     if not args["singlecpu"]:
         annotator.threaded_annotate()
     else:
@@ -52,6 +53,8 @@ def main(args=None):
         annotator.exopeptidase()
         logging.info("Finished exopeptidase activity check.\n")
 
+    write_terminal_headers("Statistical analysis")
+
     # Perform general statistics annotation if condition file is not specified
     if args["conditionfile"] is None:
         logging.info("Performing general statistics annotation...")
@@ -66,7 +69,7 @@ def main(args=None):
 
         # Perform general statistics annotation
         logging.info("Performing general statistics annotation...")
-        annotator.general_conditions()
+        annotator.general_conditions()  # LATER: Should this be removed?
         logging.info("Finished general statistics annotation.")
 
         # Perform pairwise or all-vs-all statistical testing if specified
@@ -74,14 +77,14 @@ def main(args=None):
             logging.info("Performing statistical testing...")
             annotator.condition_statistics()
             logging.info("Finished statistical testing.")
-
+            
             annotator.correct_multiple_testing()
             logging.info("Finished multiple testing correction.\n")
 
         # Perform fold distribution check if specified
         if args["significance"]:
             logging.info("Checking fold distribution...")
-            annotator.percentile_fold(0.05)
+            annotator.percentile_fold(0.05) # LATER: SHouldn't this be 0.025 since it's two-sided?
             logging.info("Finished fold distribution check.\n")
 
     if args["calcstructure"]:
@@ -97,7 +100,7 @@ def main(args=None):
     # Generate figures if specified
     if args["visualize"]:
         logging.info("Generating figures...")
-        annotator.visualize()
+        annotator.visualize(cutoff = 0.05)
         logging.info("Finished generating figures.")
 
     # Generate logos if specified

@@ -18,6 +18,12 @@ import pymol
 from reactome2py import analysis, content
 import networkx as nx
 
+def write_terminal_headers(text):
+    print("\n")
+    print("".center(70, '*'))
+    print(f"  {text}  ".center(70, '*'))
+    print("".center(70, '*'))
+    print(" ")
 
 def initialize_logger(logfile):
     
@@ -29,24 +35,6 @@ def initialize_logger(logfile):
     
     Returns:
     logger (logging.RootLogger): A logger with two handlers - one for console output and one for file output.
-    """
-    
-
-    """
-    log_format = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
-    logger = logging.getLogger(__name__)
-
-    console_handler = logging.StreamHandler()
-    console_handler.setLevel(logging.INFO)
-    console_handler.setFormatter(log_format)
-    logger.addHandler(console_handler)
-
-    file_handler = logging.FileHandler(logfile)
-    file_handler.setLevel(logging.DEBUG)
-    file_handler.setFormatter(log_format)
-    logger.addHandler(file_handler)
-
-    logger.info(f"Annotator started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.")
     """
 
     logger = logging.getLogger()
@@ -69,8 +57,20 @@ def initialize_logger(logfile):
 
     logger.setLevel(logging.DEBUG)
 
-    logger.info(f"Annotator started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.")
+    logger.info('')
 
+    logger.info(f"Annotator started at {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}.")
+    print("\n\n\n*******************************************************************************************")
+    print("*******************************************************************************************")
+    print("                  _____ _      _____ _____  _____  ______ _____          ___         ___  ")
+    print("   _       ,/'   / ____| |    |_   _|  __ \|  __ \|  ____|  __ \        |__ \       / _ \ ")
+    print("  (_).  ,/'     | |    | |      | | | |__) | |__) | |__  | |__) |          ) |     | | | |")
+    print("   _  ::        | |    | |      | | |  ___/|  ___/|  __| |  _  /          / /      | | | |")
+    print("  (_)'  `\.     | |____| |____ _| |_| |    | |    | |____| | \ \         / /_   _  | |_| |")
+    print("           `\.   \_____|______|_____|_|    |_|    |______|_|  \_\       |____| (_)  \___/ ")
+    print("\n*******************************************************************************************")
+    print("******************  Welcome to CLIPPER 2.0, a degradomics data annotator  *****************")
+    print("*******************************************************************************************\n")       
 
     return logger
 
@@ -357,10 +357,13 @@ def initialize(arguments=None):
     arguments = initialize_arguments() if arguments is None else arguments
 
     logger.debug(f"Arguments: {arguments}")
+
+    write_terminal_headers('INITIALIZING CLIPPER 2.0')
+
     print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[0:-3]} [INFO] The arguments you have provided are:')
     for argument, value in arguments.items():
         print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[0:-3]} [INFO] - {argument}: {value}')
-    print('')
+    print("")
 
     arguments["timestamp"] = timestamp
     arguments["logfile"] = logfile
@@ -503,10 +506,11 @@ def get_structure_properties(acc_cleavage_sites, env_length=4, available_models=
                 temp_cif.write(f_in.read())
             
             temp_cif.flush()  # Ensure the file is written
-
+            print("here 7")
             pymol.cmd.delete('all')
-            pymol.cmd.load(temp_cif.name, acc)
-
+            print("here 8")
+            pymol.cmd.load(temp_cif.name, acc, retain_order = 1)
+            print("here 9")
             for index, cleavage_site in cleavage_sites_indices:
                 pymol.cmd.select('sel', f'resi {cleavage_site - (env_length - 1)}-{cleavage_site + env_length} and {acc}')
 
@@ -571,7 +575,7 @@ def get_enriched_pathways(accs, cutoff=0.05):
     # Use the token to get the detailed results
     pathways = analysis.token(token, page_size='20', page='1', sort_by='ENTITIES_FDR', 
                               order='ASC', resource='TOTAL', p_value=cutoff, include_disease=True, 
-                              n_entities=None, max_entities=None)
+                              min_entities=None, max_entities=None)
     
     return pathways
 
