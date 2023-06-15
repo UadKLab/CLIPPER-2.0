@@ -3,6 +3,7 @@ import re
 import shutil
 import logging
 import concurrent.futures
+from ast import literal_eval
 from itertools import combinations, permutations
 
 from pathlib import Path
@@ -100,6 +101,7 @@ class Clipper:
         self.available_models = None
 
         self.plot = args["visualize"]
+        self.pymol_verbose = args["pymol_verbose"]
         self.cleavagevis = args["cleavagevis"]
         self.logo = args["logo"]
         self.pseudocounts = args["pseudocounts"]
@@ -181,6 +183,7 @@ class Clipper:
             self.outfolder = self.resultfolder / self.timestamp
             self.outname = Path(self.infile).name.rsplit(".", 1)[0] + self.annotation_prefix + self.outfile_type
 
+        self.temp_folder = os.path.join(self.outfolder, "tmp")
         self.protein_folder = self.outfolder / self.plot_protein_folder
         self.general_folder = self.outfolder / self.plot_general_folder
         self.fold_change_folder = self.outfolder / self.plot_fold_change_folder
@@ -403,19 +406,6 @@ class Clipper:
         logging.info("Reading Protein Atlas data..")
         self.protein_atlas = pd.read_csv(self.datafolder / self.protein_atlas_filename, sep='\t')
         logging.info("Read Protein Atlas data.")
-
-    def read_available_models(self):
-
-        """
-        Read the available AlphaFold models from the specified directory.
-        """
-            
-        # read available alphafold models
-        logging.info("Reading available AlphaFold models...")
-        available_models = annutils.read_alphafold_accessions(self.datafolder / self.alphafold_models_filename)
-        logging.info(f"Read available AlphaFold models.")
-
-        self.available_models = available_models
 
     def initialize_annotation(self, length: int):
 
@@ -945,10 +935,13 @@ class Clipper:
 
         self.initialize_annotation(length)
         logging.info("Initialized annotation dataframe.\n")
-
         logging.info("Fetching information from Uniprot...")
-        for loc in tqdm(range(length)):
-            self.annot.loc[loc] = self.process_entry(loc)
+
+        with tqdm(range(length), leave = 0) as t:
+            for loc in t:
+                self.annot.loc[loc] = self.process_entry(loc)
+            elapsed = t.format_dict['elapsed']
+            logging.info(f"Gathering info from Uniprot took {annutils.format_seconds_to_time(elapsed)}")
     
     def entry_annotate(self, loc):
 
@@ -976,14 +969,19 @@ class Clipper:
 
         self.initialize_annotation(length)
         logging.info("Initialized annotation dataframe.\n")
+        logging.info("Fetching information from Uniprot...")
 
-        for i in tqdm(range(0, length, batch_length)):
-            batch = list(range(i, i + batch_length))
+        with tqdm(range(0, length, batch_length), leave = 0) as t:
+            for i in t:
+                batch = list(range(i, i + batch_length))
 
-            with concurrent.futures.ThreadPoolExecutor(
-                max_workers=batch_length
-            ) as executor:
-                executor.map(self.entry_annotate, batch)
+                with concurrent.futures.ThreadPoolExecutor(
+                    max_workers=batch_length
+                ) as executor:
+                    executor.map(self.entry_annotate, batch)
+
+                elapsed = t.format_dict['elapsed']
+        logging.info(f"Gathering info from Uniprot took {annutils.format_seconds_to_time(elapsed)}")
 
     def annotate_protein_atlas(self):
 
@@ -1026,56 +1024,57 @@ class Clipper:
         sequences = self.annot["query_sequence"].dropna()
         sequences.sort_values(key=lambda x: x.str.len(), kind="mergesort", ascending=False, inplace=True)
 
-        #print(f'Sequences: {sequences}')
+        exopeptidase_activity = False
+        with tqdm(sequences, leave = 0) as t:
+            for seq in t:
+                if seq not in cleared:
+                    # check if sequence ends with ragged pattern. If so, check if the same sequence
+                    # with the last amino acid removed is also in the dataframe. If so, annotate.
+                    rag_flag = False
+                    cleared.add(seq)
+                    char_match = seq[-5:]
+                    matching_peptides = sequences[sequences.str.endswith(char_match)]
 
-        for seq in tqdm(sequences):
-            if seq not in cleared:
-                # check if sequence ends with ragged pattern. If so, check if the same sequence
-                # with the last amino acid removed is also in the dataframe. If so, annotate.
-                rag_flag = False
-                cleared.add(seq)
-                char_match = seq[-5:]
-                matching_peptides = sequences[sequences.str.endswith(char_match)]
+                    # if there are matches with 5 amino acids from the carboxy terminus, check if there is a ragged pattern
+                    if len(matching_peptides) > 1:
+                        compare = seq
+                        lpep = len(seq)
 
-                # if there are matches with 5 amino acids from the carboxy terminus, check if there is a ragged pattern
-                if len(matching_peptides) > 1:
-                    compare = seq
-                    lpep = len(seq)
+                        # for each matching peptide, check if the same sequence with the last amino acid removed is also in the dataframe
+                        for ind in matching_peptides.index:
+                            pep = matching_peptides[ind]
+                            same_seq_indices = self.annot[self.annot["query_sequence"] == pep].index
+                            
+                            # if there is a ragged pattern, annotate as such
+                            if pep == compare[1:]:
+                                cleared.add(pep)
+                                compare = pep
+                                logging.debug(f"1 {seq} {pep}")
+                                exopeptidase_activity = True
+                                # if the ragged pattern originated from dipetidase activity, annotate as such
+                                if rag_flag and len(pep) == lpep - 1:
+                                    for i in same_seq_indices:
+                                        self.annot.loc[i, "exopeptidase"] = "Dipeptidase_seed_Aminopeptidase_activity"
+                                # if the ragged pattern exists, annotate as aminopeptidase
+                                else:
+                                    for i in same_seq_indices:
+                                        self.annot.loc[i, "exopeptidase"] = "Aminopeptidase_activity"
+                                    rag_flag = False
 
-                    # for each matching peptide, check if the same sequence with the last amino acid removed is also in the dataframe
-                    for ind in matching_peptides.index:
-                        pep = matching_peptides[ind]
-                        same_seq_indices = self.annot[self.annot["query_sequence"] == pep].index
-                        
-                        # if there is a ragged pattern, annotate as such
-                        exopeptidase_activity = False
-                        if pep == compare[1:]:
-                            cleared.add(pep)
-                            compare = pep
-                            logging.debug(f"1 {seq} {pep}")
-                            exopeptidase_activity = True
-                            # if the ragged pattern originated from dipetidase activity, annotate as such
-                            if rag_flag and len(pep) == lpep - 1:
+                            elif pep == compare[2:]:
+                                cleared.add(pep)
+                                compare = pep
+                                rag_flag = True
+                                lpep = len(pep)
+                                logging.debug(f"2 {seq} {pep}")
+                                exopeptidase_activity = True
                                 for i in same_seq_indices:
-                                    self.annot.loc[i, "exopeptidase"] = "Dipeptidase_seed_Aminopeptidase_activity"
-                            # if the ragged pattern exists, annotate as aminopeptidase
-                            else:
-                                for i in same_seq_indices:
-                                    self.annot.loc[i, "exopeptidase"] = "Aminopeptidase_activity"
-                                rag_flag = False
+                                    self.annot.loc[i, "exopeptidase"] = "Dipeptidase_activity"
+            elapsed = t.format_dict['elapsed']
+            logging.info(f"Exopeptidase activity check took {annutils.format_seconds_to_time(elapsed)}")
 
-                        elif pep == compare[2:]:
-                            cleared.add(pep)
-                            compare = pep
-                            rag_flag = True
-                            lpep = len(pep)
-                            logging.debug(f"2 {seq} {pep}")
-                            exopeptidase_activity = True
-                            for i in same_seq_indices:
-                                self.annot.loc[i, "exopeptidase"] = "Dipeptidase_activity"
-
-                        if exopeptidase_activity:
-                            logging.info("Exopeptidase activity was found, check logfile or output for more details on exact peptide sequences")
+        if exopeptidase_activity:
+            logging.info("Exopeptidase activity was found, check logfile or output for more details on exact peptide sequences")
 
     def predict_protease_activity(self):
         """
@@ -1094,14 +1093,17 @@ class Clipper:
 
         # Create PSSM for each protease and store in a dictionary
         pssms = pp.construct_pssms(protease_codes, self.merops, self.merops_sub)
+        with tqdm(range(len(self.annot)), leave = 0) as t:
+            for i in t:
+                # Get the peptide sequence
+                cleavage = self.annot.loc[i, "p4_p4prime"]
+                # Score the peptide with each PSSM
+                if isinstance(cleavage, str) and len(cleavage) == 8 and not '-' in cleavage:
+                    scores = pp.score_proteases(pssms, cleavage)
+                    self.annot.loc[i, "predicted_protease_activity"] = scores
 
-        for i in tqdm(range(len(self.annot))):
-            # Get the peptide sequence
-            cleavage = self.annot.loc[i, "p4_p4prime"]
-            # Score the peptide with each PSSM
-            if isinstance(cleavage, str) and len(cleavage) == 8 and not '-' in cleavage:
-                scores = pp.score_proteases(pssms, cleavage)
-                self.annot.loc[i, "predicted_protease_activity"] = scores
+            elapsed = t.format_dict['elapsed']
+            logging.info(f"Protease activity prediction took {annutils.format_seconds_to_time(elapsed)}")
 
     def annotate_structure(self, cutoff):
 
@@ -1119,7 +1121,8 @@ class Clipper:
         """
 
         if self.available_models is None:
-            self.read_available_models()
+            available_models = annutils.read_alphafold_accessions(self.datafolder / self.alphafold_models_filename)
+            self.available_models = available_models
 
         self.annot["secondary_structure p4_p4prime"] = np.nan
         self.annot["solvent_accessibility p4_p4prime"] = np.nan
@@ -1141,7 +1144,13 @@ class Clipper:
 
             # get the secondary structure and solvent accessibility of all cleavage sites
 
-            structure_properties = annutils.get_structure_properties(acc_cleavage_sites, 4, self.available_models)
+            structure_tmp_filepath = os.path.join(self.temp_folder, "structure_properties.txt")
+            structure_properties = annutils.get_structure_properties(acc_cleavage_sites, structure_tmp_filepath, self.pymol_verbose, self.available_models)
+
+            with open(structure_tmp_filepath, 'r') as f:
+                lines = f.readlines()[0]
+                structure_properties = literal_eval(lines)
+            os.remove(structure_tmp_filepath)
 
             # assign to the annotation dataframe
             for (acc, cleavage_site), (index, ss, sa) in structure_properties.items():
@@ -1176,7 +1185,7 @@ class Clipper:
                                 acc_cleavage_sites.setdefault(acc, []).append((i, cleavage_site))
 
                         # get the secondary structure and solvent accessibility of all cleavage sites
-                        structure_properties = annutils.get_structure_properties(acc_cleavage_sites, 4, self.available_models)
+                        structure_properties = annutils.get_structure_properties(acc_cleavage_sites, 4, self.pymol_verbose, self.available_models)
 
                         for (acc, cleavage_site), (index, ss, sa) in structure_properties.items():
                             # if the cleavage site is not nan (has not been annotated in previous iterations), annotate
@@ -1200,8 +1209,7 @@ class Clipper:
         """
 
         # initialize Visualizer class, and generate figures for general statistics, CV plot, pie charts, heatmap and clustermap
-        vis = Visualizer(self.df, self.annot, self.conditions, self.software, self.patterns, self.pairwise)
-        print("THIS IS VIS!!!!!!!!!!!!")
+        vis = Visualizer(self.df, self.annot, self.conditions, self.software, self.patterns, self.temp_folder, self.pairwise)
         self.figures["General"] = vis.general()
         self.figures["CV"] = vis.cv_plot()
         self.figures["Piechart"] = vis.generate_pie_charts()
@@ -1224,21 +1232,22 @@ class Clipper:
             self.figures["Fold"] = vis.fold_plot()
             self.figures["Fold_nterm"] = vis.fold_termini()
 
-            logging.info("Starting gallery generation...")
+            logging.info("Generating a PDF gallery of significant peptides...")
             vis.gallery(cutoff=cutoff, stat=self.stat, folder=self.general_folder)
             logging.info("Finished gallery generation.")
             
             if self.stat and self.cleavagevis and self.pairwise:
                 if self.available_models is None:
-                    self.read_available_models()
+                    available_models = annutils.read_alphafold_accessions(self.datafolder / self.alphafold_models_filename)
+                    self.available_models = available_models
 
                 logging.info("Starting protein plotting...")
                 if self.nomerops is False:
-                    vis.plot_protein(cutoff=cutoff, folder=self.protein_folder, merops=self.merops, alphafold=self.available_models, level=self.cleavagevis)
+                    vis.plot_protein(cutoff=cutoff, pymol_verbose=self.pymol_verbose, folder=self.protein_folder, merops=self.merops, alphafold=self.available_models, level=self.cleavagevis)
                     logging.info("Finished protein plotting.")
                 else:
-                    vis.plot_protein(cutoff=cutoff, folder=self.protein_folder, alphafold=self.available_models, level=self.cleavagevis)
-                logging.info("Finished protein plotting.")
+                    vis.plot_protein(cutoff=cutoff, pymol_verbose=self.pymol_verbose, folder=self.protein_folder, alphafold=self.available_models, level=self.cleavagevis)
+                    logging.info("Finished protein plotting.")
 
 
     def create_logos(self):

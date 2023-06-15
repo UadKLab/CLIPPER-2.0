@@ -18,11 +18,21 @@ import pymol
 from reactome2py import analysis, content
 import networkx as nx
 
-def write_terminal_headers(text):
+
+import subprocess
+
+
+
+def format_seconds_to_time(s):
+    hours, remainder = divmod(s, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return '{:02}:{:02}:{:02} hh:mm:ss'.format(int(hours), int(minutes), int(seconds))
+
+def write_terminal_headers(text, length = 91):
     print("\n")
-    print("".center(70, '*'))
-    print(f"  {text}  ".center(70, '*'))
-    print("".center(70, '*'))
+    print("".center(length, '*'))
+    print(f"  {text}  ".center(length, '*'))
+    print("".center(length, '*'))
     print(" ")
 
 def initialize_logger(logfile):
@@ -38,10 +48,7 @@ def initialize_logger(logfile):
     """
 
     logger = logging.getLogger()
-    logger.setLevel(logging.INFO)
-
     formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
-
     file_handler = logging.FileHandler(logfile)
     file_handler.setFormatter(formatter)
     file_handler.setLevel(logging.DEBUG)
@@ -72,8 +79,11 @@ def initialize_logger(logfile):
     print("******************  Welcome to CLIPPER 2.0, a degradomics data annotator  *****************")
     print("*******************************************************************************************\n")       
 
-    return logger
 
+
+
+
+    return logger
 
 def initialize_arguments():
 
@@ -334,8 +344,17 @@ def initialize_arguments():
                             annotation as a separate file. False by default",
     )
 
-    return vars(parser.parse_args())
+    parser.add_argument(
+        "-pv",
+        "--pymol_verbose",
+        action="store",
+        dest="pymol_verbose",
+        type=bool,
+        default=False,
+        help="Whether to output all pymol warnings/information to terminal during run or keep quiet.",
+    )
 
+    return vars(parser.parse_args())
 
 def initialize(arguments=None):
 
@@ -370,7 +389,6 @@ def initialize(arguments=None):
 
     return arguments
 
-
 def parse_arguments(parser):
 
     """
@@ -388,7 +406,6 @@ def parse_arguments(parser):
     arg_dict = vars(args)
 
     return arg_dict
-
 
 def parse_sequence(seq: str):
 
@@ -411,7 +428,6 @@ def parse_sequence(seq: str):
     else:
         return None
 
-
 def parse_acc(acc_string: str):
 
     """
@@ -433,7 +449,6 @@ def parse_acc(acc_string: str):
     else:
         return None
 
-
 def map_dict(annot_df_row: pd.core.series.Series, annot_dict: dict):
 
     """
@@ -452,7 +467,6 @@ def map_dict(annot_df_row: pd.core.series.Series, annot_dict: dict):
 
     return annot_df_row
 
-
 def read_alphafold_accessions(accession_file: str):
 
     """
@@ -465,13 +479,48 @@ def read_alphafold_accessions(accession_file: str):
     list: List of accessions.
     """
 
+    logging.info(" - Reading available AlphaFold models...")
     with open(accession_file, "r") as f:
         accessions = f.read().splitlines()
+    logging.info(f" - Read available AlphaFold models.")
 
     return accessions
 
+def calculate_structure_properties(acc, cleavage_sites_indices, structure_properties, alphafold_folder, env_length = 4):
 
-def get_structure_properties(acc_cleavage_sites, env_length=4, available_models=None):
+    # Load the model
+    model_filename = f"AF-{acc}-F1-model_v4.cif.gz"
+    model_path = os.path.join(alphafold_folder, model_filename)
+
+    with tempfile.NamedTemporaryFile(suffix=".cif", delete=False) as temp_cif:
+        # Open the gzipped CIF file
+        with gzip.open(model_path, 'rb') as f_in:
+            # Write the decompressed contents to the temporary file
+            temp_cif.write(f_in.read())
+
+        temp_cif.flush()  # Ensure the file is written
+
+        pymol.cmd.delete('all')
+        pymol.cmd.load(temp_cif.name, acc)
+
+        for index, cleavage_site in cleavage_sites_indices:
+            pymol.cmd.select('sel', f'resi {cleavage_site - (env_length - 1)}-{cleavage_site + env_length} and {acc}')
+
+            # Compute the secondary structure
+            pymol.cmd.dss(acc)
+            ss_list = []
+            pymol.cmd.iterate('sel and name ca', 'ss_list.append(ss)', space=locals())
+            ss = ''.join(ss_list)
+
+            # Compute the solvent accessible surface area
+            pymol.cmd.set('dot_solvent', 1)
+            sa= pymol.cmd.get_area('sel')
+
+            structure_properties[(acc, cleavage_site)] = (index, ss, sa)
+
+    return structure_properties
+
+def get_structure_properties(acc_cleavage_sites, tmp_output_path, pymol_verbose, available_models=None):
 
     """
     Computes the solvent accessible surface area of a peptide.
@@ -486,45 +535,39 @@ def get_structure_properties(acc_cleavage_sites, env_length=4, available_models=
     or None if the model is not available.
     """
 
+    logging.info(" - Calculating surface area and secondary structure...")
+
     structure_properties = {}
     alphafold_folder_name = r"/Volumes/Bio-Temp/Protease-Systems-Biology-temp/Kostas/CLIPPER/Datasets/Alphafold"
     alphafold_folder = Path(alphafold_folder_name)
 
-    for acc, cleavage_sites_indices in tqdm(acc_cleavage_sites.items()):
-        if available_models is not None and acc not in available_models:
-            logging.warning(f"Model for {acc} not available")
-            continue
+    # initialize the tmp file with an empty dict to not mess up the subprocess read/write system
+    os.makedirs(os.path.dirname(tmp_output_path), exist_ok=True)
+    with open(tmp_output_path, 'w') as f:
+        f.write("{}")
 
-        # Load the model
-        model_filename = f"AF-{acc}-F1-model_v4.cif.gz"
-        model_path = alphafold_folder / model_filename
+    # if all pymol messages and output should be included in terminal set pymol_verbose = True
+    if pymol_verbose:
+        with tqdm(acc_cleavage_sites.items(), leave = 0) as t:
+            for acc, cleavage_sites_indices in t:
+                if available_models is not None and acc not in available_models:
+                    logging.warning(f"Model for {acc} not available")
+                structure_properties = calculate_structure_properties(acc, cleavage_sites_indices, structure_properties, alphafold_folder)
+            with open(tmp_output_path, 'w') as f:
+                f.write(str(structure_properties))
+            elapsed = t.format_dict['elapsed']
+            logging.info(f"Structure calculations took {format_seconds_to_time(elapsed)}")
 
-        with tempfile.NamedTemporaryFile(suffix=".cif", delete=False) as temp_cif:
-            # Open the gzipped CIF file
-            with gzip.open(model_path, 'rb') as f_in:
-                # Write the decompressed contents to the temporary file
-                temp_cif.write(f_in.read())
-            
-            temp_cif.flush()  # Ensure the file is written
-            print("here 7")
-            pymol.cmd.delete('all')
-            print("here 8")
-            pymol.cmd.load(temp_cif.name, acc, retain_order = 1)
-            print("here 9")
-            for index, cleavage_site in cleavage_sites_indices:
-                pymol.cmd.select('sel', f'resi {cleavage_site - (env_length - 1)}-{cleavage_site + env_length} and {acc}')
-
-                # Compute the secondary structure
-                pymol.cmd.dss(acc)
-                ss_list = []
-                pymol.cmd.iterate('sel and name ca', 'ss_list.append(ss)', space=locals())
-                ss = ''.join(ss_list)
-
-                # Compute the solvent accessible surface area
-                pymol.cmd.set('dot_solvent', 1)
-                sa= pymol.cmd.get_area('sel')
-
-                structure_properties[(acc, cleavage_site)] = (index, ss, sa)
+    # otherwise run the function as a subprocess to choke the otherwise very persistent output
+    else:
+        with tqdm(acc_cleavage_sites.items(), leave = 0) as t:
+            for acc, cleavage_sites_indices in t:
+                if available_models is not None and acc not in available_models:
+                    logging.warning(f"Model for {acc} not available")
+                subprocess.run(['python', 'pymol_subprocess_ss.py', '-tf', str(tmp_output_path), '-acc', str(acc), '-af', str(alphafold_folder), '-csi', str(cleavage_sites_indices)], stdout=subprocess.DEVNULL)
+            elapsed = t.format_dict['elapsed']
+            logging.info(f"Structure calculations took {format_seconds_to_time(elapsed)}")
+    
 
     return structure_properties
 
@@ -548,7 +591,6 @@ def map_accessions(accessions):
     human_accessions = [entry['mapsTo'][0]['identifier'] for entry in mapping if entry['mapsTo']]
 
     return human_accessions
-
 
 def get_enriched_pathways(accs, cutoff=0.05):
 
@@ -578,7 +620,6 @@ def get_enriched_pathways(accs, cutoff=0.05):
                               min_entities=None, max_entities=None)
     
     return pathways
-
 
 def get_proteins_and_interactors(pathway_id):
 
@@ -611,7 +652,6 @@ def get_proteins_and_interactors(pathway_id):
             interaction_map[acc] = interactors_filtered
 
     return proteins, interaction_map
-
 
 def construct_edgelists(subframe, interaction_map):
 
@@ -647,7 +687,6 @@ def construct_edgelists(subframe, interaction_map):
     
     return protein_edgelist, cleavage_edgelist, cleavages
 
-
 def construct_network(protein_edgelist, cleavage_edgelist, proteins):
 
     """
@@ -671,7 +710,6 @@ def construct_network(protein_edgelist, cleavage_edgelist, proteins):
     network.add_nodes_from(proteins)
 
     return network
-
 
 def save_figures(figures, folders):
     

@@ -51,7 +51,7 @@ def main(args=None):
     if not args["noexo"]:
         logging.info("Starting exopeptidase activity check...")
         annotator.exopeptidase()
-        logging.info("Finished exopeptidase activity check.\n")
+        logging.info("Finished exopeptidase activity check.")
 
     write_terminal_headers("Statistical analysis")
 
@@ -99,6 +99,7 @@ def main(args=None):
 
     # Generate figures if specified
     if args["visualize"]:
+        write_terminal_headers('Creating visualizations')
         logging.info("Generating figures...")
         annotator.visualize(cutoff = 0.05)
         logging.info("Finished generating figures.")
@@ -107,9 +108,10 @@ def main(args=None):
     if args["logo"] is not None:
         logging.info("Generating logos...")
         annotator.create_logos()
-        logging.info("Finished generating logos.\n")
+        logging.info("Finished generating logos.")
 
     # Write output files
+    write_terminal_headers('Finishing up')
     logging.info("Writing output files...")
     annotator.write_files()
     logging.info("Finished writing output files")

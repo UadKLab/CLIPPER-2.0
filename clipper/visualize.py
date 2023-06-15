@@ -3,6 +3,7 @@ import tempfile
 import gzip
 import logging
 import warnings
+import subprocess
 from pathlib import Path
 
 warnings.filterwarnings('ignore')
@@ -71,13 +72,14 @@ class Visualizer:
         plot_pathway_enrichment: Performs a pathway enrichment analysis and generates pathway plots for significant peptides.
     """
         
-    def __init__(self, df: pd.DataFrame, annot: str, conditions: list, software: str, patterns: dict, pairwise: bool=False) -> None:
+    def __init__(self, df: pd.DataFrame, annot: str, conditions: list, software: str, patterns: dict, temp_folder: str, pairwise: bool=False) -> None:
 
         self.df = df
         self.annot = annot
         self.conditions = conditions
         self.software = software
         self.patterns = patterns
+        self.temp_folder = temp_folder
         self.pairwise = pairwise
 
     def general(self) -> dict:
@@ -472,34 +474,37 @@ class Visualizer:
 
         sns.set("paper", "ticks")
         pp = PdfPages(os.path.join(folder, "Sig_gallery.pdf"))
+        with tqdm(accs, leave = 0) as t:
+            for acc in t:
 
-        for acc in tqdm(accs):
+                natural = self.annot[(self.annot["query_accession"] == acc) & (self.annot["nterm_annot"].isin(["Met removed",
+                                "Met intact", "Signal removed", "Propeptide removed",]))]
 
-            natural = self.annot[(self.annot["query_accession"] == acc) & (self.annot["nterm_annot"].isin(["Met removed",
-                            "Met intact", "Signal removed", "Propeptide removed",]))]
+                internal = self.annot[(self.annot["query_accession"] == acc) & (self.annot["nterm_annot"] == "Internal")]
 
-            internal = self.annot[(self.annot["query_accession"] == acc) & (self.annot["nterm_annot"] == "Internal")]
+                columns = natural.columns[natural.columns.str.contains("_mean")]
+                natural = natural.drop_duplicates("query_sequence").dropna(subset=columns)
+                internal = internal.drop_duplicates("query_sequence").dropna(subset=columns)
 
-            columns = natural.columns[natural.columns.str.contains("_mean")]
-            natural = natural.drop_duplicates("query_sequence").dropna(subset=columns)
-            internal = internal.drop_duplicates("query_sequence").dropna(subset=columns)
+                if len(natural) > 0 and len(internal) > 0:
 
-            if len(natural) > 0 and len(internal) > 0:
+                    fig, ax = plt.subplots(1, 2, figsize=(12, 10))
 
-                fig, ax = plt.subplots(1, 2, figsize=(12, 10))
+                    # Generate the mean values bar plot
+                    mean_values_data = get_mean_values_data(columns, natural, internal)
+                    generate_bar_plot(ax[0], mean_values_data, "summer", "Mean values per condition")
 
-                # Generate the mean values bar plot
-                mean_values_data = get_mean_values_data(columns, natural, internal)
-                generate_bar_plot(ax[0], mean_values_data, "summer", "Mean values per condition")
+                    # Generate the peptides with quant values bar plot
+                    quant_values_data = get_quant_values_data(columns, natural, internal)
+                    generate_bar_plot(ax[1], quant_values_data, "winter", "Peptides with quant values")
 
-                # Generate the peptides with quant values bar plot
-                quant_values_data = get_quant_values_data(columns, natural, internal)
-                generate_bar_plot(ax[1], quant_values_data, "winter", "Peptides with quant values")
+                    plt.suptitle(f"Protein Uniprot ID: {acc}")
+                    plt.tight_layout()
+                    plt.savefig(pp, format="pdf")
+                    plt.close()
 
-                plt.suptitle(f"Protein Uniprot ID: {acc}")
-                plt.tight_layout()
-                plt.savefig(pp, format="pdf")
-                plt.close()
+            elapsed = t.format_dict['elapsed']
+            logging.info(f"Generating PDF gallery took {annutils.format_seconds_to_time(elapsed)}")
 
         pp.close()
 
@@ -654,7 +659,7 @@ class Visualizer:
 
         return {"UMAP": fig}
     
-    def plot_protein(self, cutoff, folder=None, merops=None, alphafold=None, level=None):
+    def plot_protein(self, cutoff, pymol_verbose, folder=None, merops=None, alphafold=None, level=None):
 
         """
         Plots significant peptides for each condition on protein sequence and structure.
@@ -673,19 +678,30 @@ class Visualizer:
             cols = self.annot.columns[self.annot.columns.str.startswith("Independent T-test:")]
         else:
             cols = self.annot.columns[self.annot.columns.str.startswith("ANOVA:")]
+        logging.info(f"Plotting all significant peptides for {len(cols)} comparisons on protein sequences and structures.")
+        log_warnings = []
+        with tqdm(cols, leave = 0) as t:
+            for col in t:
+                #logging.info(f"Plotting peptides on protein sequence and structures for {col.split(':')[1].strip()}")
+                df = self.annot[self.annot[col] < cutoff]
+                accs = df["query_accession"].unique()
 
-        for col in cols:
-            df = self.annot[self.annot[col] < cutoff]
-            accs = df["query_accession"].unique()
+                if len(accs) != 0:
+                    # Create a PDF file to save all figures
+                    condition_name = col.split(":")[1].strip()
+                    pdf_path = os.path.join(folder, f"{condition_name.replace('/', '_')}_sequence_plots.pdf")
+                    with PdfPages(pdf_path) as pp:
+                        for acc in tqdm(accs, leave = 0):
+                            subframe = df[df["query_accession"] == acc]
+                            if len(subframe) > 0:
+                                plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level, self.temp_folder, pymol_verbose=pymol_verbose)
+                else:
+                    log_warnings.append(f"There were no significant peptides for condition {col.split(':')[1].strip()}, no pdf is made.")
+            elapsed = t.format_dict['elapsed']
+            logging.info(f"Plotting peptide sequences and positions on structures took {annutils.format_seconds_to_time(elapsed)}")
+        for item in log_warnings:
+            logging.warning(item)
 
-            # Create a PDF file to save all figures
-            condition_name = col.split(":")[1].strip()
-            pdf_path = os.path.join(folder, f"{condition_name.replace('/', '_')}_sequence_plots.pdf")
-            with PdfPages(pdf_path) as pp:
-                for acc in tqdm(accs):
-                    subframe = df[df["query_accession"] == acc]
-                    if len(subframe) > 0:
-                        plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level)
 
     def plot_functional_enrichment(self, cutoff):
 
@@ -715,7 +731,7 @@ class Visualizer:
                 fig = plot_enrichment_figure(genes, col_name)
                 figures[col_name] = fig
             else:
-                logging.warning(f'Statistics found no significant differentially abundant peptides with a cutoff value <{cutoff} for conditions {col_name}. No functional enrichment plots will be made for this comparison.')
+                logging.warning(f'No significant peptides with a cutoff value <{cutoff} for conditions {col_name}. No functional enrichment plots will be made for this comparison.')
 
         return figures
     
@@ -937,7 +953,7 @@ def extract_protein_features(acc, record, merops, subframe):
         return features
 
 
-def get_pymol_image(acc, positions, colormap, vmin, vmax, alphafold):
+def get_pymol_image(acc, positions, colormap, vmin, vmax, peptide_protein_plot_path):
 
     """
     Get the image of the protein structure with the significant positions highlighted.
@@ -962,10 +978,6 @@ def get_pymol_image(acc, positions, colormap, vmin, vmax, alphafold):
     numpy.array or None
         The image data, or None if the AlphaFold model is not available.
     """
-    
-    if acc not in alphafold:
-        logging.warning(f"Alphafold model for {acc} not available.")
-        return None
     
     model_filename = f"AF-{acc}-F1-model_v4.cif.gz"
     alphafold_path = Path(alphafold_folder_name)
@@ -1009,17 +1021,10 @@ def get_pymol_image(acc, positions, colormap, vmin, vmax, alphafold):
     if max_fold_change_pos is not None:
         pymol.cmd.orient(f'resi {max_fold_change_pos[0]}-{max_fold_change_pos[1]} and {acc}')
         pymol.cmd.zoom(acc, complete=0.65)
-        
-    tmp_file = tempfile.mktemp(suffix=".png")
     pymol.cmd.ray(1280, 720)
-    pymol.cmd.png(tmp_file, dpi=600)
-    img = plt.imread(tmp_file)
-    os.remove(tmp_file)
+    pymol.cmd.png(peptide_protein_plot_path, dpi=600)
 
-    return img
-
-
-def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level):
+def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level, temp_folder, pymol_verbose):
 
     """
     Plots the protein sequence and structure with the significant peptides highlighted, and saves the figure to the PDF file.
@@ -1086,10 +1091,27 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level):
     cb.set_label(col_fold, fontsize=12)
 
     # get the pymol image of the protein structure
-    if alphafold and level=='both':
+    if alphafold and level=='both': # LATER: Why also level = both?
         positions = subframe[['start_pep', 'end_pep', col_fold]].values.tolist()
-        img = get_pymol_image(acc, positions, cmap, -max_fold_change, max_fold_change, alphafold)
+        peptide_protein_plot_path = os.path.join(temp_folder, f"peptide_protein_plot_path_{acc}.png")
 
+        # initialize the tmp file with an empty dict to not mess up the subprocess read/write system
+        os.makedirs(os.path.dirname(temp_folder), exist_ok=True)
+
+        if acc not in alphafold:
+            logging.warning(f"Alphafold model for {acc} not available.")
+            return None
+
+        # if all pymol messages and output should be included in terminal set pymol_verbose = True
+        if pymol_verbose:
+            get_pymol_image(acc, positions, cmap, -max_fold_change, max_fold_change, peptide_protein_plot_path)
+            
+        # otherwise run the function as a subprocess to choke the otherwise very persistent output
+        else:
+            subprocess.run(['python', 'pymol_subprocess_plot_protein.py', '-acc', str(acc), '-pos', str(positions), '-_mfc', str(-max_fold_change), '-mfc', str(max_fold_change), '-tf', str(peptide_protein_plot_path)], stdout=subprocess.DEVNULL)
+
+        img = plt.imread(peptide_protein_plot_path)
+        os.remove(peptide_protein_plot_path)
         if img is not None:
             ax2.imshow(img)
     
@@ -1167,35 +1189,41 @@ def plot_pathway_figures(subframe, col_fold, condition_name, pp, cutoff):
 
         # Get the significant pathway identifiers
         significant_pathways_stIDs = [p["stId"] for p in pathways]
-        logging.info(f"Significant pathways for {col_fold}: {significant_pathways_stIDs}")
-        
-        # Plot the pathways
-        for i, pathway_stId in tqdm(enumerate(significant_pathways_stIDs)):
+        if significant_pathways_stIDs == []:
+            logging.info(f"No significantly enriched pathways found for {col_fold.split(':')[1].strip()}")
+        else:
+            logging.info(f"Significant pathways for {col_fold.split(':')[1].strip()}: {significant_pathways_stIDs}")
 
-            # Get the pathway proteins and interaction map
-            pathway_proteins, interaction_map = annutils.get_proteins_and_interactors(pathway_stId)
+            # Plot the pathways
+            with tqdm(enumerate(significant_pathways_stIDs), total=len(significant_pathways_stIDs), leave = 0) as t:
+                for i, pathway_stId in t:
 
-            if len(interaction_map) > 0:
-                # Get the protein edgelist, cleavage edgelist and cleavages
-                protein_edgelist, cleavage_edgelist, cleavages = annutils.construct_edgelists(subframe, interaction_map)
+                    # Get the pathway proteins and interaction map
+                    pathway_proteins, interaction_map = annutils.get_proteins_and_interactors(pathway_stId)
 
-                # Construct the network
-                network = annutils.construct_network(protein_edgelist, cleavage_edgelist, pathway_proteins)
+                    if len(interaction_map) > 0:
+                        # Get the protein edgelist, cleavage edgelist and cleavages
+                        protein_edgelist, cleavage_edgelist, cleavages = annutils.construct_edgelists(subframe, interaction_map)
 
-                # Create labels and colors for proteins and cleavages
-                protein_labels, protein_colors, cleavage_labels, cleavage_colors, protein_cmap, peptide_cmap = create_labels_colors(pathway_proteins, 
-                                                                                                                                    cleavages, subframe, accessions, col_fold)
+                        # Construct the network
+                        network = annutils.construct_network(protein_edgelist, cleavage_edgelist, pathway_proteins)
 
-                # Plot the network
-                fig = visualize_network(network, pathway_proteins, protein_edgelist, protein_colors, protein_labels, protein_cmap, cleavages, cleavage_edgelist,
-                                        cleavage_colors, cleavage_labels, peptide_cmap, col_fold, subframe, pathway_stId, pathways, i)
-                fig.savefig(pp, format="pdf")
-                plt.close()
+                        # Create labels and colors for proteins and cleavages
+                        protein_labels, protein_colors, cleavage_labels, cleavage_colors, protein_cmap, peptide_cmap = create_labels_colors(pathway_proteins, 
+                                                                                                                                            cleavages, subframe, accessions, col_fold)
 
-            else:
-                logging.warning(f"No interaction map found for pathway: {pathway_stId}")
+                        # Plot the network
+                        fig = visualize_network(network, pathway_proteins, protein_edgelist, protein_colors, protein_labels, protein_cmap, cleavages, cleavage_edgelist,
+                                                cleavage_colors, cleavage_labels, peptide_cmap, col_fold, subframe, pathway_stId, pathways, i)
+                        fig.savefig(pp, format="pdf")
+                        plt.close()
+
+                    else:
+                        logging.warning(f"No interaction map found for pathway: {pathway_stId}")
+                elapsed = t.format_dict['elapsed']
+                logging.info(f"Structure calculations took {annutils.format_seconds_to_time(elapsed)}")
     else:
-        logging.warning(f'Statistics found no significant differentially abundant peptides with a cutoff value <{cutoff} for conditions {condition_name}. No pathway enrichment plots will be made for this comparison.')
+        logging.warning(f'No significant peptides with a cutoff value <{cutoff} for conditions {condition_name}. No pathway enrichment plots will be made for this comparison.')
 
 
 def create_labels_colors(proteins, cleavages, subframe, accs, col_fold):
