@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+
+<head>
+	
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link href="https://fonts.googleapis.com/css2?family=Titillium+Web:wght@300&display=swap" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="../static/index.css">
+
+</head>
+
+<body>
+	
+	<img id="logo" alt="DTU logo" src="../static/DTU_logo.png">
+
+	<h1 id="center">Peptide annotator</h1>
+
+	<hr/>
+
+	<p>
+		Thanks for submitting your job with ID <b>{{jobid}}</b>. Your results will be downloaded when processing is complete. If you have not provided an email, do not exit this page otherwise your query will be lost. You can see and download the input file <a href="{{url_for('download_input', jobid=jobid, filename=filename)}}" target="blank">here</a>.
+	</p>
+
+</body>
+<!-- comment -->
+
+<script> window.location.replace('/{{jobid}}/result'); </script>
