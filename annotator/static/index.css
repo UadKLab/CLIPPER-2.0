@@ -1,0 +1,36 @@
+body {
+	font-family: 'Titillium Web', sans-serif;
+}
+
+#logo {
+	height: 85.38px;
+	width: 58.53px;
+}
+
+#center {
+	margin: 0 auto;
+	text-align: center;
+  	width: 500px;
+  	padding: 5px;
+}
+
+ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+legend {
+	font-size: 18px;
+}
+
+form {
+	margin: 0 auto;
+	width: 500px;
+}
+
+input[type=number]{
+    width: 40px;
+} 
+
+/*      comment       */
