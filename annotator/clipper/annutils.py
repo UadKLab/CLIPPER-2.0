@@ -18,10 +18,9 @@ import pymol
 from reactome2py import analysis, content
 import networkx as nx
 
-
 import subprocess
 
-
+alphafold_folder_name = r"W:\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
 
 def format_seconds_to_time(s):
     hours, remainder = divmod(s, 3600)
@@ -536,7 +535,6 @@ def get_structure_properties(acc_cleavage_sites, tmp_output_path, pymol_verbose,
     logging.info(" - Calculating surface area and secondary structure...")
 
     structure_properties = {}
-    alphafold_folder_name = r"/Volumes/Bio-Temp/Protease-Systems-Biology-temp/Kostas/CLIPPER/Datasets/Alphafold"
     alphafold_folder = Path(alphafold_folder_name)
 
     # initialize the tmp file with an empty dict to not mess up the subprocess read/write system

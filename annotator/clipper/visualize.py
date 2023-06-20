@@ -33,9 +33,6 @@ import networkx as nx
 from . import annutils
 
 
-alphafold_folder_name = r"/Volumes/Bio-Temp/Protease-Systems-Biology-temp/Kostas/CLIPPER/Datasets/Alphafold"
-
-
 class Visualizer:
 
     """
@@ -678,7 +675,7 @@ class Visualizer:
             cols = self.annot.columns[self.annot.columns.str.startswith("Independent T-test:")]
         else:
             cols = self.annot.columns[self.annot.columns.str.startswith("ANOVA:")]
-        logging.info(f"Plotting all significant peptides for {len(cols)} comparisons on protein sequences and structures.")
+        logging.info(f"Plotting all significant peptides for {len(cols)} comparison(s) on protein sequences and structures.")
         log_warnings = []
         with tqdm(cols, leave = 0) as t:
             for col in t:
@@ -980,7 +977,7 @@ def get_pymol_image(acc, positions, colormap, vmin, vmax, peptide_protein_plot_p
     """
     
     model_filename = f"AF-{acc}-F1-model_v4.cif.gz"
-    alphafold_path = Path(alphafold_folder_name)
+    alphafold_path = Path(annutils.alphafold_folder_name)
     model_path = alphafold_path / model_filename
 
     with tempfile.NamedTemporaryFile(suffix=".cif", delete=False) as temp_cif:

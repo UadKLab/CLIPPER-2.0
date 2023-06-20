@@ -1,0 +1,78 @@
+2023-06-20 16:10:32,276 [INFO] 
+2023-06-20 16:10:32,277 [INFO] Annotator started at 2023-06-20 16:10:32.
+2023-06-20 16:10:32,282 [DEBUG] Arguments: {'infile': '..\\tests\\HUNTER_clean_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': None, 'singlecpu': False, 'conditionfile': '..\\tests\\cond_HUNTER.txt', 'stat': True, 'stat_pairwise': True, 'significance': None, 'visualize': False, 'logo': None, 'pseudocounts': True, 'cleavagevis': None, 'enrichment': False, 'pathway': False, 'proteasefile': '..\\tests\\proteases.txt', 'output_name': None, 'outfile_type': 'xlsx', 'separate': False, 'pymol_verbose': False}
+2023-06-20 16:10:32,294 [INFO] Startup complete!
+
+2023-06-20 16:10:32,295 [INFO] Reading file...
+2023-06-20 16:10:32,296 [INFO] Input is excel
+2023-06-20 16:10:32,882 [INFO] Read dataframe.
+2023-06-20 16:10:32,883 [INFO] Read input with 284 peptides.
+2023-06-20 16:10:32,887 [INFO] Input software is sm
+2023-06-20 16:10:32,893 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_127C to numeric type
+2023-06-20 16:10:32,894 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_128C to numeric type
+2023-06-20 16:10:32,896 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_129C to numeric type
+2023-06-20 16:10:32,897 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_130C to numeric type
+2023-06-20 16:10:32,900 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_131C to numeric type
+2023-06-20 16:10:32,902 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_132C to numeric type
+2023-06-20 16:10:32,902 [INFO] Finished converting quantification values to floats.
+2023-06-20 16:10:32,909 [DEBUG] Patterns are: {'acc': 'PG.ProteinAccessions', 'seq': 'PEP.StrippedSequence', 'amino': 'B|J|O|U|X|Z', 'mod': 'P.MoleculeID', 'quant': 'PEP\\.TMT', 'label': '\\[TMT', 'nterm': 'N-?ter', 'nterm_label': 'TMT.*_Nter', 'lysine_label': 'K\\[TMT.{0,3}_Lys\\]'}
+2023-06-20 16:10:32,910 [INFO] Successfully generated indexing patterns for sm input. See logfile for the found patterns.
+2023-06-20 16:10:32,910 [INFO] Format check complete.
+
+2023-06-20 16:10:32,912 [INFO] Initialization complete!
+
+2023-06-20 16:10:32,912 [INFO] Filtering and sanitizing input...
+2023-06-20 16:10:32,917 [DEBUG] Starting annotation of peptides...
+2023-06-20 16:10:32,919 [INFO] Reading MEROPS data..
+2023-06-20 16:10:34,386 [INFO] Read MEROPS data
+2023-06-20 16:10:34,391 [INFO] Initialized annotation dataframe.
+
+2023-06-20 16:10:34,391 [INFO] Fetching information from Uniprot...
+2023-06-20 16:10:49,662 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-20 16:10:49,663 [WARNING] Peptide YSCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-06-20 16:10:49,674 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-20 16:10:49,704 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-20 16:10:49,707 [WARNING] Peptide SELHIENLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-20 16:10:49,718 [WARNING] Peptide ADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-20 16:10:50,825 [WARNING] Peptide SCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-06-20 16:11:04,310 [WARNING] Error retrieving Uniprot record for A0A494C169: No SwissProt record found
+2023-06-20 16:11:28,519 [INFO] Gathering info from Uniprot took 00:00:54 hh:mm:ss
+2023-06-20 16:11:28,520 [INFO] Finished annotation of peptides.
+
+2023-06-20 16:11:28,521 [INFO] Starting annotation of Protein Atlas data...
+2023-06-20 16:11:28,522 [INFO] Reading Protein Atlas data..
+2023-06-20 16:11:29,157 [INFO] Read Protein Atlas data.
+2023-06-20 16:11:29,173 [WARNING] Duplicates found in 'Uniprot' column of 'protein_atlas_sub'. Dropping duplicates.
+2023-06-20 16:11:29,216 [INFO] Finished annotation of Protein Atlas data.
+
+2023-06-20 16:11:29,218 [INFO] Starting proteoform check...
+2023-06-20 16:11:29,222 [INFO] Finished proteoform check.
+2023-06-20 16:11:29,223 [INFO] Starting exopeptidase activity check...
+2023-06-20 16:11:29,258 [DEBUG] 2 LGLGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR LGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR
+2023-06-20 16:11:29,326 [DEBUG] 1 YSCVFLPEPMGTANIQLHGPPR SCVFLPEPMGTANIQLHGPPR
+2023-06-20 16:11:29,329 [DEBUG] 2 AEAMDLGKDPNGPTHSSTLFVR AMDLGKDPNGPTHSSTLFVR
+2023-06-20 16:11:29,334 [DEBUG] 2 AEAQALLSGDTQTDATSFYDR AQALLSGDTQTDATSFYDR
+2023-06-20 16:11:29,353 [DEBUG] 1 KACANPAAGSVILLENLR ACANPAAGSVILLENLR
+2023-06-20 16:11:29,354 [DEBUG] 2 KACANPAAGSVILLENLR ANPAAGSVILLENLR
+2023-06-20 16:11:29,377 [DEBUG] 1 AAQTSPSPKAGAATGR AQTSPSPKAGAATGR
+2023-06-20 16:11:29,379 [DEBUG] 1 SSGFSLEDPQTHSNR SGFSLEDPQTHSNR
+2023-06-20 16:11:29,380 [DEBUG] 2 SKNLKLGIHEDSTNR NLKLGIHEDSTNR
+2023-06-20 16:11:29,407 [DEBUG] 2 SEDFSLPAYMDR DFSLPAYMDR
+2023-06-20 16:11:29,433 [DEBUG] 2 SPVLHFYVR VLHFYVR
+2023-06-20 16:11:29,455 [INFO] Exopeptidase activity check took 00:00:00 hh:mm:ss
+2023-06-20 16:11:29,455 [INFO] Exopeptidase activity was found, check logfile or output for more details on exact peptide sequences
+2023-06-20 16:11:29,456 [INFO] Finished exopeptidase activity check.
+2023-06-20 16:11:29,483 [INFO] Parsed condition file
+2023-06-20 16:11:29,483 [INFO] Performing general statistics annotation...
+2023-06-20 16:11:29,516 [INFO] Finished general statistics annotation.
+2023-06-20 16:11:29,517 [INFO] Performing statistical testing...
+2023-06-20 16:11:29,534 [INFO] Finished statistical testing.
+2023-06-20 16:11:29,536 [DEBUG] Corrected p-values for Corrected Independent T-test: gluc/control using fdr_bh method
+2023-06-20 16:11:29,536 [INFO] Finished multiple testing correction.
+
+2023-06-20 16:11:29,536 [INFO] Predicting protease activity...
+2023-06-20 16:11:29,539 [INFO] Protease codes: ['M10.002', 'M10.009', 'S01.001']
+2023-06-20 16:11:31,083 [INFO] Protease activity prediction took 00:00:00 hh:mm:ss
+2023-06-20 16:11:31,085 [INFO] Finished predicting protease activity.
+2023-06-20 16:11:31,088 [INFO] Writing output files...
+2023-06-20 16:11:31,452 [INFO] Finished. Wrote results to C:\Users\konka\Documents\clipper_cmd\annotator\annotator\results\20230620161032.
