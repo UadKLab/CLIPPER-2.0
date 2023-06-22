@@ -4,6 +4,7 @@ import re
 import string
 import gzip
 import tempfile
+import platform
 
 from argparse import ArgumentParser, HelpFormatter
 from datetime import datetime
@@ -20,7 +21,11 @@ import networkx as nx
 
 import subprocess
 
-alphafold_folder_name = r"W:\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
+if platform.system() == 'Darwin':
+    alphafold_folder_name = r"/Volumes/Bio-Temp/Protease-Systems-Biology-temp/Kostas/CLIPPER/Datasets/Alphafold"
+else:
+    alphafold_folder_name = r"W:\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
+
 
 def format_seconds_to_time(s):
     hours, remainder = divmod(s, 3600)
@@ -47,6 +52,7 @@ def initialize_logger(logfile):
     """
 
     logger = logging.getLogger()
+    logger.handlers.clear()
     formatter = logging.Formatter("%(asctime)s [%(levelname)s] %(message)s")
     file_handler = logging.FileHandler(logfile)
     file_handler.setFormatter(formatter)
@@ -325,9 +331,9 @@ def initialize_arguments():
 
     parser.add_argument(
         "-ot",
-        "--outfile_type",
+        "--output_filetype",
         action="store",
-        dest="outfile_type",
+        dest="output_filetype",
         type=str,
         default="xlsx",
         help="File type of output \

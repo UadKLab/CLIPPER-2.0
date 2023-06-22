@@ -21,6 +21,7 @@ from .entry import Entry
 from .logo import create_logo_helper
 from .visualize import Visualizer
 from . import protease_prediction as pp
+from . globals import *
 
 class Clipper:
     """Annotator class for processing and analyzing peptide proteomics data. All
@@ -30,7 +31,7 @@ class Clipper:
         conditions (dict): A dictionary of conditions and their respective files.
         annot (pd.DataFrame): The input data as a Pandas DataFrame.
         outfolder (str): The path to the output folder.
-        outfile_type (str): The type of output file to generate.
+        output_filetype (str): The type of output file to generate.
         logfolder (str): The path to the log folder.
         logfile (str): The path to the log file.
         figures (dict): A dictionary of generated figures.
@@ -53,25 +54,25 @@ class Clipper:
         """ 
 
         # global variables
-        self.result_folder_name = "results"
-        self.data_folder_name = "data"
-        self.annotation_prefix = "_annot."
+        self.result_folder_name = result_folder_name
+        self.data_folder_name = data_folder_name
+        self.annotation_prefix = annotation_prefix
 
-        self.alphafold_models_filename = "alphafold_accs.txt"
-        self.merops_filename = "cleavage.csv"
-        self.merops_name_filename = "protein_name.csv"
-        self.merops_sub_filename = "substrate.csv"
-        self.protein_atlas_filename = "proteinatlas.tsv"
+        self.alphafold_models_filename = alphafold_models_filename
+        self.merops_filename = merops_filename
+        self.merops_name_filename = merops_name_filename
+        self.merops_sub_filename = merops_sub_filename
+        self.protein_atlas_filename = protein_atlas_filename
         
         # output folders
-        self.plot_protein_folder = "protein_plots"
-        self.plot_general_folder = "general_plots"
-        self.plot_fold_change_folder = "fold_change_plots"
-        self.plot_volcano_folder = "volcano_plots"
-        self.plot_piechart_folder = "piecharts"
-        self.plot_logo_folder = "logos"
-        self.plot_enrichement_folder = "enrichment"
-        self.plot_pathway_folder = "pathway"
+        self.plot_protein_folder = plot_protein_folder
+        self.plot_general_folder = plot_general_folder
+        self.plot_fold_change_folder = plot_fold_change_folder
+        self.plot_volcano_folder = plot_volcano_folder
+        self.plot_piechart_folder = plot_piechart_folder
+        self.plot_logo_folder = plot_logo_folder
+        self.plot_enrichement_folder = plot_enrichement_folder
+        self.plot_pathway_folder = plot_pathway_folder
 
         # input attributes
         self.infile_type = args["infile_type"]
@@ -111,7 +112,7 @@ class Clipper:
         # logging and file handling
         self.timestamp = args["timestamp"]
         self.logfile = args["logfile"]
-        self.outfile_type = args["outfile_type"]
+        self.outfile_type = args["output_filetype"]
         self.outname = args["output_name"]
 
         self.conditions = None
