@@ -1,0 +1,17 @@
+INFO:root:Annotator started, Thursday June 22 2023, 17:34:45
+INFO:werkzeug:127.0.0.1 - - [22/Jun/2023 17:34:45] "[35m[1mGET /86/result HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [22/Jun/2023 17:34:45] "GET /86/result?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jun/2023 17:34:45] "GET /86/result?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jun/2023 17:34:45] "GET /86/result?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jun/2023 17:34:45] "[36mGET /86/result?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [22/Jun/2023 17:36:02] "[32mPOST /new_job HTTP/1.1[0m" 302 -
+INFO:werkzeug:127.0.0.1 - - [22/Jun/2023 17:36:02] "GET /87/submitted_job HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jun/2023 17:36:02] "[36mGET /static/DTU_logo.png HTTP/1.1[0m" 304 -
+INFO:werkzeug:127.0.0.1 - - [22/Jun/2023 17:36:02] "[36mGET /static/index.css HTTP/1.1[0m" 304 -
+INFO:root:Annotator started, Thursday June 22 2023, 17:36:02
+INFO:werkzeug:127.0.0.1 - - [22/Jun/2023 17:36:02] "[35m[1mGET /87/result HTTP/1.1[0m" 500 -
+INFO:werkzeug:127.0.0.1 - - [22/Jun/2023 17:36:02] "GET /87/result?__debugger__=yes&cmd=resource&f=style.css HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jun/2023 17:36:02] "GET /87/result?__debugger__=yes&cmd=resource&f=debugger.js HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jun/2023 17:36:02] "GET /87/result?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1" 200 -
+INFO:werkzeug:127.0.0.1 - - [22/Jun/2023 17:36:02] "[36mGET /87/result?__debugger__=yes&cmd=resource&f=console.png HTTP/1.1[0m" 304 -
+INFO:werkzeug: * Detected change in '/Users/aleksanderhaack/Desktop/TAILS annotator v2/annotator/annotator/app.py', reloading

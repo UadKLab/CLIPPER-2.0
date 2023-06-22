@@ -1,0 +1,96 @@
+2023-06-22 17:42:24,552 [INFO] 
+2023-06-22 17:42:24,553 [INFO] Annotator started at 2023-06-22 17:42:24.
+2023-06-22 17:42:24,559 [DEBUG] Arguments: {'infile': '/Users/aleksanderhaack/Desktop/TAILS annotator v2/annotator/annotator/upload/Mahima_DIA_TAILS_small.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': 'all', 'singlecpu': False, 'conditionfile': None, 'proteasefile': None, 'stat': False, 'stat_pairwise': False, 'significance': None, 'visualize': False, 'logo': None, 'pseudocounts': False, 'cleavagevis': 'None', 'enrichment': False, 'pathway': False, 'output_name': '20230622174224_annotated_data', 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False, 'jobid': '94', 'logfile': '/Users/aleksanderhaack/Desktop/TAILS annotator v2/annotator/annotator/log/94.log', 'resultdest': '/Users/aleksanderhaack/Desktop/TAILS annotator v2/annotator/annotator/results', 'datafolder': '/Users/aleksanderhaack/Desktop/TAILS annotator v2/annotator/annotator/data', 'email': ''}
+2023-06-22 17:42:24,559 [INFO] Startup complete!
+
+2023-06-22 17:42:24,559 [INFO] Reading file...
+2023-06-22 17:42:24,559 [INFO] Input is excel
+2023-06-22 17:42:24,574 [INFO] Read dataframe.
+2023-06-22 17:42:24,574 [INFO] Read input with 62 peptides.
+2023-06-22 17:42:24,575 [INFO] Input software is sm
+2023-06-22 17:42:24,575 [DEBUG] Converted values in [1] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT1_UT_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,576 [DEBUG] Converted values in [2] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT1_TNP_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,576 [DEBUG] Converted values in [3] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT3_UT_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,576 [DEBUG] Converted values in [4] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT3_TNP_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,577 [DEBUG] Converted values in [5] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO2_UT_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,577 [DEBUG] Converted values in [6] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO2_TNP_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,578 [DEBUG] Converted values in [7] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO3_UT_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,578 [DEBUG] Converted values in [8] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO3_TNP_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,579 [DEBUG] Converted values in [9] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT3_TNP_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,579 [DEBUG] Converted values in [10] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT3_UT_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,580 [DEBUG] Converted values in [11] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT1_TNP_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,580 [DEBUG] Converted values in [12] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT1_UT_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,581 [DEBUG] Converted values in [13] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO2_TNP_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,581 [DEBUG] Converted values in [14] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO2_UT_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,581 [DEBUG] Converted values in [15] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO3_TNP_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,582 [DEBUG] Converted values in [16] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO3_UT_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,583 [DEBUG] Converted values in [17] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_PO_30_WT2_TNP_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,583 [DEBUG] Converted values in [18] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_NPO_30_WT2_TNP_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,583 [DEBUG] Converted values in [19] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_PO_27_WT2_UT_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,584 [DEBUG] Converted values in [20] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_NPO_27_WT2_UT_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,584 [DEBUG] Converted values in [21] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_PO_5_KO1_TNP_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,585 [DEBUG] Converted values in [22] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_NPO_5_KO1_TNP_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,585 [DEBUG] Converted values in [23] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_PO_2_KO1_UT_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,585 [DEBUG] Converted values in [24] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_NPO_2_KO1_UT_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-06-22 17:42:24,585 [INFO] Finished converting quantification values to floats.
+2023-06-22 17:42:24,586 [DEBUG] Patterns are: {'acc': 'PG.ProteinAccessions', 'seq': 'PEP.StrippedSequence', 'amino': 'B|J|O|U|X|Z', 'mod': 'EG.PrecursorId', 'quant': 'EG\\.TotalQuantity', 'label': 'Dimeth', 'nterm': 'DimethNter0', 'nterm_label': '\\[DimethNter0\\]', 'lysine_label': 'K\\[DimethLys0\\]'}
+2023-06-22 17:42:24,586 [INFO] Successfully generated indexing patterns for sm input. See logfile for the found patterns.
+2023-06-22 17:42:24,586 [INFO] Format check complete.
+
+2023-06-22 17:42:24,586 [INFO] Initialization complete!
+
+2023-06-22 17:42:24,586 [INFO] Filtering and sanitizing input...
+2023-06-22 17:42:24,587 [WARNING] There were rows with no accession numbers in the loaded file, please check the log file for further information
+2023-06-22 17:42:24,587 [DEBUG] Empty accession rows: 52
+2023-06-22 17:42:24,587 [DEBUG] Empty accession rows: 53
+2023-06-22 17:42:24,587 [DEBUG] Empty accession rows: 54
+2023-06-22 17:42:24,587 [DEBUG] Empty accession rows: 55
+2023-06-22 17:42:24,587 [DEBUG] Empty accession rows: 56
+2023-06-22 17:42:24,587 [DEBUG] Empty accession rows: 57
+2023-06-22 17:42:24,587 [DEBUG] Empty accession rows: 58
+2023-06-22 17:42:24,587 [DEBUG] Empty accession rows: 59
+2023-06-22 17:42:24,587 [DEBUG] Empty accession rows: 60
+2023-06-22 17:42:24,587 [DEBUG] Empty accession rows: 61
+2023-06-22 17:42:24,587 [DEBUG] Empty accession rows: 62
+2023-06-22 17:42:24,587 [DEBUG] Starting annotation of peptides...
+2023-06-22 17:42:24,587 [INFO] Reading MEROPS data..
+2023-06-22 17:42:25,164 [INFO] Read MEROPS data
+2023-06-22 17:42:25,165 [INFO] Initialized annotation dataframe.
+
+2023-06-22 17:42:25,165 [INFO] Fetching information from Uniprot...
+2023-06-22 17:42:31,176 [INFO] Gathering info from Uniprot took 00:00:06 hh:mm:ss
+2023-06-22 17:42:31,176 [INFO] Finished annotation of peptides.
+
+2023-06-22 17:42:31,176 [INFO] Starting annotation of Protein Atlas data...
+2023-06-22 17:42:31,176 [INFO] Reading Protein Atlas data..
+2023-06-22 17:42:31,444 [INFO] Read Protein Atlas data.
+2023-06-22 17:42:31,447 [WARNING] Duplicates found in 'Uniprot' column of 'protein_atlas_sub'. Dropping duplicates.
+2023-06-22 17:42:31,451 [INFO] Finished annotation of Protein Atlas data.
+
+2023-06-22 17:42:31,451 [INFO] Starting proteoform check...
+2023-06-22 17:42:31,451 [INFO] Finished proteoform check.
+2023-06-22 17:42:31,452 [INFO] Starting exopeptidase activity check...
+2023-06-22 17:42:31,455 [DEBUG] 1 RFDTAFFLCCLR FDTAFFLCCLR
+2023-06-22 17:42:31,457 [INFO] Exopeptidase activity check took 00:00:00 hh:mm:ss
+2023-06-22 17:42:31,457 [INFO] Exopeptidase activity was found, check logfile or output for more details on exact peptide sequences
+2023-06-22 17:42:31,457 [INFO] Finished exopeptidase activity check.
+2023-06-22 17:42:31,457 [INFO] Performing general statistics annotation...
+2023-06-22 17:42:31,458 [INFO] Finished general statistics annotation.
+
+2023-06-22 17:42:31,458 [INFO] Computing structural properties...
+2023-06-22 17:42:31,458 [INFO]  - Reading available AlphaFold models...
+2023-06-22 17:42:31,473 [INFO]  - Read available AlphaFold models.
+2023-06-22 17:42:31,474 [INFO]  - Calculating surface area and secondary structure...
+2023-06-22 17:42:43,917 [INFO] Structure calculations took 00:00:12 hh:mm:ss
+2023-06-22 17:42:43,922 [INFO] Finished computing structural properties.
+2023-06-22 17:42:43,922 [INFO] Writing output files...
+2023-06-22 17:42:43,954 [INFO] Finished. Wrote results to /Users/aleksanderhaack/Desktop/TAILS annotator v2/annotator/annotator/results/20230622174224_annotated_data.
+2023-06-22 17:42:43,956 [INFO] Finished writing output files
+2023-06-22 17:42:43,956 [INFO] 
+CLIPPER 2.0 pipeline completed in 0:00:19.405138.
+
+2023-06-22 17:42:43,987 [INFO] 127.0.0.1 - - [22/Jun/2023 17:42:43] "GET /94/result HTTP/1.1" 200 -
+2023-06-22 17:42:59,006 [INFO] 127.0.0.1 - - [22/Jun/2023 17:42:59] "[32mPOST /new_job HTTP/1.1[0m" 302 -
+2023-06-22 17:42:59,011 [INFO] 127.0.0.1 - - [22/Jun/2023 17:42:59] "GET /95/submitted_job HTTP/1.1" 200 -
+2023-06-22 17:42:59,038 [INFO] 127.0.0.1 - - [22/Jun/2023 17:42:59] "[36mGET /static/index.css HTTP/1.1[0m" 304 -
+2023-06-22 17:42:59,048 [INFO] Annotator started, Thursday June 22 2023, 17:42:59

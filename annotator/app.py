@@ -27,57 +27,75 @@ app.add_url_rule('/', endpoint='index')
 
 @app.route('/', methods=["GET", "POST"])
 def index():
-    if request.method == 'POST':
-
-        data_folder = os.path.join(current_app.root_path, current_app.config['DATA_FOLDER'])
-        data_path = os.path.join(data_folder, current_app.config['DATA_FILE'])
-        upload_folder = os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'])
-
-        with open(data_path, 'rb') as fh:
-            dic = pickle.load(fh)
-        
-        jobid = dic['jobid']
-        dic['jobid'] += 1
-        
-        with open(data_path, 'wb') as fh:
-            pickle.dump(dic, fh)
-
-        input_file = request.files['infile']
-        cond_file = request.files['condfile']
-        prot_file = request.files['protfile']
-
-        if input_file and allowed_file(input_file.filename):
-            input_filename = secure_filename(input_file.filename)
-            input_file.save(os.path.join(upload_folder, input_filename))
-            session['infile'] = input_filename
-
-            if cond_file and allowed_file(cond_file.filename):
-                cond_filename = secure_filename(cond_file.filename)
-                cond_file.save(os.path.join(upload_folder, cond_filename))
-                session['conditionfile'] = cond_filename
-            else:
-                session['conditionfile'] = None
-            
-            if prot_file and allowed_file(prot_file.filename):
-                prot_filename = secure_filename(prot_file.filename)
-                prot_file.save(os.path.join(upload_folder, prot_filename))
-                session['proteasefile'] = prot_filename
-            else:
-                session['proteasefile'] = None
-
-            session['jobid'] = jobid
-            session['form'] = request.form
-
-            return redirect(url_for('submission', jobid=jobid))
-
-        else:
-            flash('filename not valid')
-            return(redirect(request.url))
-
+    """
+    Loads the index.html view and shows the submission form
+    """
     return render_template('index.html')
 
 
-@app.route('/<int:jobid>/submit', methods=['GET'])
+@app.route('/new_job', methods=['GET', 'POST'])
+def start_new_job():
+    """
+    Once the user presses "submit", a job ID is created and saved to a file for later reference
+    """
+    data_folder = os.path.join(current_app.root_path, current_app.config['DATA_FOLDER'])
+    data_path = os.path.join(data_folder, current_app.config['DATA_FILE'])
+    upload_folder = os.path.join(current_app.root_path, current_app.config['UPLOAD_FOLDER'])
+
+    with open(data_path, 'rb') as fh:
+        dic = pickle.load(fh)
+    
+    jobid = dic['jobid']
+    dic['jobid'] += 1
+    
+    with open(data_path, 'wb') as fh:
+        pickle.dump(dic, fh)
+
+    get_new_job_details(jobid, upload_folder)
+
+    return redirect(url_for('submission', jobid=jobid))
+
+
+def get_new_job_details(jobid, upload_folder):
+    """
+    The form information is fetched and saved to the session dict.
+    """
+    print("WOW I'm in getting a new job!")
+    input_file = request.files['infile']
+    cond_file = request.files['condfile']
+    prot_file = request.files['protfile']
+
+    if input_file and allowed_file(input_file.filename):
+        input_filename = secure_filename(input_file.filename)
+        input_file.save(os.path.join(upload_folder, input_filename))
+        session['infile'] = input_filename
+        
+        if cond_file and allowed_file(cond_file.filename):
+            cond_filename = secure_filename(cond_file.filename)
+            cond_file.save(os.path.join(upload_folder, cond_filename))
+            session['conditionfile'] = cond_filename
+        else:
+            session['conditionfile'] = None
+        
+        if prot_file and allowed_file(prot_file.filename):
+            prot_filename = secure_filename(prot_file.filename)
+            prot_file.save(os.path.join(upload_folder, prot_filename))
+            session['proteasefile'] = prot_filename
+        else:
+            session['proteasefile'] = None
+        
+        session['jobid'] = jobid
+        session['form'] = request.form
+
+    else:
+        flash('filename not valid')
+        return(redirect(request.url))
+    return
+
+
+
+
+@app.route('/<int:jobid>/submitted_job', methods=['GET'])
 def submission(jobid):
 
     filename = session['infile']
@@ -94,7 +112,6 @@ def download_input(jobid, filename):
 @app.route('/<int:jobid>/result', methods=['GET'])
 def download_results(jobid):
     arguments = create_arguments(jobid)
-    print("\n\n\nin download_results()\n\n")
 
     try:
         run.main(arguments)
@@ -174,6 +191,8 @@ def create_arguments(jobid):
         session['form']['noexopeptidase'] = False
     if 'nomerops' not in session['form']:
         session['form']['nomerops'] = False
+    if session['form']['calcstructure'] == 'None':
+        session['form']['calcstructure'] = None
     if 'visualize' not in session['form']:
         session['form']['visualize'] = False
     if 'enrichment' not in session['form']:
@@ -209,7 +228,7 @@ def create_arguments(jobid):
                     'sleeptime': float(session['form']['sleeptime']),
                     'noexo': session['form']['noexopeptidase'],
                     'nomerops': session['form']['nomerops'],
-                    'calcstructure': ast.literal_eval(session['form']['calcstructure']),
+                    'calcstructure': session['form']['calcstructure'],
                     'singlecpu': session['form']['singlecpu'],
                     'conditionfile': cond_file,
                     'proteasefile': prot_file,
@@ -237,3 +256,6 @@ def create_arguments(jobid):
         traceback.print_exc()
 
     return arguments
+
+if __name__ == "__main__":
+    app.run(debug=True)

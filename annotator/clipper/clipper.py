@@ -1128,7 +1128,7 @@ class Clipper:
         self.annot["secondary_structure p4_p4prime"] = np.nan
         self.annot["solvent_accessibility p4_p4prime"] = np.nan
 
-        #if self.calcstructure is None:
+        #if self.calcstructure is 'None':
         #    return
 
         if self.calcstructure == "all":
@@ -1198,7 +1198,7 @@ class Clipper:
                                 self.annot.loc[index, "solvent_accessibility p4_p4prime"] = sa
 
         else:
-            raise ValueError("calcstructure argument must be either None, 'all', or 'sig'")
+            raise ValueError(f"calcstructure argument must be either None, 'all', or 'sig'. It was '{self.calcstructure}' and of type {type(self.calcstructure)}")
 
     def visualize(self, cutoff):
 

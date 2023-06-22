@@ -361,6 +361,7 @@ def initialize_arguments():
 
     return vars(parser.parse_args())
 
+
 def initialize(arguments):
 
     """
