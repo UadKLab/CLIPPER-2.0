@@ -726,7 +726,8 @@ class Visualizer:
 
             if genes:
                 fig = plot_enrichment_figure(genes, col_name)
-                figures[col_name] = fig
+                fig_name = col_name.replace('/', '_')
+                figures[fig_name] = fig
             else:
                 logging.warning(f'No significant peptides with a cutoff value <{cutoff} for conditions {col_name}. No functional enrichment plots will be made for this comparison.')
 
