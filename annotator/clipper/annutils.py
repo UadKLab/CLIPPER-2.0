@@ -637,7 +637,7 @@ def get_proteins_and_interactors(pathway_id):
     Returns:
     tuple: A tuple with two lists, one of proteins and one of interaction maps.
     """
-
+    
     path_res = content.participants_reference_entities(pathway_id)
     proteins = [p['identifier'] for p in path_res if p['identifier'][0] in list(string.ascii_uppercase) and len(p['identifier']) == 6]
     

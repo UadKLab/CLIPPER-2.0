@@ -980,46 +980,50 @@ def get_pymol_image(acc, positions, colormap, vmin, vmax, peptide_protein_plot_p
     alphafold_path = Path(annutils.alphafold_folder_name)
     model_path = alphafold_path / model_filename
 
-    with tempfile.NamedTemporaryFile(suffix=".cif", delete=False) as temp_cif:
-        # Open the gzipped CIF file
-        with gzip.open(model_path, 'rb') as f_in:
-            # Write the decompressed contents to the temporary file
-            temp_cif.write(f_in.read())
-        
-        temp_cif.flush()  # Ensure the file is written
+    if os.path.isfile(model_path):
+        with tempfile.NamedTemporaryFile(suffix=".cif", delete=False) as temp_cif:
+            # Open the gzipped CIF file
+            with gzip.open(model_path, 'rb') as f_in:
+                # Write the decompressed contents to the temporary file
+                temp_cif.write(f_in.read())
+            
+            temp_cif.flush()  # Ensure the file is written
 
-        pymol.cmd.delete('all')
-        pymol.cmd.load(temp_cif.name, acc)
+            pymol.cmd.delete('all')
+            pymol.cmd.load(temp_cif.name, acc)
 
-    pymol.cmd.set('ray_trace_mode', '1')
-    pymol.cmd.set('ray_trace_color', 'black')
-    pymol.cmd.orient(acc)
-    pymol.cmd.select('het_atoms', f'{acc} and hetatm')
-    pymol.cmd.extract('het_atob', 'het_atoms')
-    pymol.cmd.delete('het_atob')
+        pymol.cmd.set('ray_trace_mode', '1')
+        pymol.cmd.set('ray_trace_color', 'black')
+        pymol.cmd.orient(acc)
+        pymol.cmd.select('het_atoms', f'{acc} and hetatm')
+        pymol.cmd.extract('het_atob', 'het_atoms')
+        pymol.cmd.delete('het_atob')
 
-    # Set the entire protein to grey
-    pymol.cmd.color('grey', acc)
+        # Set the entire protein to grey
+        pymol.cmd.color('grey', acc)
 
-    positions = sorted(positions, key=lambda tup: tup[2])
-    max_fold_change_pos = None
-    max_fold_change = vmin
+        positions = sorted(positions, key=lambda tup: tup[2])
+        max_fold_change_pos = None
+        max_fold_change = vmin
 
-    for ind, pos in enumerate(positions):
-        color = colormap((pos[2] - vmin) / (vmax - vmin))
-        pymol.cmd.select('sel', f'resi {pos[0]}-{pos[1]} and {acc}')
-        pymol.cmd.color('0x' + colors.to_hex(color)[1:], 'sel')
+        for ind, pos in enumerate(positions):
+            color = colormap((pos[2] - vmin) / (vmax - vmin))
+            pymol.cmd.select('sel', f'resi {pos[0]}-{pos[1]} and {acc}')
+            pymol.cmd.color('0x' + colors.to_hex(color)[1:], 'sel')
 
-        if pos[2] > max_fold_change:
-            max_fold_change = pos[2]
-            max_fold_change_pos = pos
+            if pos[2] > max_fold_change:
+                max_fold_change = pos[2]
+                max_fold_change_pos = pos
 
-    # Orient the structure based on the highest fold change peptide
-    if max_fold_change_pos is not None:
-        pymol.cmd.orient(f'resi {max_fold_change_pos[0]}-{max_fold_change_pos[1]} and {acc}')
-        pymol.cmd.zoom(acc, complete=0.65)
-    pymol.cmd.ray(1280, 720)
-    pymol.cmd.png(peptide_protein_plot_path, dpi=600)
+        # Orient the structure based on the highest fold change peptide
+        if max_fold_change_pos is not None:
+            pymol.cmd.orient(f'resi {max_fold_change_pos[0]}-{max_fold_change_pos[1]} and {acc}')
+            pymol.cmd.zoom(acc, complete=0.65)
+        pymol.cmd.ray(1280, 720)
+        pymol.cmd.png(peptide_protein_plot_path, dpi=600)
+
+    else:
+        logging.warning(f'The file {model_filename} is not available at {alphafold_path}. Cannot create PyMol illustrations.')
 
 def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level, temp_folder, pymol_verbose):
 
@@ -1106,7 +1110,10 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level, temp_f
         # otherwise run the function as a subprocess to choke the otherwise very persistent output
         else:
             subprocess.run(['python', 'pymol_subprocess_plot_protein.py', '-acc', str(acc), '-pos', str(positions), '-_mfc', str(-max_fold_change), '-mfc', str(max_fold_change), '-tf', str(peptide_protein_plot_path)], stdout=subprocess.DEVNULL)
-        img = plt.imread(peptide_protein_plot_path)
+        try:
+            img = plt.imread(peptide_protein_plot_path)
+        except OSError as err:
+            logging.warning(f'The file for accession {acc} is not available at path {Path(annutils.alphafold_folder_name)}. Cannot create PyMol figures.')
         os.remove(peptide_protein_plot_path)
         if img is not None:
             ax2.imshow(img)
@@ -1197,18 +1204,14 @@ def plot_pathway_figures(subframe, col_fold, condition_name, pp, cutoff):
 
                     # Get the pathway proteins and interaction map
                     pathway_proteins, interaction_map = annutils.get_proteins_and_interactors(pathway_stId)
-
                     if len(interaction_map) > 0:
                         # Get the protein edgelist, cleavage edgelist and cleavages
                         protein_edgelist, cleavage_edgelist, cleavages = annutils.construct_edgelists(subframe, interaction_map)
-
                         # Construct the network
                         network = annutils.construct_network(protein_edgelist, cleavage_edgelist, pathway_proteins)
-
                         # Create labels and colors for proteins and cleavages
                         protein_labels, protein_colors, cleavage_labels, cleavage_colors, protein_cmap, peptide_cmap = create_labels_colors(pathway_proteins, 
                                                                                                                                             cleavages, subframe, accessions, col_fold)
-
                         # Plot the network
                         fig = visualize_network(network, pathway_proteins, protein_edgelist, protein_colors, protein_labels, protein_cmap, cleavages, cleavage_edgelist,
                                                 cleavage_colors, cleavage_labels, peptide_cmap, col_fold, subframe, pathway_stId, pathways, i)

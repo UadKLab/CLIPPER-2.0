@@ -358,6 +358,7 @@ class Clipper:
         """
 
         os.mkdir(self.outfolder)
+        os.mkdir(self.temp_folder)
 
         if self.plot:
             os.mkdir(self.general_folder)
@@ -808,7 +809,7 @@ class Clipper:
         conditions = list(self.conditions.keys())
         if len(conditions) >= 2:
             test_func = ttest_ind if len(conditions) == 2 else f_oneway
-            column_name = f"{'Independent T-test' if len(conditions) == 2 else 'ANOVA'} - {' vs. '.join(conditions)}"
+            column_name = f"{'Independent T-test:' if len(conditions) == 2 else 'ANOVA:'} {' vs. '.join(conditions)}"
             column_log = f"Log10 pvalue: {column_name}"
             cols_per_condition = []
             vals_per_condition = []
@@ -1317,7 +1318,6 @@ class Clipper:
         the logfile is copied to the output folder, and the output folder is compressed into a zip file.
         """
 
-        print('started write_files')
         outfile = self.outfolder / self.outname
 
         if self.separate:
@@ -1336,7 +1336,7 @@ class Clipper:
 
         # Save the dataframe using the appropriate method
         saving_methods[self.outfile_type](final_df, outfile)
-        print('save_figures')
+
         # Save figures
         if len(self.figures) > 0:
             annutils.save_figures(self.figures, self.folders)
@@ -1347,5 +1347,7 @@ class Clipper:
         shutil.copy(self.logfile, self.outfolder / log_basename)
 
         shutil.make_archive(self.outfolder, "zip", self.outfolder)
+
+        os.rmdir(self.temp_folder)
 
         return None
