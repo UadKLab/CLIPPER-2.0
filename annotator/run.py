@@ -57,14 +57,8 @@ def main(args=None):
 
     write_terminal_headers("Statistical analysis")
 
-    # Perform general statistics annotation if condition file is not specified
-    if args["conditionfile"] is None:
-        logging.info("Performing general statistics annotation...")
-        annotator.general_conditions()
-        logging.info("Finished general statistics annotation.\n")
-
     # Perform condition-specific statistics annotation if condition file is specified
-    else:
+    if args["conditionfile"]:
         # Read the condition file
         annotator.read_condition_file()
         logging.info("Parsed condition file")

@@ -116,6 +116,7 @@ class Clipper:
         self.outname = args["output_name"]
 
         self.conditions = None
+        self.comparisons = []
         self.figures = {}
 
         self.basefolder = Path.cwd().absolute()
@@ -712,49 +713,44 @@ class Clipper:
         self.annot["proteoform_certainty%"] = self.df[self.patterns['acc']].apply(
             lambda x: 100 / len([i.strip() for i in x.split(';')])
         )
-
+    
     def general_conditions(self):   # LATER: What is this used for? Not distinguishing N and C tags? Why is it necessary? REMOVE
-
         """
         Generates general statistics for the conditions supplied. If no conditions are given, default
         conditions are used. The method computes mean, standard deviation and coefficient of variation (CV)
         for each condition and stores them in the dataframe. It also computes fold changes and log2 fold 
         changes between each pair of conditions.
         """
+        if self.conditions:
+            def calc_stats(df, cols):
+                mean = df[cols].mean(axis=1)
+                std = df[cols].std(axis=1)
+                return mean, std, std / mean
 
-        if not self.conditions:
-            self.conditions = {
-                "all": ["126", "127", "128", "129", "130", "131", "132", "133", "134"]
-            }
+            def generate_condition_columns(pair, mean0, mean1):
+                column_name = f"Fold change: {pair[0]} vs. {pair[1]}"
+                column_log = f"Log2 fold change: {pair[0]} vs. {pair[1]}"
+                fold_change = mean0 / mean1
+                log_fold_change = np.log2(fold_change)
+                return column_name, column_log, fold_change, log_fold_change
 
-        def calc_stats(df, cols):
-            mean = df[cols].mean(axis=1)
-            std = df[cols].std(axis=1)
-            return mean, std, std / mean
+            for condition, channels in self.conditions.items():
+                cols = self.df.columns[self.df.columns.str.contains("|".join(channels)) & self.df.columns.str.contains(self.patterns['quant'])]
+                mean, std, cv = calc_stats(self.df, cols)
+                self.annot[f"{condition}_mean"] = mean
+                self.annot[f"{condition}_deviation"] = std
+                self.annot[f"{condition}_CV"] = cv
 
-        def generate_condition_columns(pair, mean0, mean1):
-            column_name = f"Fold_change: {pair[0]}/{pair[1]}"
-            column_log = f"Log2_fold_change: {pair[0]}/{pair[1]}"
-            fold_change = mean0 / mean1
-            log_fold_change = np.log2(fold_change)
-            return column_name, column_log, fold_change, log_fold_change
+            if len(self.conditions) > 1:
+                for pair in permutations(self.conditions.keys(), 2):
+                    cols0 = self.df.columns[self.df.columns.str.contains("|".join(self.conditions[pair[0]])) & self.df.columns.str.contains(self.patterns['quant'])]
+                    cols1 = self.df.columns[self.df.columns.str.contains("|".join(self.conditions[pair[1]])) & self.df.columns.str.contains(self.patterns['quant'])]
+                    mean0, _, _ = calc_stats(self.df, cols0)
+                    mean1, _, _ = calc_stats(self.df, cols1)
+                    column_name, column_log, fold_change, log_fold_change = generate_condition_columns(pair, mean0, mean1)
+                    self.annot[column_name] = fold_change
+                    self.annot[column_log] = log_fold_change
 
-        for condition, channels in self.conditions.items():
-            cols = self.df.columns[self.df.columns.str.contains("|".join(channels)) & self.df.columns.str.contains(self.patterns['quant'])]
-            mean, std, cv = calc_stats(self.df, cols)
-            self.annot[f"{condition}_mean"] = mean
-            self.annot[f"{condition}_deviation"] = std
-            self.annot[f"{condition}_CV"] = cv
-
-        if len(self.conditions) > 1:
-            for pair in permutations(self.conditions.keys(), 2):
-                cols0 = self.df.columns[self.df.columns.str.contains("|".join(self.conditions[pair[0]])) & self.df.columns.str.contains(self.patterns['quant'])]
-                cols1 = self.df.columns[self.df.columns.str.contains("|".join(self.conditions[pair[1]])) & self.df.columns.str.contains(self.patterns['quant'])]
-                mean0, _, _ = calc_stats(self.df, cols0)
-                mean1, _, _ = calc_stats(self.df, cols1)
-                column_name, column_log, fold_change, log_fold_change = generate_condition_columns(pair, mean0, mean1)
-                self.annot[column_name] = fold_change
-                self.annot[column_log] = log_fold_change
 
     def percentile_fold(self, percentile):
 
@@ -771,8 +767,8 @@ class Clipper:
             conditions_iter = permutations(self.conditions.keys(), 2)
 
             for pair in conditions_iter:
-                column = f"Fold_change: {pair[0]}/{pair[1]}"
-                self.annot[f"Fold {pair[0]}/{pair[1]} significance"] = np.nan
+                column = f"Fold change: {pair[0]} vs. {pair[1]}"
+                self.annot[f"Fold {pair[0]} vs. {pair[1]} significance"] = np.nan
 
                 if self.significance == 'all':
                     subframe = self.annot
@@ -794,7 +790,7 @@ class Clipper:
                         return "significant low"
                     return np.nan
 
-                self.annot[f"Fold {pair[0]}/{pair[1]} significance"] = subframe[column].apply(classify_fold_change)
+                self.annot[f"Fold {pair[0]} vs. {pair[1]} significance"] = subframe[column].apply(classify_fold_change)
 
     def condition_statistics(self):
         """
@@ -812,7 +808,7 @@ class Clipper:
         conditions = list(self.conditions.keys())
         if len(conditions) >= 2:
             test_func = ttest_ind if len(conditions) == 2 else f_oneway
-            column_name = f"{'Independent T-test' if len(conditions) == 2 else 'ANOVA'}: {'/'.join(conditions)}"
+            column_name = f"{'Independent T-test' if len(conditions) == 2 else 'ANOVA'} - {' vs. '.join(conditions)}"
             column_log = f"Log10 pvalue: {column_name}"
             cols_per_condition = []
             vals_per_condition = []
@@ -826,8 +822,9 @@ class Clipper:
 
         if self.pairwise and len(conditions) > 2:
             for pair in combinations(self.conditions.keys(), 2):
-                column_name = f"Independent T-test: {pair[0]}/{pair[1]}"
-                column_log = f"Log10 pvalue: {pair[0]}/{pair[1]}"
+                self.comparisons.append(pair[0] + ' vs. ' + pair[1])
+                column_name = f"Independent T-test: {pair[0]} vs. {pair[1]}"
+                column_log = f"Log10 pvalue: {pair[0]} vs. {pair[1]}"
                 cols_per_condition = []
                 vals_per_condition = []
                 for cond in pair:
@@ -877,16 +874,16 @@ class Clipper:
         if self.pairwise:
             col_stat = 'Independent T-test'
             for pair in combinations(self.conditions.keys(), 2):
-                column_name = f"Corrected {col_stat}: {pair[0]}/{pair[1]}"
-                column_log = f"Log10_pvalue_{column_name}"
-                original_column_name = f"{col_stat}: {pair[0]}/{pair[1]}"
+                column_name = f"Corrected {col_stat}: {pair[0]} vs. {pair[1]}"
+                column_log = f"Log10 pvalue {column_name}"
+                original_column_name = f"{col_stat}: {pair[0]} vs. {pair[1]}"
                 pvals = self.annot[original_column_name].values
                 perform_correction(pvals, column_name, column_log, original_column_name)
         else:
             col_stat = 'Independent T-test' if len(self.conditions) == 2 else 'ANOVA'
-            column_name = f"Corrected {col_stat}: {'/'.join(self.conditions.keys())}"
-            column_log = f"Log10_pvalue_{column_name}"
-            original_column_name = f"{col_stat}: {'/'.join(self.conditions.keys())}"
+            column_name = f"Corrected {col_stat}: {' vs. '.join(self.conditions.keys())}"
+            column_log = f"Log10 pvalue {column_name}"
+            original_column_name = f"{col_stat}: {' vs. '.join(self.conditions.keys())}"
             pvals = self.annot[original_column_name].values
             perform_correction(pvals, column_name, column_log, original_column_name)
 
@@ -1168,10 +1165,10 @@ class Clipper:
                     if self.pairwise or len(self.conditions) == 2:
                         conditions_iter = combinations(self.conditions.keys(), 2)
                         for pair in conditions_iter:
-                            column_name = f"Independent T-test: {pair[0]}/{pair[1]}"
+                            column_name = f"Independent T-test: {pair[0]} vs. {pair[1]}"
                             cols.append(column_name)
                     else:
-                        column_name = "ANOVA: " + "/".join(self.conditions.keys())
+                        column_name = "ANOVA: " + " vs. ".join(self.conditions.keys())
                         cols.append(column_name)
 
                     # iterate over all columns and entries in the dataframe
@@ -1232,7 +1229,7 @@ class Clipper:
         # if there are more than one condition, generate volcano, fold change and fold change at termini plots, and gallery of significant peptides
         if len(self.conditions) > 1:
             
-            self.figures["Volcano"] = vis.volcano()
+            self.figures["Volcano"] = vis.volcano(self.comparisons)
             self.figures["Fold"] = vis.fold_plot()
             self.figures["Fold_nterm"] = vis.fold_termini()
 
@@ -1267,34 +1264,42 @@ class Clipper:
         """
 
         if len(self.conditions) > 1:
+            #print(self.figures)
             conditions_iter = permutations(self.conditions.keys(), 2)
-            for pair in conditions_iter:
-                if self.stat: 
+            
+            for comparison in self.comparisons:
+                pair = comparison.split(' vs. ')
+                if self.stat:
+
                     try:
-                        column_name_test = f"Log10_pvalue: {pair[0]}/{pair[1]}"
-                        column_name_fold = f"Log2_fold_change: {pair[0]}/{pair[1]}"
+                        column_name_test = f"Log10 pvalue: {comparison}"
+                        column_name_fold = f"Log2 fold change: {comparison}"
+                        condition = column_name_test.split(': ')[1].strip()
                         column_test = self.annot[column_name_test]
+
                         column_fold = self.annot[column_name_fold]
-                        condition = column_name_test.split()[1].strip()
+                        condition = column_name_test.split(': ')[1].strip()
 
                         data = self.annot[(column_test < -1.5) & (column_fold > 1.5)]
-                        self.figures[f"Logo_{condition}_high"] = create_logo_helper(data, condition, self.pseudocounts, self.logo)
+                        self.figures[f"Logo {comparison} high"] = create_logo_helper(data, comparison, self.pseudocounts, self.logo)
 
                         data = self.annot[(column_test < -1.5) & (column_fold < -1.5)]
-                        self.figures[f"Logo_{condition}_low"] = create_logo_helper(data, condition, self.pseudocounts, self.logo)            
-                    except KeyError:
+                        self.figures[f"Logo {comparison} low"] = create_logo_helper(data, comparison, self.pseudocounts, self.logo)            
+                    except KeyError as err:
+                        print(f'ERROR in create_logos(): {err}')
                         continue
                 else:
-                    column = f"Fold {pair[0]}/{pair[1]} significance"
-                    condition = column.split()[1].strip().replace("/", "_")
+                    column = f"Fold {comparison} significance"
+                    condition = column.split()[1].strip().replace(" vs. ", "_")
 
                     data = self.annot[self.annot[column] == "significant high"]
                     self.figures[f"Logo_{pair[0]}_high"] = create_logo_helper(data, condition, self.pseudocounts, self.logo)
 
                     data = self.annot[self.annot[column] == "significant low"]
                     self.figures[f"Logo_{pair[0]}_low"] = create_logo_helper(data, condition, self.pseudocounts, self.logo)
-
+            
         elif len(self.conditions) == 1:
+            
             condition = list(self.conditions.keys())[0]
             self.figures[f"Logo_{condition}"] = create_logo_helper(self.annot, condition, self.pseudocounts, self.logo)
 
@@ -1309,6 +1314,7 @@ class Clipper:
         the logfile is copied to the output folder, and the output folder is compressed into a zip file.
         """
 
+        print('started write_files')
         outfile = self.outfolder / self.outname
 
         if self.separate:
@@ -1327,7 +1333,7 @@ class Clipper:
 
         # Save the dataframe using the appropriate method
         saving_methods[self.outfile_type](final_df, outfile)
-
+        print('save_figures')
         # Save figures
         if len(self.figures) > 0:
             annutils.save_figures(self.figures, self.folders)

@@ -146,7 +146,7 @@ class Visualizer:
 
         return {"general": fig}
 
-    def volcano(self) -> dict:
+    def volcano(self, comparisons) -> dict:
 
         """
         Creates a volcano plot for each condition pair.
@@ -156,42 +156,41 @@ class Visualizer:
         dict
             A dictionary with each key being a condition pair and the value being a corresponding matplotlib Figure object of the plot.
         """
-
-        columns_fold = self.annot.columns[self.annot.columns.str.contains("Log2_fold_change:")]
-        columns_ttest = self.annot.columns[self.annot.columns.str.contains("Log10_pvalue:")]
+        columns_fold = self.annot.columns[self.annot.columns.str.contains("Log2 fold change:")]
+        columns_ttest = self.annot.columns[self.annot.columns.str.contains("Log10 pvalue:")]
         figures = {}
 
         for test in columns_ttest:
-            conditions = test.split()[1].split("_")
-
+            conditions = [condition.strip() for condition in test.split(':')[1].split(" vs. ")]
             for fold in columns_fold:
+                if len(conditions) == 2:
+                    comparison = conditions[0] + ' vs. ' + conditions[1]
+                    if comparison in fold:
+                        frame = self.annot.loc[:, [fold, test]].dropna(how="any")
+                        # log values are negative for ttest column, inverse
+                        frame[test] = frame[test] * -1
+                        frame["coding"] = np.where((~frame[fold].between(-1.5, 1.5)) & (~frame[test].between(-1.5, 1.5)), "1", "0",)
+                        frame = frame.sort_values("coding")
 
-                if conditions[0] in fold and conditions[1] in fold:
-                    frame = self.annot.loc[:, [fold, test]].dropna(how="any")
-                    # log values are negative for ttest column, inverse
-                    frame[test] = frame[test] * -1
-                    frame["coding"] = np.where((~frame[fold].between(-1.5, 1.5)) & (~frame[test].between(-1.5, 1.5)), "1", "0",)
-                    frame = frame.sort_values("coding")
+                        if len(frame.coding.unique()) == 1:
+                            colors = ["grey"]
+                        else:
+                            colors = ["grey", "crimson"]
 
-                    if len(frame.coding.unique()) == 1:
-                        colors = ["grey"]
-                    else:
-                        colors = ["grey", "crimson"]
+                        g = sns.scatterplot(data=frame, x=fold, y=test, hue="coding", palette=colors)
+                        ax = plt.gca()
+                        ax.set_ylabel("- " + test)
+                        xmin, xmax = ax.get_xlim()
+                        ymin, ymax = ax.get_ylim()
+                        ax.plot([xmin, xmax], [1.5, 1.5], "--b", alpha=0.2)
+                        ax.plot([1.5, 1.5], [0, ymax], "--b", alpha=0.2)
+                        ax.plot([-1.5, -1.5], [0, ymax], "--b", alpha=0.2)
+                        ax.legend().set_visible(False)
 
-                    g = sns.scatterplot(data=frame, x=fold, y=test, hue="coding", palette=colors)
-                    ax = plt.gca()
-                    ax.set_ylabel("- " + test)
-                    xmin, xmax = ax.get_xlim()
-                    ymin, ymax = ax.get_ylim()
-                    ax.plot([xmin, xmax], [1.5, 1.5], "--b", alpha=0.2)
-                    ax.plot([1.5, 1.5], [0, ymax], "--b", alpha=0.2)
-                    ax.plot([-1.5, -1.5], [0, ymax], "--b", alpha=0.2)
-                    ax.legend().set_visible(False)
-
-                    name = fold.split(":")[1].strip()
-                    name = "_".join(name.split("/"))
-                    figures[name] = g
-                    plt.close()
+                        name = fold.split(":")[1].strip()
+                        name = "_".join(name.split("/"))
+                        figures[name] = g
+                        plt.close()
 
         return figures
 
@@ -233,7 +232,7 @@ class Visualizer:
             A dictionary with each key being a condition and the value being a corresponding matplotlib Figure object of the plot.
         """
 
-        columns = self.annot.columns[self.annot.columns.str.contains("Log2_fold_change:")]
+        columns = self.annot.columns[self.annot.columns.str.contains("Log2 fold change:")]
         figures = {}
         colors = sns.color_palette("husl", (len(self.conditions) - 1)*len(self.conditions))
 
@@ -257,7 +256,7 @@ class Visualizer:
             A dictionary with each key being a condition appended with 'internal_nterm' or 'natural_nterm' and the value being a corresponding matplotlib Figure object of the plot.
         """
 
-        columns = self.annot.columns[self.annot.columns.str.contains("Log2_fold_change:")]
+        columns = self.annot.columns[self.annot.columns.str.contains("Log2 fold change:")]
         figures = {}
         colors = sns.color_palette("husl", (len(self.conditions) - 1)*len(self.conditions)*2)
         
@@ -747,7 +746,7 @@ class Visualizer:
         cols = self.annot.columns[self.annot.columns.str.startswith("Independent T-test:")]
 
         for col in cols:
-            col_fold = col.replace('Independent T-test', 'Log2_fold_change') # LATER: Does the conversion of _ to / prohibit the use of underscores in condition naming? Convert to / in creation process
+            col_fold = col.replace('Independent T-test', 'Log2 fold change') # LATER: Does the conversion of _ to / prohibit the use of underscores in condition naming? Convert to / in creation process
             subframe = self.annot[self.annot[col] < cutoff]
 
             # Create a PDF file to save all figures
@@ -1052,7 +1051,7 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level, temp_f
     features = extract_protein_features(acc, record, merops, subframe)
 
     # get the significant peptides
-    col_fold = col.replace('Independent T-test', 'Log2_fold_change')
+    col_fold = col.replace('Independent T-test', 'Log2 fold change')
 
     # Collapse duplicate peptides and take the mean of fold changes
     subframe = subframe.groupby(['query_sequence', 'start_pep', 'end_pep']).agg({col_fold: 'mean'}).reset_index()
@@ -1142,6 +1141,7 @@ def plot_enrichment_figure(genes, col_name, organism='hsapiens'):
     significant_results = enrichment_results[enrichment_results['p_value'] < 0.05]
 
     if len(significant_results) == 0:
+        logging.info(f'No significant functional enrichment found for {col_name}')
         return None
 
     # Pivot data for heatmap
