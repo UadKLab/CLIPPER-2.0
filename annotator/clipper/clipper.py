@@ -1312,6 +1312,7 @@ class Clipper:
         the logfile is copied to the output folder, and the output folder is compressed into a zip file.
         """
 
+        os.rmdir(self.temp_folder)
         outfile = self.outfolder / self.outname
 
         if self.separate:
