@@ -553,9 +553,10 @@ def get_structure_properties(acc_cleavage_sites, tmp_output_path, pymol_verbose,
     if pymol_verbose:
         with tqdm(acc_cleavage_sites.items(), leave = 0) as t:
             for acc, cleavage_sites_indices in t:
-                if available_models is not None and acc not in available_models:
+                if available_models and acc in available_models:
+                    structure_properties = calculate_structure_properties(acc, cleavage_sites_indices, structure_properties, alphafold_folder)
+                else:
                     logging.warning(f"Model for {acc} not available")
-                structure_properties = calculate_structure_properties(acc, cleavage_sites_indices, structure_properties, alphafold_folder)
             with open(tmp_output_path, 'w') as f:
                 f.write(str(structure_properties))
             elapsed = t.format_dict['elapsed']
@@ -565,9 +566,10 @@ def get_structure_properties(acc_cleavage_sites, tmp_output_path, pymol_verbose,
     else:
         with tqdm(acc_cleavage_sites.items(), leave = 0) as t:
             for acc, cleavage_sites_indices in t:
-                if available_models is not None and acc not in available_models:
+                if available_models and acc in available_models:
+                    subprocess.run(['python', 'pymol_subprocess_ss.py', '-tf', str(tmp_output_path), '-acc', str(acc), '-af', str(alphafold_folder), '-csi', str(cleavage_sites_indices)], stdout=subprocess.DEVNULL)
+                else:
                     logging.warning(f"Model for {acc} not available")
-                subprocess.run(['python', 'pymol_subprocess_ss.py', '-tf', str(tmp_output_path), '-acc', str(acc), '-af', str(alphafold_folder), '-csi', str(cleavage_sites_indices)], stdout=subprocess.DEVNULL)
             elapsed = t.format_dict['elapsed']
             logging.info(f"Structure calculations took {format_seconds_to_time(elapsed)}")
     
