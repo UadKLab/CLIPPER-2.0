@@ -1,0 +1,58 @@
+2023-06-23 09:40:53,551 [INFO] 
+2023-06-23 09:40:53,552 [INFO] Annotator started at 2023-06-23 09:40:53.
+2023-06-23 09:40:53,578 [DEBUG] Arguments: {'infile': 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\upload\\HUNTER_clean.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': None, 'singlecpu': False, 'conditionfile': 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\upload\\cond.txt', 'proteasefile': None, 'stat': False, 'stat_pairwise': 'True', 'significance': None, 'visualize': False, 'logo': None, 'pseudocounts': False, 'cleavagevis': 'None', 'enrichment': False, 'pathway': False, 'output_name': '20230623094053_annotated_data', 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False, 'jobid': '105', 'logfile': 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\log\\105.log', 'resultdest': 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\results', 'datafolder': 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\data', 'email': 'konka@dtu.dk'}
+2023-06-23 09:40:53,623 [INFO] Startup complete!
+
+2023-06-23 09:40:53,625 [INFO] Reading file...
+2023-06-23 09:40:53,626 [INFO] Input is excel
+2023-06-23 09:40:58,445 [INFO] Read dataframe.
+2023-06-23 09:40:58,445 [INFO] Read input with 15832 peptides.
+2023-06-23 09:40:58,449 [INFO] Input software is sm
+2023-06-23 09:40:58,497 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_127C to numeric type
+2023-06-23 09:40:58,548 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_128C to numeric type
+2023-06-23 09:40:58,574 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_129C to numeric type
+2023-06-23 09:40:58,612 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_130C to numeric type
+2023-06-23 09:40:58,640 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_131C to numeric type
+2023-06-23 09:40:58,672 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_132C to numeric type
+2023-06-23 09:40:58,683 [INFO] Finished converting quantification values to floats.
+2023-06-23 09:40:58,779 [DEBUG] Patterns are: {'acc': 'PG.ProteinAccessions', 'seq': 'PEP.StrippedSequence', 'amino': 'B|J|O|U|X|Z', 'mod': 'P.MoleculeID', 'quant': 'PEP\\.TMT', 'label': '\\[TMT', 'nterm': 'N-?ter', 'nterm_label': 'TMT.*_Nter', 'lysine_label': 'K\\[TMT.{0,3}_Lys\\]'}
+2023-06-23 09:40:58,779 [INFO] Successfully generated indexing patterns for sm input. See logfile for the found patterns.
+2023-06-23 09:40:58,780 [INFO] Format check complete.
+
+2023-06-23 09:40:58,782 [INFO] Initialization complete!
+
+2023-06-23 09:40:58,784 [INFO] Filtering and sanitizing input...
+2023-06-23 09:40:58,805 [DEBUG] Starting annotation of peptides...
+2023-06-23 09:40:58,816 [INFO] Reading MEROPS data..
+2023-06-23 09:41:01,816 [INFO] Read MEROPS data
+2023-06-23 09:41:01,829 [INFO] Initialized annotation dataframe.
+
+2023-06-23 09:41:01,830 [INFO] Fetching information from Uniprot...
+2023-06-23 09:42:11,557 [WARNING] Peptide YSCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-06-23 09:42:11,875 [WARNING] Peptide SELHIENLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-23 09:42:11,973 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-23 09:42:11,984 [WARNING] Peptide ADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-23 09:42:11,985 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-23 09:42:12,130 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-23 09:42:16,747 [WARNING] Peptide SCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-06-23 09:42:46,723 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-23 09:42:46,904 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-23 09:42:46,905 [WARNING] Peptide SELHIENLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-23 09:42:46,909 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-23 09:42:46,948 [WARNING] Peptide ADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-23 09:42:46,999 [WARNING] Peptide YSCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-06-23 09:42:50,374 [WARNING] Peptide SCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-06-23 09:43:07,263 [WARNING] Error retrieving Uniprot record for A0A494C169: No SwissProt record found
+2023-06-23 09:43:29,948 [WARNING] Error retrieving Uniprot record for E7ES96: No SwissProt record found
+2023-06-23 09:43:34,626 [WARNING] Error retrieving Uniprot record for A0A494C169: No SwissProt record found
+2023-06-23 09:43:53,395 [WARNING] Peptide QKTLTPDQWAR not found in protein sequence for A0A087WZT3.
+2023-06-23 09:43:53,402 [WARNING] Peptide GKPLLQR not found in protein sequence for A0A087WZT3.
+2023-06-23 09:43:53,420 [WARNING] Peptide AEHVEVEDTTLNR not found in protein sequence for A0A087WZT3.
+2023-06-23 09:43:53,459 [WARNING] Peptide VEDTTLNR not found in protein sequence for A0A087WZT3.
+2023-06-23 09:43:53,481 [WARNING] Peptide DLEAEHVEVEDTTLNR not found in protein sequence for A0A087WZT3.
+2023-06-23 09:43:58,252 [WARNING] Error retrieving Uniprot record for E7ES96: No SwissProt record found
+2023-06-23 09:44:23,155 [WARNING] Peptide AEHVEVEDTTLNR not found in protein sequence for A0A087WZT3.
+2023-06-23 09:44:23,637 [WARNING] Peptide VEDTTLNR not found in protein sequence for A0A087WZT3.
+2023-06-23 09:44:23,922 [WARNING] Peptide QKTLTPDQWAR not found in protein sequence for A0A087WZT3.
+2023-06-23 09:44:24,034 [WARNING] Peptide DLEAEHVEVEDTTLNR not found in protein sequence for A0A087WZT3.
+2023-06-23 09:44:24,088 [WARNING] Peptide GKPLLQR not found in protein sequence for A0A087WZT3.

@@ -1125,9 +1125,6 @@ class Clipper:
         self.annot["secondary_structure p4_p4prime"] = np.nan
         self.annot["solvent_accessibility p4_p4prime"] = np.nan
 
-        #if self.calcstructure is 'None':
-        #    return
-
         if self.calcstructure == "all":
             # Create a dictionary where each accession is a key and the value is a list of tuples
             # Each tuple contains the index of the cleavage site in the annot dataframe and the cleavage site position
@@ -1186,7 +1183,13 @@ class Clipper:
                                 acc_cleavage_sites.setdefault(acc, []).append((i, cleavage_site))
 
                         # get the secondary structure and solvent accessibility of all cleavage sites
-                        structure_properties = annutils.get_structure_properties(acc_cleavage_sites, 4, self.pymol_verbose, self.available_models)
+                        structure_tmp_filepath = os.path.join(self.temp_folder, "structure_properties.txt")
+                        structure_properties = annutils.get_structure_properties(acc_cleavage_sites, structure_tmp_filepath, self.pymol_verbose, self.available_models)
+
+                        with open(structure_tmp_filepath, 'r') as f:
+                            lines = f.readlines()[0]
+                            structure_properties = literal_eval(lines)
+                        os.remove(structure_tmp_filepath)
 
                         for (acc, cleavage_site), (index, ss, sa) in structure_properties.items():
                             # if the cleavage site is not nan (has not been annotated in previous iterations), annotate
