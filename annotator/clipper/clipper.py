@@ -809,8 +809,13 @@ class Clipper:
         conditions = list(self.conditions.keys())
         if len(conditions) >= 2:
             test_func = ttest_ind if len(conditions) == 2 else f_oneway
+            if len(conditions) == 2:
+                self.comparisons.append(conditions[0] + ' vs. ' + conditions[1])
+                print(f'self.comparisons: {self.comparisons}')
             column_name = f"{'Independent T-test:' if len(conditions) == 2 else 'ANOVA:'} {' vs. '.join(conditions)}"
-            column_log = f"Log10 pvalue: {column_name}"
+            # LOG10 PVALUE ERROR
+            #column_log = f"Log10 pvalue: {column_name}"
+            column_log = f"Log10 pvalue: {' vs. '.join(conditions)}"
             cols_per_condition = []
             vals_per_condition = []
             for cond in conditions:
@@ -1268,22 +1273,16 @@ class Clipper:
         """
 
         if len(self.conditions) > 1:
-            #print(self.figures)
-            conditions_iter = permutations(self.conditions.keys(), 2)
-            
             for comparison in self.comparisons:
                 pair = comparison.split(' vs. ')
                 if self.stat:
-
                     try:
                         column_name_test = f"Log10 pvalue: {comparison}"
                         column_name_fold = f"Log2 fold change: {comparison}"
                         condition = column_name_test.split(': ')[1].strip()
                         column_test = self.annot[column_name_test]
-
                         column_fold = self.annot[column_name_fold]
                         condition = column_name_test.split(': ')[1].strip()
-
                         data = self.annot[(column_test < -1.5) & (column_fold > 1.5)]
                         self.figures[f"Logo {comparison} high"] = create_logo_helper(data, comparison, self.pseudocounts, self.logo)
 
@@ -1295,12 +1294,11 @@ class Clipper:
                 else:
                     column = f"Fold {comparison} significance"
                     condition = column.split()[1].strip().replace(" vs. ", "_")
-
                     data = self.annot[self.annot[column] == "significant high"]
-                    self.figures[f"Logo_{pair[0]}_high"] = create_logo_helper(data, condition, self.pseudocounts, self.logo)
+                    self.figures[f"Logo {pair[0]} high"] = create_logo_helper(data, comparison, self.pseudocounts, self.logo)
 
                     data = self.annot[self.annot[column] == "significant low"]
-                    self.figures[f"Logo_{pair[0]}_low"] = create_logo_helper(data, condition, self.pseudocounts, self.logo)
+                    self.figures[f"Logo {pair[0]} low"] = create_logo_helper(data, comparison, self.pseudocounts, self.logo)
             
         elif len(self.conditions) == 1:
             
