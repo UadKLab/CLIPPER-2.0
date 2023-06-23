@@ -1,0 +1,38 @@
+2023-06-23 17:33:57,137 [INFO] 
+2023-06-23 17:33:57,138 [INFO] Annotator started at 2023-06-23 17:33:57.
+2023-06-23 17:33:57,141 [DEBUG] Arguments: {'infile': '..\\tests\\HUNTER_clean_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': None, 'singlecpu': False, 'conditionfile': '..\\tests\\cond_HUNTER.txt', 'stat': True, 'stat_pairwise': True, 'significance': 'all', 'visualize': True, 'logo': 'all', 'pseudocounts': True, 'cleavagevis': None, 'enrichment': False, 'pathway': False, 'proteasefile': None, 'output_name': None, 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False}
+2023-06-23 17:33:57,153 [INFO] Startup complete!
+
+2023-06-23 17:33:57,154 [INFO] Reading file...
+2023-06-23 17:33:57,155 [INFO] Input is excel
+2023-06-23 17:33:57,630 [INFO] Read dataframe.
+2023-06-23 17:33:57,631 [INFO] Read input with 284 peptides.
+2023-06-23 17:33:57,632 [INFO] Input software is sm
+2023-06-23 17:33:57,637 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_127C to numeric type
+2023-06-23 17:33:57,641 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_128C to numeric type
+2023-06-23 17:33:57,644 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_129C to numeric type
+2023-06-23 17:33:57,646 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_130C to numeric type
+2023-06-23 17:33:57,647 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_131C to numeric type
+2023-06-23 17:33:57,650 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_132C to numeric type
+2023-06-23 17:33:57,650 [INFO] Finished converting quantification values to floats.
+2023-06-23 17:33:57,653 [DEBUG] Patterns are: {'acc': 'PG.ProteinAccessions', 'seq': 'PEP.StrippedSequence', 'amino': 'B|J|O|U|X|Z', 'mod': 'P.MoleculeID', 'quant': 'PEP\\.TMT', 'label': '\\[TMT', 'nterm': 'N-?ter', 'nterm_label': 'TMT.*_Nter', 'lysine_label': 'K\\[TMT.{0,3}_Lys\\]'}
+2023-06-23 17:33:57,653 [INFO] Successfully generated indexing patterns for sm input. See logfile for the found patterns.
+2023-06-23 17:33:57,654 [INFO] Format check complete.
+
+2023-06-23 17:33:57,659 [INFO] Initialization complete!
+
+2023-06-23 17:33:57,659 [INFO] Filtering and sanitizing input...
+2023-06-23 17:33:57,661 [DEBUG] Starting annotation of peptides...
+2023-06-23 17:33:57,663 [INFO] Reading MEROPS data..
+2023-06-23 17:33:58,996 [INFO] Read MEROPS data
+2023-06-23 17:33:59,000 [INFO] Initialized annotation dataframe.
+
+2023-06-23 17:33:59,001 [INFO] Fetching information from Uniprot...
+2023-06-23 17:34:38,996 [WARNING] Peptide ADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-23 17:34:39,301 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-23 17:34:39,368 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-23 17:34:39,405 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-23 17:34:39,440 [WARNING] Peptide YSCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-06-23 17:34:39,518 [WARNING] Peptide SELHIENLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-06-23 17:34:42,731 [WARNING] Peptide SCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-06-23 17:35:21,897 [WARNING] Error retrieving Uniprot record for A0A494C169: No SwissProt record found

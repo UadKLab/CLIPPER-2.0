@@ -811,7 +811,7 @@ class Clipper:
             test_func = ttest_ind if len(conditions) == 2 else f_oneway
             if len(conditions) == 2:
                 self.comparisons.append(conditions[0] + ' vs. ' + conditions[1])
-                print(f'self.comparisons: {self.comparisons}')
+
             column_name = f"{'Independent T-test:' if len(conditions) == 2 else 'ANOVA:'} {' vs. '.join(conditions)}"
             # LOG10 PVALUE ERROR
             #column_log = f"Log10 pvalue: {column_name}"

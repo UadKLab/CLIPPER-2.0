@@ -1,0 +1,30 @@
+2023-06-23 17:39:26,926 [INFO] 
+2023-06-23 17:39:26,927 [INFO] Annotator started at 2023-06-23 17:39:26.
+2023-06-23 17:39:26,930 [DEBUG] Arguments: {'infile': '..\\tests\\HUNTER_clean_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': None, 'singlecpu': False, 'conditionfile': '..\\tests\\cond_HUNTER.txt', 'stat': True, 'stat_pairwise': True, 'significance': None, 'visualize': True, 'logo': 'all', 'pseudocounts': True, 'cleavagevis': None, 'enrichment': False, 'pathway': False, 'proteasefile': None, 'output_name': None, 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False}
+2023-06-23 17:39:26,944 [INFO] Startup complete!
+
+2023-06-23 17:39:26,947 [INFO] Reading file...
+2023-06-23 17:39:26,949 [INFO] Input is excel
+2023-06-23 17:39:27,347 [INFO] Read dataframe.
+2023-06-23 17:39:27,348 [INFO] Read input with 284 peptides.
+2023-06-23 17:39:27,349 [INFO] Input software is sm
+2023-06-23 17:39:27,353 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_127C to numeric type
+2023-06-23 17:39:27,355 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_128C to numeric type
+2023-06-23 17:39:27,358 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_129C to numeric type
+2023-06-23 17:39:27,360 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_130C to numeric type
+2023-06-23 17:39:27,362 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_131C to numeric type
+2023-06-23 17:39:27,363 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_132C to numeric type
+2023-06-23 17:39:27,364 [INFO] Finished converting quantification values to floats.
+2023-06-23 17:39:27,370 [DEBUG] Patterns are: {'acc': 'PG.ProteinAccessions', 'seq': 'PEP.StrippedSequence', 'amino': 'B|J|O|U|X|Z', 'mod': 'P.MoleculeID', 'quant': 'PEP\\.TMT', 'label': '\\[TMT', 'nterm': 'N-?ter', 'nterm_label': 'TMT.*_Nter', 'lysine_label': 'K\\[TMT.{0,3}_Lys\\]'}
+2023-06-23 17:39:27,370 [INFO] Successfully generated indexing patterns for sm input. See logfile for the found patterns.
+2023-06-23 17:39:27,371 [INFO] Format check complete.
+
+2023-06-23 17:39:27,375 [INFO] Initialization complete!
+
+2023-06-23 17:39:27,377 [INFO] Filtering and sanitizing input...
+2023-06-23 17:39:27,381 [DEBUG] Starting annotation of peptides...
+2023-06-23 17:39:27,384 [INFO] Reading MEROPS data..
+2023-06-23 17:39:29,017 [INFO] Read MEROPS data
+2023-06-23 17:39:29,022 [INFO] Initialized annotation dataframe.
+
+2023-06-23 17:39:29,023 [INFO] Fetching information from Uniprot...

@@ -19,7 +19,7 @@ def send_email(email_address, jobid, filename):
 	current_app.config['MAIL_SERVER']='smtp.gmail.com'
 	current_app.config['MAIL_PORT'] = 587
 	current_app.config['MAIL_USERNAME'] = 'annotator.dtu@gmail.com'
-	current_app.config['MAIL_PASSWORD'] = 'konka2612'
+	current_app.config['MAIL_PASSWORD'] = 'xjdroqkqpaxwmmtj'
 	current_app.config['MAIL_USE_TLS'] = True
 	current_app.config['MAIL_USE_SSL'] = False
 
