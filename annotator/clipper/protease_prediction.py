@@ -147,6 +147,9 @@ def create_protease_pssm(protease, df_cleavage, df_substrate, peptide_length=8, 
     # Filter out None values and sequences with non-standard amino acids
     peptides = [peptide for peptide in peptides if peptide and set(peptide) <= set(alphabet)]
     
+    if len(peptides) == 0:
+        return None
+    
     # Create PSSM
     pssm = PSSM(sequences=peptides, pseudocounts=pseudocounts)
     
@@ -231,6 +234,10 @@ def score_proteases(pssms, peptide_sequence):
 
     scores = []
     for code, matrix in pssms.items():
+
+        if matrix is None:
+            continue
+
         # Score peptide
         score = score_peptide(peptide_sequence, matrix)
         # Append to scores list

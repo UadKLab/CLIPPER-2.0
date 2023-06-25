@@ -1099,6 +1099,7 @@ class Clipper:
 
         # Create PSSM for each protease and store in a dictionary
         pssms = pp.construct_pssms(protease_codes, self.merops, self.merops_sub)
+        
         with tqdm(range(len(self.annot)), leave = 0) as t:
             for i in t:
                 # Get the peptide sequence
