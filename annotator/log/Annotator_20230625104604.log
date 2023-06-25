@@ -1,0 +1,7 @@
+2023-06-25 10:46:04,351 [INFO] 
+2023-06-25 10:46:04,351 [INFO] Annotator started at 2023-06-25 10:46:04.
+2023-06-25 10:46:04,354 [DEBUG] Arguments: {'infile': '..\\tests\\BaPI_Nterm.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': 'sig', 'singlecpu': False, 'conditionfile': '..\\tests\\cond_bapi.txt', 'stat': True, 'stat_pairwise': True, 'significance': 'all', 'visualize': True, 'logo': 'all', 'pseudocounts': True, 'cleavagevis': 'both', 'enrichment': True, 'pathway': True, 'proteasefile': '../tests/proteases_bapi.txt', 'output_name': None, 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False}
+2023-06-25 10:46:04,361 [INFO] Startup complete!
+
+2023-06-25 10:46:04,363 [INFO] Reading file...
+2023-06-25 10:46:04,365 [INFO] Input is excel

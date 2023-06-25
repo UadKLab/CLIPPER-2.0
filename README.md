@@ -299,3 +299,4 @@ We hope you find CLIPPER 2.0 useful for your research. Feel free to contact us f
 - [ ] Add heatmap with cleavage site specificity to complement logos
 - [ ] Add pycache to git ignore
 - [ ] Create github issues instead of writing things to do here
+- [ ] Add cleavage environemnt length as argument (right now is only 4)
