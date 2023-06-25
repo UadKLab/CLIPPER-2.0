@@ -277,29 +277,25 @@ We hope you find CLIPPER 2.0 useful for your research. Feel free to contact us f
     - [x] Have not managed to recreate it yet, need to use input data with multiple (>4) conditions. Did not manage even with 6 conditions.
 - [x] Static Uniprot entry lookup
     - [x] Will not be implemented
-- [ ] Update and prepare for publication
 - [x] Write doc strings and prepare documentation
-- [ ] Write tests
-- [ ] Update application and website
-- [ ] Figure out hosting
 - [x] Clean up structure of folders
 - [x] Rename folders and scripts to make more sense i.e. Clipper 2.0 instead of annotator for base folder, app_main.py instead of general.py
 - [x] Merge with main
-- [ ] Add support for other software like Fragpipe
-- [ ] Use Path instead of os.path.join
 - [x] Figure out way of pointing to Alphafold database that is device agnostic, and easy to change from user side
-- [ ] Show column patterns in command line
-- [ ] Make docs and examples for software export, column descriptions, etc.
 - [x] Fix bug where model is not found in Alphafold database but still tries to read it
 - [x] Delete tmp folder in the cmd result folder
+- [ ] Add support for other software like Fragpipe
+- [ ] Use Path instead of os.path.join
+- [ ] Show column patterns in command line
+- [ ] Make docs and examples for software export, column descriptions, etc.
 - [ ] Change descriptions to reflect support for other software and new arguments
 - [ ] Add C-terminomics support
 - [ ] Add C-terminal exopeptidase activity check
 - [ ] Add heatmap with cleavage site specificity to complement logos
 - [ ] Add pycache to git ignore
 - [ ] Create github issues instead of writing things to do here
-- [ ] Add cleavage environemnt length as argument (right now is only 4)
+- [ ] Add cleavage environment length as argument (right now is only 4)
 - [ ] Why is log10 pvalue in the annotated dataframe negative instead of -log10?
 - [ ] Add argument to control p-value and fold cutoff for logos
 - [ ] Add argument to control p-value and fold cutoff for volcano plots
-
+- [ ] Add argument to restrict the number of cores used in threading
