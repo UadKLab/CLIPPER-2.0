@@ -1,0 +1,32 @@
+2023-06-25 10:15:29,774 [INFO] 
+2023-06-25 10:15:29,774 [INFO] Annotator started at 2023-06-25 10:15:29.
+2023-06-25 10:15:29,778 [DEBUG] Arguments: {'infile': '..\\tests\\BaPI_Nterm.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': 'sig', 'singlecpu': False, 'conditionfile': '..\\tests\\cond_bapi.txt', 'stat': True, 'stat_pairwise': False, 'significance': 'all', 'visualize': True, 'logo': 'all', 'pseudocounts': True, 'cleavagevis': 'both', 'enrichment': True, 'pathway': True, 'proteasefile': '..\\tests\\proteases_bapi.txt', 'output_name': None, 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False}
+2023-06-25 10:15:29,784 [INFO] Startup complete!
+
+2023-06-25 10:15:29,785 [INFO] Reading file...
+2023-06-25 10:15:29,786 [INFO] Input is excel
+2023-06-25 10:15:30,748 [INFO] Read dataframe.
+2023-06-25 10:15:30,750 [INFO] Read input with 803 peptides.
+2023-06-25 10:15:30,755 [INFO] Input software is pd
+2023-06-25 10:15:30,762 [DEBUG] Converted values in Abundances (Normalized): F1: 130C, Sample, BaPI to numeric type
+2023-06-25 10:15:30,766 [DEBUG] Converted values in Abundances (Normalized): F1: 131N, Sample, BaPI to numeric type
+2023-06-25 10:15:30,769 [DEBUG] Converted values in Abundances (Normalized): F1: 131C, Sample, BaPI to numeric type
+2023-06-25 10:15:30,771 [DEBUG] Converted values in Abundances (Normalized): F1: 129N, Sample, control to numeric type
+2023-06-25 10:15:30,773 [DEBUG] Converted values in Abundances (Normalized): F1: 129C, Sample, control to numeric type
+2023-06-25 10:15:30,776 [DEBUG] Converted values in Abundances (Normalized): F1: 130N, Sample, control to numeric type
+2023-06-25 10:15:30,777 [INFO] Finished converting quantification values to floats.
+2023-06-25 10:15:30,783 [DEBUG] Patterns are: {'acc': 'Master Protein Accessions', 'mod': 'Modifications', 'nterm': '\\[N-Term\\]', 'seq': 'Annotated Sequence', 'amino': '\\.[A-Z]*(B|J|O|U|X|Z)[A-Z]*\\.', 'quant': 'Abundances \\(?Normalized\\):.*', 'label': 'TMT', 'nterm_label': 'TMT.* \\[N-Term\\]', 'lysine_label': 'TMT.{0,5} \\[K'}
+2023-06-25 10:15:30,784 [INFO] Successfully generated indexing patterns for pd input. See logfile for the found patterns.
+2023-06-25 10:15:30,784 [INFO] Format check complete.
+
+2023-06-25 10:15:30,787 [INFO] Initialization complete!
+
+2023-06-25 10:15:30,788 [INFO] Filtering and sanitizing input...
+2023-06-25 10:15:30,790 [DEBUG] Starting annotation of peptides...
+2023-06-25 10:15:30,792 [INFO] Reading MEROPS data..
+2023-06-25 10:15:32,579 [INFO] Read MEROPS data
+2023-06-25 10:15:32,584 [INFO] Initialized annotation dataframe.
+
+2023-06-25 10:15:32,585 [INFO] Fetching information from Uniprot...
+2023-06-25 10:20:51,169 [WARNING] Peptide LKLDKENAIDR not found in protein sequence for P09493.
+2023-06-25 10:22:30,209 [WARNING] Peptide ILLSKLR not found in protein sequence for Q9BUF5.

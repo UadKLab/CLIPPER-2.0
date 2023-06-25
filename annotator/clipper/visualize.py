@@ -1019,8 +1019,8 @@ def get_pymol_image(acc, positions, colormap, vmin, vmax, peptide_protein_plot_p
         if max_fold_change_pos is not None:
             pymol.cmd.orient(f'resi {max_fold_change_pos[0]}-{max_fold_change_pos[1]} and {acc}')
             pymol.cmd.zoom(acc, complete=0.65)
-        pymol.cmd.ray(1280, 720)
-        pymol.cmd.png(peptide_protein_plot_path, dpi=600)
+        pymol.cmd.ray(720, 720)
+        pymol.cmd.png(peptide_protein_plot_path, dpi=150)
 
     else:
         logging.warning(f'The file {model_filename} is not available at {alphafold_path}. Cannot create PyMol illustrations.')
@@ -1081,7 +1081,7 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level, temp_f
             features.append(gf)
 
     # create the figure
-    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 12))
+    fig, (ax1, ax2) = plt.subplots(2, 1, figsize=(8, 10))
 
     gr = GraphicRecord(sequence_length=record.sequence_length, features=features, first_index=1)
     gr.plot(ax=ax1)

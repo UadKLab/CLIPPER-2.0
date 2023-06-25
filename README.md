@@ -12,17 +12,17 @@ Please note that CLIPPER 2.0 is currently in beta, and we welcome any bug report
 ## Prerequisites
 
 * Python 3.11.3
-* [Graphvis](https://www.graphviz.org/download/) v7.1.0 (optional for enhanced layout options)
+* [Graphvis](https://www.graphviz.org/download/), tested version is v7.1.0 (optional for enhanced layout options)
 
 ## Installation
 
 1. Install Python 3.11.3 and create a conda environment:
 
 ```bash
-conda create --n clipper python=3.11.3
+conda create -n clipper python=3.11.3
 ```
 
-2. Install packages with *pip*:
+2. Change to your newly created conda environament and install packages with *pip*:
 
 ```bash
 pip install -r requirements.txt
@@ -34,7 +34,7 @@ pip install -r requirements.txt
 conda install -c conda-forge pymol-open-source
 ```
 
-4. (Optional) To enable additional layout features, install Graphviz (v7.1.0) separately. Then install *pygraphviz*:
+4. (Optional) To enable additional pathway layout features, install Graphviz (v7.1.0) separately. Then install *pygraphviz*:
 
 ```bash
 conda install --channel conda-forge pygraphviz
@@ -297,3 +297,5 @@ We hope you find CLIPPER 2.0 useful for your research. Feel free to contact us f
 - [ ] Add C-terminomics support
 - [ ] Add C-terminal exopeptidase activity check
 - [ ] Add heatmap with cleavage site specificity to complement logos
+- [ ] Add pycache to git ignore
+- [ ] Create github issues instead of writing things to do here

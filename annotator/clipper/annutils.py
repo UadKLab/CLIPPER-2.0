@@ -102,7 +102,7 @@ def initialize_arguments():
     parser = ArgumentParser(
         prog="CLIPPER 2.0",
         description="Peptide annotation and analysis of proteomics data utilizing databases and visulization tools",
-        epilog="Not extensively tested, this tool is still in beta version. Contact konka@dtu.dk for bug reports and requests.",
+        epilog="Not extensively tested, this tool is still in beta version. Contact konka@dtu.dk or alemol@dtu.dk for bug reports and requests.",
         formatter_class=HelpFormatter,
     )
 

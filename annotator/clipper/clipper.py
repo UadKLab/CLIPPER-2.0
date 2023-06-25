@@ -780,7 +780,9 @@ class Clipper:
                     logging.info(f"Significance invalid argument {self.significance}, skipping")
                     continue
 
-                hist = np.histogram(subframe[column].dropna())
+                finite_vals = subframe[column].dropna()
+                finite_vals = finite_vals[np.isfinite(finite_vals)]
+                hist = np.histogram(finite_vals)
                 hist_dist = rv_histogram(hist)
 
                 def classify_fold_change(value):

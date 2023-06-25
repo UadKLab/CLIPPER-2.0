@@ -1,0 +1,30 @@
+2023-06-25 10:28:50,332 [INFO] 
+2023-06-25 10:28:50,333 [INFO] Annotator started at 2023-06-25 10:28:50.
+2023-06-25 10:28:50,336 [DEBUG] Arguments: {'infile': '..\\tests\\BaPI_Nterm.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': None, 'singlecpu': False, 'conditionfile': '..\\tests\\cond_bapi.txt', 'stat': False, 'stat_pairwise': False, 'significance': 'all', 'visualize': False, 'logo': None, 'pseudocounts': True, 'cleavagevis': None, 'enrichment': False, 'pathway': False, 'proteasefile': None, 'output_name': None, 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False}
+2023-06-25 10:28:50,347 [INFO] Startup complete!
+
+2023-06-25 10:28:50,349 [INFO] Reading file...
+2023-06-25 10:28:50,351 [INFO] Input is excel
+2023-06-25 10:28:51,193 [INFO] Read dataframe.
+2023-06-25 10:28:51,193 [INFO] Read input with 803 peptides.
+2023-06-25 10:28:51,195 [INFO] Input software is pd
+2023-06-25 10:28:51,200 [DEBUG] Converted values in Abundances (Normalized): F1: 130C, Sample, BaPI to numeric type
+2023-06-25 10:28:51,208 [DEBUG] Converted values in Abundances (Normalized): F1: 131N, Sample, BaPI to numeric type
+2023-06-25 10:28:51,212 [DEBUG] Converted values in Abundances (Normalized): F1: 131C, Sample, BaPI to numeric type
+2023-06-25 10:28:51,216 [DEBUG] Converted values in Abundances (Normalized): F1: 129N, Sample, control to numeric type
+2023-06-25 10:28:51,220 [DEBUG] Converted values in Abundances (Normalized): F1: 129C, Sample, control to numeric type
+2023-06-25 10:28:51,224 [DEBUG] Converted values in Abundances (Normalized): F1: 130N, Sample, control to numeric type
+2023-06-25 10:28:51,224 [INFO] Finished converting quantification values to floats.
+2023-06-25 10:28:51,227 [DEBUG] Patterns are: {'acc': 'Master Protein Accessions', 'mod': 'Modifications', 'nterm': '\\[N-Term\\]', 'seq': 'Annotated Sequence', 'amino': '\\.[A-Z]*(B|J|O|U|X|Z)[A-Z]*\\.', 'quant': 'Abundances \\(?Normalized\\):.*', 'label': 'TMT', 'nterm_label': 'TMT.* \\[N-Term\\]', 'lysine_label': 'TMT.{0,5} \\[K'}
+2023-06-25 10:28:51,227 [INFO] Successfully generated indexing patterns for pd input. See logfile for the found patterns.
+2023-06-25 10:28:51,228 [INFO] Format check complete.
+
+2023-06-25 10:28:51,228 [INFO] Initialization complete!
+
+2023-06-25 10:28:51,229 [INFO] Filtering and sanitizing input...
+2023-06-25 10:28:51,234 [DEBUG] Starting annotation of peptides...
+2023-06-25 10:28:51,238 [INFO] Reading MEROPS data..
+2023-06-25 10:28:52,511 [INFO] Read MEROPS data
+2023-06-25 10:28:52,515 [INFO] Initialized annotation dataframe.
+
+2023-06-25 10:28:52,516 [INFO] Fetching information from Uniprot...
