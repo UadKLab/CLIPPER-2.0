@@ -291,11 +291,12 @@ We hope you find CLIPPER 2.0 useful for your research. Feel free to contact us f
 - [ ] Change descriptions to reflect support for other software and new arguments
 - [ ] Add C-terminomics support
 - [ ] Add C-terminal exopeptidase activity check
-- [ ] Add heatmap with cleavage site specificity to complement logos
+- [ ] Add heatmap with cleavage site specificity as an alternative to logos
 - [ ] Add pycache to git ignore
 - [ ] Create github issues instead of writing things to do here
 - [ ] Add cleavage environment length as argument (right now is only 4)
-- [ ] Why is log10 pvalue in the annotated dataframe negative instead of -log10?
+- [ ] Change back log10 pval to -log10 pval in annotation dataframe
 - [ ] Add argument to control p-value and fold cutoff for logos
 - [ ] Add argument to control p-value and fold cutoff for volcano plots
 - [ ] Add argument to restrict the number of cores used in threading
+- [ ] Read email credentials from file to avoid hardcoding
