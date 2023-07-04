@@ -1,0 +1,111 @@
+2023-07-04 11:12:50,240 [INFO] 
+2023-07-04 11:12:50,240 [INFO] Annotator started at 2023-07-04 11:12:50.
+2023-07-04 11:12:50,240 [DEBUG] Arguments: {'infile': '../tests/HUNTER_clean_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': 'all', 'singlecpu': False, 'conditionfile': '../tests/cond_HUNTER.txt', 'stat': True, 'stat_pairwise': True, 'significance': 'all', 'visualize': True, 'logo': None, 'pseudocounts': True, 'cleavagevis': 'both', 'enrichment': False, 'pathway': False, 'proteasefile': None, 'output_name': None, 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False}
+2023-07-04 11:12:50,240 [INFO] Startup complete!
+
+2023-07-04 11:12:50,240 [INFO] Reading file...
+2023-07-04 11:12:50,240 [INFO] Input is excel
+2023-07-04 11:12:50,314 [INFO] Read dataframe.
+2023-07-04 11:12:50,314 [INFO] Read input with 284 peptides.
+2023-07-04 11:12:50,315 [INFO] Input software is sm
+2023-07-04 11:12:50,316 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_127C to numeric type
+2023-07-04 11:12:50,316 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_128C to numeric type
+2023-07-04 11:12:50,317 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_129C to numeric type
+2023-07-04 11:12:50,317 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_130C to numeric type
+2023-07-04 11:12:50,318 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_131C to numeric type
+2023-07-04 11:12:50,318 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_132C to numeric type
+2023-07-04 11:12:50,318 [INFO] Finished converting quantification values to floats.
+2023-07-04 11:12:50,319 [DEBUG] Patterns are: {'acc': 'PG.ProteinAccessions', 'seq': 'PEP.StrippedSequence', 'amino': 'B|J|O|U|X|Z', 'mod': 'P.MoleculeID', 'quant': 'PEP\\.TMT', 'label': '\\[TMT', 'nterm': 'N-?ter', 'nterm_label': 'TMT.*_Nter', 'lysine_label': 'K\\[TMT.{0,3}_Lys\\]'}
+2023-07-04 11:12:50,319 [INFO] Successfully generated indexing patterns for sm input. See logfile for the found patterns.
+2023-07-04 11:12:50,319 [INFO] Format check complete.
+
+2023-07-04 11:12:50,319 [INFO] Initialization complete!
+
+2023-07-04 11:12:50,320 [INFO] Filtering and sanitizing input...
+2023-07-04 11:12:50,320 [DEBUG] Starting annotation of peptides...
+2023-07-04 11:12:50,320 [INFO] Reading MEROPS data..
+2023-07-04 11:12:50,869 [INFO] Read MEROPS data
+2023-07-04 11:12:50,870 [INFO] Initialized annotation dataframe.
+
+2023-07-04 11:12:50,870 [INFO] Fetching information from Uniprot...
+2023-07-04 11:12:59,481 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-07-04 11:12:59,497 [WARNING] Peptide YSCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-07-04 11:12:59,554 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-07-04 11:12:59,567 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-07-04 11:12:59,577 [WARNING] Peptide ADPGQYR not found in protein sequence for A0A087X2B5.
+2023-07-04 11:12:59,613 [WARNING] Peptide SELHIENLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-07-04 11:13:00,280 [WARNING] Peptide SCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-07-04 11:13:08,661 [WARNING] Error retrieving Uniprot record for A0A494C169: No SwissProt record found
+2023-07-04 11:13:22,644 [INFO] Gathering info from Uniprot took 00:00:31 hh:mm:ss
+2023-07-04 11:13:22,644 [INFO] Finished annotation of peptides.
+
+2023-07-04 11:13:22,644 [INFO] Starting annotation of Protein Atlas data...
+2023-07-04 11:13:22,644 [INFO] Reading Protein Atlas data..
+2023-07-04 11:13:22,901 [INFO] Read Protein Atlas data.
+2023-07-04 11:13:22,905 [WARNING] Duplicates found in 'Uniprot' column of 'protein_atlas_sub'. Dropping duplicates.
+2023-07-04 11:13:22,912 [INFO] Finished annotation of Protein Atlas data.
+
+2023-07-04 11:13:22,912 [INFO] Starting proteoform check...
+2023-07-04 11:13:22,912 [INFO] Finished proteoform check.
+2023-07-04 11:13:22,912 [INFO] Starting exopeptidase activity check...
+2023-07-04 11:13:22,917 [DEBUG] 2 LGLGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR LGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR
+2023-07-04 11:13:22,927 [DEBUG] 1 YSCVFLPEPMGTANIQLHGPPR SCVFLPEPMGTANIQLHGPPR
+2023-07-04 11:13:22,927 [DEBUG] 2 AEAMDLGKDPNGPTHSSTLFVR AMDLGKDPNGPTHSSTLFVR
+2023-07-04 11:13:22,929 [DEBUG] 2 AEAQALLSGDTQTDATSFYDR AQALLSGDTQTDATSFYDR
+2023-07-04 11:13:22,933 [DEBUG] 1 KACANPAAGSVILLENLR ACANPAAGSVILLENLR
+2023-07-04 11:13:22,933 [DEBUG] 2 KACANPAAGSVILLENLR ANPAAGSVILLENLR
+2023-07-04 11:13:22,939 [DEBUG] 1 AAQTSPSPKAGAATGR AQTSPSPKAGAATGR
+2023-07-04 11:13:22,939 [DEBUG] 1 SSGFSLEDPQTHSNR SGFSLEDPQTHSNR
+2023-07-04 11:13:22,940 [DEBUG] 2 SKNLKLGIHEDSTNR NLKLGIHEDSTNR
+2023-07-04 11:13:22,949 [DEBUG] 2 SEDFSLPAYMDR DFSLPAYMDR
+2023-07-04 11:13:22,956 [DEBUG] 2 SPVLHFYVR VLHFYVR
+2023-07-04 11:13:22,963 [INFO] Exopeptidase activity check took 00:00:00 hh:mm:ss
+2023-07-04 11:13:22,963 [INFO] Exopeptidase activity was found, check logfile or output for more details on exact peptide sequences
+2023-07-04 11:13:22,963 [INFO] Finished exopeptidase activity check.
+2023-07-04 11:13:22,963 [INFO] Parsed condition file
+2023-07-04 11:13:22,963 [INFO] Performing general statistics annotation...
+2023-07-04 11:13:22,969 [INFO] Finished general statistics annotation.
+2023-07-04 11:13:22,969 [INFO] Performing statistical testing...
+2023-07-04 11:13:22,970 [INFO] Finished statistical testing.
+2023-07-04 11:13:22,971 [DEBUG] Corrected p-values for Corrected Independent T-test: gluc vs. control using fdr_bh method
+2023-07-04 11:13:22,971 [INFO] Finished multiple testing correction.
+
+2023-07-04 11:13:22,971 [INFO] Checking fold distribution...
+2023-07-04 11:13:22,986 [INFO] Finished fold distribution check.
+
+2023-07-04 11:13:22,986 [INFO] Computing structural properties...
+2023-07-04 11:13:22,986 [INFO]  - Reading available AlphaFold models...
+2023-07-04 11:13:23,000 [INFO]  - Read available AlphaFold models.
+2023-07-04 11:13:23,002 [INFO]  - Calculating surface area and secondary structure...
+2023-07-04 11:13:27,131 [WARNING] Model for H3BMP6 not available
+2023-07-04 11:13:27,135 [WARNING] Model for A0A0C4DG17 not available
+2023-07-04 11:13:27,141 [WARNING] Model for C9J6D1 not available
+2023-07-04 11:13:28,225 [WARNING] Model for E9PB61 not available
+2023-07-04 11:13:29,655 [WARNING] Model for A0A0A0MS45 not available
+2023-07-04 11:13:31,385 [WARNING] Model for E7EVA0 not available
+2023-07-04 11:13:32,672 [WARNING] Model for C9J329 not available
+2023-07-04 11:13:33,639 [WARNING] Model for P62913-2 not available
+2023-07-04 11:13:36,934 [WARNING] Model for G3V180 not available
+2023-07-04 11:13:38,907 [WARNING] Model for J3KRN5 not available
+2023-07-04 11:13:38,911 [WARNING] Model for A0A1B0GUB2 not available
+2023-07-04 11:13:38,916 [WARNING] Model for E5RGS9 not available
+2023-07-04 11:13:39,998 [WARNING] Model for A0A0A0MRR3 not available
+2023-07-04 11:13:41,511 [WARNING] Model for K7ELL7 not available
+2023-07-04 11:13:41,516 [WARNING] Model for H3BUP2 not available
+2023-07-04 11:13:41,948 [WARNING] Model for C9J7Z4 not available
+2023-07-04 11:13:41,953 [WARNING] Model for C9JR82 not available
+2023-07-04 11:13:41,958 [WARNING] Model for H3BT13 not available
+2023-07-04 11:13:41,964 [WARNING] Model for P58107 not available
+2023-07-04 11:13:42,445 [WARNING] Model for A0A494BZZ2 not available
+2023-07-04 11:13:42,450 [WARNING] Model for B9A055 not available
+2023-07-04 11:13:49,350 [WARNING] Model for D6RBK3 not available
+2023-07-04 11:13:49,356 [WARNING] Model for F8WAS3 not available
+2023-07-04 11:13:49,360 [WARNING] Model for A0A2R8YF49 not available
+2023-07-04 11:13:50,147 [WARNING] Model for E9PLY5 not available
+2023-07-04 11:13:52,196 [WARNING] Model for H3BN72 not available
+2023-07-04 11:13:52,202 [WARNING] Model for C9J9C1 not available
+2023-07-04 11:13:52,206 [WARNING] Model for A0A087WW66 not available
+2023-07-04 11:13:52,210 [WARNING] Model for A0A0U1RQF0 not available
+2023-07-04 11:13:55,220 [WARNING] Model for B4E0Y9 not available
+2023-07-04 11:13:55,225 [WARNING] Model for D6RAT0 not available
+2023-07-04 11:13:55,229 [WARNING] Model for A0A0D9SEI7 not available
