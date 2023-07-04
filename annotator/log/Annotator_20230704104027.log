@@ -1,0 +1,76 @@
+2023-07-04 10:40:27,518 [INFO] 
+2023-07-04 10:40:27,519 [INFO] Annotator started at 2023-07-04 10:40:27.
+2023-07-04 10:40:27,533 [DEBUG] Arguments: {'infile': 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\upload\\HUNTER_clean_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': None, 'singlecpu': False, 'conditionfile': 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\upload\\cond_HUNTER.txt', 'proteasefile': None, 'stat': False, 'stat_pairwise': False, 'significance': None, 'visualize': False, 'logo': None, 'pseudocounts': False, 'cleavagevis': 'None', 'enrichment': False, 'pathway': False, 'output_name': '20230704104027_annotated_data', 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False, 'jobid': '112', 'logfile': 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\log\\112.log', 'resultdest': 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\results', 'datafolder': 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\data', 'email': 'konka@dtu.dk'}
+2023-07-04 10:40:27,553 [INFO] Startup complete!
+
+2023-07-04 10:40:27,553 [INFO] Reading file...
+2023-07-04 10:40:27,553 [INFO] Input is excel
+2023-07-04 10:40:28,009 [INFO] Read dataframe.
+2023-07-04 10:40:28,009 [INFO] Read input with 284 peptides.
+2023-07-04 10:40:28,010 [INFO] Input software is sm
+2023-07-04 10:40:28,013 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_127C to numeric type
+2023-07-04 10:40:28,015 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_128C to numeric type
+2023-07-04 10:40:28,017 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_129C to numeric type
+2023-07-04 10:40:28,020 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_130C to numeric type
+2023-07-04 10:40:28,021 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_131C to numeric type
+2023-07-04 10:40:28,023 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_132C to numeric type
+2023-07-04 10:40:28,024 [INFO] Finished converting quantification values to floats.
+2023-07-04 10:40:28,025 [DEBUG] Patterns are: {'acc': 'PG.ProteinAccessions', 'seq': 'PEP.StrippedSequence', 'amino': 'B|J|O|U|X|Z', 'mod': 'P.MoleculeID', 'quant': 'PEP\\.TMT', 'label': '\\[TMT', 'nterm': 'N-?ter', 'nterm_label': 'TMT.*_Nter', 'lysine_label': 'K\\[TMT.{0,3}_Lys\\]'}
+2023-07-04 10:40:28,025 [INFO] Successfully generated indexing patterns for sm input. See logfile for the found patterns.
+2023-07-04 10:40:28,026 [INFO] Format check complete.
+
+2023-07-04 10:40:28,027 [INFO] Initialization complete!
+
+2023-07-04 10:40:28,028 [INFO] Filtering and sanitizing input...
+2023-07-04 10:40:28,030 [DEBUG] Starting annotation of peptides...
+2023-07-04 10:40:28,031 [INFO] Reading MEROPS data..
+2023-07-04 10:40:29,459 [INFO] Read MEROPS data
+2023-07-04 10:40:29,464 [INFO] Initialized annotation dataframe.
+
+2023-07-04 10:40:29,464 [INFO] Fetching information from Uniprot...
+2023-07-04 10:40:44,271 [WARNING] Peptide SELHIENLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-07-04 10:40:44,290 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-07-04 10:40:44,294 [WARNING] Peptide ADPGQYR not found in protein sequence for A0A087X2B5.
+2023-07-04 10:40:44,297 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-07-04 10:40:44,302 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-07-04 10:40:44,303 [WARNING] Peptide YSCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-07-04 10:40:45,501 [WARNING] Peptide SCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-07-04 10:40:58,482 [WARNING] Error retrieving Uniprot record for A0A494C169: No SwissProt record found
+2023-07-04 10:41:25,643 [INFO] Gathering info from Uniprot took 00:00:56 hh:mm:ss
+2023-07-04 10:41:25,645 [INFO] Finished annotation of peptides.
+
+2023-07-04 10:41:25,646 [INFO] Starting annotation of Protein Atlas data...
+2023-07-04 10:41:25,647 [INFO] Reading Protein Atlas data..
+2023-07-04 10:41:26,253 [INFO] Read Protein Atlas data.
+2023-07-04 10:41:26,269 [WARNING] Duplicates found in 'Uniprot' column of 'protein_atlas_sub'. Dropping duplicates.
+2023-07-04 10:41:26,291 [INFO] Finished annotation of Protein Atlas data.
+
+2023-07-04 10:41:26,292 [INFO] Starting proteoform check...
+2023-07-04 10:41:26,293 [INFO] Finished proteoform check.
+2023-07-04 10:41:26,293 [INFO] Starting exopeptidase activity check...
+2023-07-04 10:41:26,310 [DEBUG] 2 LGLGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR LGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR
+2023-07-04 10:41:26,342 [DEBUG] 1 YSCVFLPEPMGTANIQLHGPPR SCVFLPEPMGTANIQLHGPPR
+2023-07-04 10:41:26,344 [DEBUG] 2 AEAMDLGKDPNGPTHSSTLFVR AMDLGKDPNGPTHSSTLFVR
+2023-07-04 10:41:26,349 [DEBUG] 2 AEAQALLSGDTQTDATSFYDR AQALLSGDTQTDATSFYDR
+2023-07-04 10:41:26,363 [DEBUG] 1 KACANPAAGSVILLENLR ACANPAAGSVILLENLR
+2023-07-04 10:41:26,363 [DEBUG] 2 KACANPAAGSVILLENLR ANPAAGSVILLENLR
+2023-07-04 10:41:26,383 [DEBUG] 1 AAQTSPSPKAGAATGR AQTSPSPKAGAATGR
+2023-07-04 10:41:26,385 [DEBUG] 1 SSGFSLEDPQTHSNR SGFSLEDPQTHSNR
+2023-07-04 10:41:26,387 [DEBUG] 2 SKNLKLGIHEDSTNR NLKLGIHEDSTNR
+2023-07-04 10:41:26,415 [DEBUG] 2 SEDFSLPAYMDR DFSLPAYMDR
+2023-07-04 10:41:26,439 [DEBUG] 2 SPVLHFYVR VLHFYVR
+2023-07-04 10:41:26,456 [INFO] Exopeptidase activity check took 00:00:00 hh:mm:ss
+2023-07-04 10:41:26,456 [INFO] Exopeptidase activity was found, check logfile or output for more details on exact peptide sequences
+2023-07-04 10:41:26,457 [INFO] Finished exopeptidase activity check.
+2023-07-04 10:41:26,460 [INFO] Parsed condition file
+2023-07-04 10:41:26,460 [INFO] Performing general statistics annotation...
+2023-07-04 10:41:26,482 [INFO] Finished general statistics annotation.
+2023-07-04 10:41:26,488 [INFO] Writing output files...
+2023-07-04 10:41:26,788 [INFO] Finished. Wrote results to C:\Users\konka\Documents\CLIPPER\annotator\annotator\results\20230704104027_annotated_data.
+2023-07-04 10:41:26,836 [INFO] Finished writing output files
+2023-07-04 10:41:26,837 [INFO] 
+CLIPPER 2.0 pipeline completed in 0:00:59.322399.
+
+2023-07-04 10:41:26,879 [INFO] Failed to send email for job id 112
+2023-07-04 10:41:26,892 [INFO] 127.0.0.1 - - [04/Jul/2023 10:41:26] "GET /112/result HTTP/1.1" 200 -
+2023-07-04 11:06:41,675 [INFO]  * Detected change in 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\clipper\\mail.py', reloading

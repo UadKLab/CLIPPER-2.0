@@ -11,13 +11,14 @@ mimetype = {'json' : 'application/json',
 			'zip' : 'application/zip',
 			}
 
-def send_email(email_address, jobid, filename, email, password):
+def send_email(email_address, jobid, filename):
 
-	downloads = current_app.root_path / current_app.config['DOWNLOAD_FOLDER']
+	downloads = os.path.join(current_app.root_path, current_app.config['DOWNLOAD_FOLDER'])
 	extension = filename.rsplit('.', 1)[1]
 	filetype = mimetype[extension]
 
-	with open('../data/credentials.json', 'r') as file:
+	print(os.getcwd())
+	with open('data/credentials.json', 'r') as file:
 		credentials = json.load(file)
 
 	email = credentials['email']
@@ -35,7 +36,7 @@ def send_email(email_address, jobid, filename, email, password):
 	msg = Message(f'Annotator results {jobid}', sender = email, 
 		recipients = [email_address])
 	msg.body = "Thanks for using our tool. Your results are ready. You can find them as an atachment in this email."
-	with current_app.open_resource(downloads / filename) as fh:
+	with current_app.open_resource(os.path.join(downloads, filename)) as fh:
 		msg.attach(filename, filetype, fh.read())
 
 	mail.send(msg)

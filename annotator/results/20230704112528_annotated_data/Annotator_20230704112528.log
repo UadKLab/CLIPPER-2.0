@@ -1,0 +1,69 @@
+2023-07-04 11:25:28,036 [INFO] 
+2023-07-04 11:25:28,038 [INFO] Annotator started at 2023-07-04 11:25:28.
+2023-07-04 11:25:28,061 [DEBUG] Arguments: {'infile': 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\upload\\HUNTER_clean_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': None, 'singlecpu': False, 'conditionfile': 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\upload\\cond_HUNTER.txt', 'proteasefile': None, 'stat': False, 'stat_pairwise': False, 'significance': None, 'visualize': False, 'logo': None, 'pseudocounts': False, 'cleavagevis': 'None', 'enrichment': False, 'pathway': False, 'output_name': '20230704112528_annotated_data', 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False, 'jobid': '116', 'logfile': 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\log\\116.log', 'resultdest': 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\results', 'datafolder': 'C:\\Users\\konka\\Documents\\CLIPPER\\annotator\\annotator\\data', 'email': 'konka@dtu.dk'}
+2023-07-04 11:25:28,096 [INFO] Startup complete!
+
+2023-07-04 11:25:28,097 [INFO] Reading file...
+2023-07-04 11:25:28,098 [INFO] Input is excel
+2023-07-04 11:25:28,382 [INFO] Read dataframe.
+2023-07-04 11:25:28,383 [INFO] Read input with 284 peptides.
+2023-07-04 11:25:28,384 [INFO] Input software is sm
+2023-07-04 11:25:28,387 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_127C to numeric type
+2023-07-04 11:25:28,389 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_128C to numeric type
+2023-07-04 11:25:28,390 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_129C to numeric type
+2023-07-04 11:25:28,391 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_130C to numeric type
+2023-07-04 11:25:28,393 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_131C to numeric type
+2023-07-04 11:25:28,394 [DEBUG] Converted values in 20210512_FJ_KK_LB_HUNTER_PO.raw.PEP.TMTpro_132C to numeric type
+2023-07-04 11:25:28,395 [INFO] Finished converting quantification values to floats.
+2023-07-04 11:25:28,396 [DEBUG] Patterns are: {'acc': 'PG.ProteinAccessions', 'seq': 'PEP.StrippedSequence', 'amino': 'B|J|O|U|X|Z', 'mod': 'P.MoleculeID', 'quant': 'PEP\\.TMT', 'label': '\\[TMT', 'nterm': 'N-?ter', 'nterm_label': 'TMT.*_Nter', 'lysine_label': 'K\\[TMT.{0,3}_Lys\\]'}
+2023-07-04 11:25:28,397 [INFO] Successfully generated indexing patterns for sm input. See logfile for the found patterns.
+2023-07-04 11:25:28,397 [INFO] Format check complete.
+
+2023-07-04 11:25:28,399 [INFO] Initialization complete!
+
+2023-07-04 11:25:28,399 [INFO] Filtering and sanitizing input...
+2023-07-04 11:25:28,402 [DEBUG] Starting annotation of peptides...
+2023-07-04 11:25:28,406 [INFO] Reading MEROPS data..
+2023-07-04 11:25:29,564 [INFO] Read MEROPS data
+2023-07-04 11:25:29,569 [INFO] Initialized annotation dataframe.
+
+2023-07-04 11:25:29,569 [INFO] Fetching information from Uniprot...
+2023-07-04 11:25:44,522 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-07-04 11:25:44,549 [WARNING] Peptide ADPGQYR not found in protein sequence for A0A087X2B5.
+2023-07-04 11:25:44,575 [WARNING] Peptide YSCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-07-04 11:25:44,578 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-07-04 11:25:44,579 [WARNING] Peptide SELHIENLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-07-04 11:25:44,646 [WARNING] Peptide NLNMEADPGQYR not found in protein sequence for A0A087X2B5.
+2023-07-04 11:25:46,030 [WARNING] Peptide SCVFLPEPMGTANIQLHGPPR not found in protein sequence for A0A087X2B5.
+2023-07-04 11:25:58,968 [WARNING] Error retrieving Uniprot record for A0A494C169: No SwissProt record found
+2023-07-04 11:26:21,402 [INFO] Gathering info from Uniprot took 00:00:51 hh:mm:ss
+2023-07-04 11:26:21,403 [INFO] Finished annotation of peptides.
+
+2023-07-04 11:26:21,403 [INFO] Starting annotation of Protein Atlas data...
+2023-07-04 11:26:21,404 [INFO] Reading Protein Atlas data..
+2023-07-04 11:26:21,942 [INFO] Read Protein Atlas data.
+2023-07-04 11:26:21,955 [WARNING] Duplicates found in 'Uniprot' column of 'protein_atlas_sub'. Dropping duplicates.
+2023-07-04 11:26:21,974 [INFO] Finished annotation of Protein Atlas data.
+
+2023-07-04 11:26:21,975 [INFO] Starting proteoform check...
+2023-07-04 11:26:21,977 [INFO] Finished proteoform check.
+2023-07-04 11:26:21,978 [INFO] Starting exopeptidase activity check...
+2023-07-04 11:26:21,992 [DEBUG] 2 LGLGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR LGIDEDEVAAEEPNAAVPDEIPPLEGDEDASR
+2023-07-04 11:26:22,026 [DEBUG] 1 YSCVFLPEPMGTANIQLHGPPR SCVFLPEPMGTANIQLHGPPR
+2023-07-04 11:26:22,029 [DEBUG] 2 AEAMDLGKDPNGPTHSSTLFVR AMDLGKDPNGPTHSSTLFVR
+2023-07-04 11:26:22,034 [DEBUG] 2 AEAQALLSGDTQTDATSFYDR AQALLSGDTQTDATSFYDR
+2023-07-04 11:26:22,048 [DEBUG] 1 KACANPAAGSVILLENLR ACANPAAGSVILLENLR
+2023-07-04 11:26:22,049 [DEBUG] 2 KACANPAAGSVILLENLR ANPAAGSVILLENLR
+2023-07-04 11:26:22,065 [DEBUG] 1 AAQTSPSPKAGAATGR AQTSPSPKAGAATGR
+2023-07-04 11:26:22,066 [DEBUG] 1 SSGFSLEDPQTHSNR SGFSLEDPQTHSNR
+2023-07-04 11:26:22,067 [DEBUG] 2 SKNLKLGIHEDSTNR NLKLGIHEDSTNR
+2023-07-04 11:26:22,092 [DEBUG] 2 SEDFSLPAYMDR DFSLPAYMDR
+2023-07-04 11:26:22,113 [DEBUG] 2 SPVLHFYVR VLHFYVR
+2023-07-04 11:26:22,131 [INFO] Exopeptidase activity check took 00:00:00 hh:mm:ss
+2023-07-04 11:26:22,131 [INFO] Exopeptidase activity was found, check logfile or output for more details on exact peptide sequences
+2023-07-04 11:26:22,132 [INFO] Finished exopeptidase activity check.
+2023-07-04 11:26:22,134 [INFO] Parsed condition file
+2023-07-04 11:26:22,134 [INFO] Performing general statistics annotation...
+2023-07-04 11:26:22,153 [INFO] Finished general statistics annotation.
+2023-07-04 11:26:22,155 [INFO] Writing output files...
+2023-07-04 11:26:22,434 [INFO] Finished. Wrote results to C:\Users\konka\Documents\CLIPPER\annotator\annotator\results\20230704112528_annotated_data.
