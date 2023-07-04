@@ -12,8 +12,8 @@ Please note that CLIPPER 2.0 is currently in beta, and we welcome any bug report
 ## Prerequisites
 
 * Conda (Either Anaconda or Miniconda will work)
-* - https://www.anaconda.com/
-* - https://docs.conda.io/en/latest/miniconda.html
+ - https://www.anaconda.com/
+ - https://docs.conda.io/en/latest/miniconda.html
 * [Graphvis](https://www.graphviz.org/download/), tested version is v7.1.0 (optional for enhanced layout options)
 
 ## Installation
@@ -24,7 +24,7 @@ Please note that CLIPPER 2.0 is currently in beta, and we welcome any bug report
 xcode-select --install
 ```
 
-2. Open the commandline and create a conda environment with Python version 3.11.3:
+2. Open the command line and create a conda environment with Python version 3.11.3:
 
 ```bash
 conda create -n clipper python=3.11.3
