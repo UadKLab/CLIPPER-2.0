@@ -145,8 +145,8 @@ Not extensively tested, this tool is still in beta version. Contact konka@dtu.dk
 
 ## Input files
 
-###Condition file (optional, but required for statistical tests and most visualizations)
-The condition file is a text file where each line represents a condition. The first string on the line is the name of the condition, and the rest of the strings, space-separated, are columns corresponding to that condition.
+### Condition file (optional, but required for statistical tests and most visualizations)
+The condition file is a text file where each line represents a condition. The first string on the line is the name of the condition, and the rest of the strings are space-separated specific identifyers for the columns corresponding to that condition (An example is found in tests/...).
 
 Example of condition file format:
     
@@ -156,7 +156,7 @@ Condition2 Column2a Column2b Column2c
 ...
 ```
 
-###Protease file (optional, required for protease activity prediction)
+### Protease file (optional, required for protease activity prediction)
 
 The protease file is a text file containing one protease MEROPS code per line. These codes correspond to a list of proteins for which you want to predict cleavages.
 
