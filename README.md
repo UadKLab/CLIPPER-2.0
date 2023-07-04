@@ -11,39 +11,61 @@ Please note that CLIPPER 2.0 is currently in beta, and we welcome any bug report
 
 ## Prerequisites
 
-* Python 3.11.3
+* Conda (Either Anaconda or Miniconda will work)
+* - https://www.anaconda.com/
+* - https://docs.conda.io/en/latest/miniconda.html
 * [Graphvis](https://www.graphviz.org/download/), tested version is v7.1.0 (optional for enhanced layout options)
 
 ## Installation
 
-1. Install Python 3.11.3 and create a conda environment:
+1. **For Mac only:** Some users have experienced the need for xcode command line developer tools for the setup to succeed. If you experience any problems related to the installation run the following and retry what you were doing:
+
+```bash
+xcode-select --install
+```
+
+2. Open the commandline and create a conda environment with Python version 3.11.3:
 
 ```bash
 conda create -n clipper python=3.11.3
 ```
 
-2. Change to your newly created conda environament and install packages with *pip*:
+3. Activate the conda environment with:
 
 ```bash
-pip install -r requirements.txt
+conda activate clipper
 ```
 
-3. To take advantage of the secondary structure calculation and structure plotting, install *pymol* with *conda*:
+4. To take advantage of the secondary structure calculation and structure plotting, install *pymol* with *conda*:
 
 ```bash
 conda install -c conda-forge pymol-open-source
 ```
 
-4. (Optional) To enable additional pathway layout features, install Graphviz (v7.1.0) separately. Then install *pygraphviz*:
+5. **For Mac only:** Install pycairo from the conda repository
+
+```bash
+conda install -c conda-forge pycairo
+```
+
+6. (Optional) To enable additional (better) pathway layout features, install Graphviz (v7.1.0) separately (see prerequisites). Then install *pygraphviz* afterwards with:
 
 ```bash
 conda install --channel conda-forge pygraphviz
 ```
 
+7. Download the Clipper 2.0 application.
+
+8. From the commandline navigate to the Clipper 2.0 application (the "*annotator*" folder with the "*requirements.txt*" file) and install dependencies with *pip*:
+
+```bash
+pip install -r requirements.txt
+```
+
 Verify your installation by running the following commands:
 
 ```bash
-cd clipper
+cd annotator
 python run.py -h
 ```
 
@@ -66,8 +88,8 @@ python run.py -h
 ### Output and available arguments:
 
 ```
-usage: CLIPPER 2.0 [-h] -i INFILE [-it INFILE_TYPE] [-sw SOFTWARE] [-l LEVEL] [-dn] [-fn FILLNA] [-st SLEEPTIME] [-nx] [-nm] [-cs CALCSTRUCTURE] [-sc] [-cf CONDITIONFILE] [-stat] [-spw] [-sig SIGNIFICANCE] [-vis]
-                   [-logo LOGO] [-psc PSEUDOCOUNTS] [-clvis CLEAVAGEVIS] [-enr] [-path] [-pf PROTEASEFILE] [-o OUTPUT_NAME] [-ot OUTFILE_TYPE] [-sep]
+usage: CLIPPER 2.0 [-h] -i INFILE [-it INFILE_TYPE] [-sw SOFTWARE] [-l LEVEL] [-dn] [-fn FILLNA] [-st SLEEPTIME] [-nx] [-nm] [-cs CALCSTRUCTURE] [-sc] [-cf CONDITIONFILE] [-stat] [-spw] [-sig SIGNIFICANCE]
+                   [-vis] [-logo LOGO] [-psc PSEUDOCOUNTS] [-clvis CLEAVAGEVIS] [-enr] [-path] [-pf PROTEASEFILE] [-o OUTPUT_NAME] [-ot OUTPUT_FILETYPE] [-sep] [-pv PYMOL_VERBOSE]
 
 Peptide annotation and analysis of proteomics data utilizing databases and visulization tools
 
@@ -92,8 +114,8 @@ options:
                         Annotate cleavage site solvent accessibility and secondary structure for the significant peptides in the dataset using Pymol and Alphafold models Accepted values: all/sig.
   -sc, --singlecpu      Use a single process instead of threading for annotation
   -cf CONDITIONFILE, --conditionfile CONDITIONFILE
-                        Map labels to conditions. Adds columns for fold change for each pairwise comparison, average and CV of each condition to the dataframe. Each line must start with the condition name followed by the     
-                        channels used, separated by a single space
+                        Map labels to conditions. Adds columns for fold change for each pairwise comparison, average and CV of each condition to the dataframe. Each line must start with the condition name
+                        followed by the channels used, separated by a single space
   -stat, --statistic    Performs statistical significance testing. Student T-test for two conditions, ANOVA from three or more
   -spw, --stat_pairwise
                         Performs statistical significance t-test for all conditions pairwise
@@ -112,11 +134,13 @@ options:
                         Protease MEROPS identifiers to predict activity of. Using weighted PSSM
   -o OUTPUT_NAME, --output_name OUTPUT_NAME
                         File name of output folder and annotated output file
-  -ot OUTFILE_TYPE, --outfile_type OUTFILE_TYPE
+  -ot OUTPUT_FILETYPE, --output_filetype OUTPUT_FILETYPE
                         File type of output file Accepted values: xlsx/csv/tsv/pkl/json
   -sep, --separate      Whether to merge or keep annotation as a separate file. False by default
+  -pv PYMOL_VERBOSE, --pymol_verbose PYMOL_VERBOSE
+                        Whether to output all pymol warnings/information to terminal during run or keep quiet.
 
-Not extensively tested, this tool is still in beta version. Contact konka@dtu.dk for bug reports and requests.
+Not extensively tested, this tool is still in beta version. Contact konka@dtu.dk or alemol@dtu.dk for bug reports and requests.
 ```
 
 ## Input files
@@ -126,7 +150,7 @@ The condition file is a text file where each line represents a condition. The fi
 
 Example of condition file format:
     
-```	
+``` 
 Condition1 Column1a Column1b Column1c
 Condition2 Column2a Column2b Column2c
 ...
@@ -138,7 +162,7 @@ The protease file is a text file containing one protease MEROPS code per line. T
 
 Example of protease file format:
 
-```	
+``` 
 MEROPSProteaseCode1
 MEROPSProteaseCode2
 ...
@@ -151,43 +175,43 @@ Here are some examples of how you can use CLIPPER 2.0:
 1. Basic usage
 
 ```bash
-python run.py -i ..\tests\HUNTER_clean_100.xlsx
+python run.py -i ../tests/HUNTER_clean_100.xlsx
 ```
 
 2. Including pairwise statistical significance t-tests and fold change significance checks:
 
 ```bash
-python run.py -i ..\tests\HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -sig all -stat -spw
+python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -sig all -stat -spw
 ```
 
 3. Adding visualizations like volcano plots, dimensionality reduction and heatmaps:
 
 ```bash
-python run.py -i ..\tests\HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -stat -spw -vis
+python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ../tests/cond_HUNTER.txt -stat -spw -vis
 ```
 
 4. Adding gene enrichment and pathway analysis and visualization:
 
 ```bash
-python run.py -i ..\tests\HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -sig all -stat -spw -vis -path -enr
+python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ../tests/cond_HUNTER.txt -sig all -stat -spw -vis -path -enr
 ```
 
 5. Adding cleavage site solvent accessibility and secondary structure annotation:
 
 ```bash
-python run.py -i ..\tests\HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -cs all -sig all -stat -spw -vis
+python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ../tests/cond_HUNTER.txt -cs all -sig all -stat -spw -vis
 ```
 
 6. Adding both sequence and structural visualization of cleavage sites:
 
 ```bash
-python run.py -i ..\tests\HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -cs all -sig all -stat -spw -vis -clvis both
+python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ../tests/cond_HUNTER.txt -cs all -sig all -stat -spw -vis -clvis both
 ```
 
 7. Predicting cleavages for specified proteins using the protease file:
 
 ```bash
-python run.py -i ..\tests\HUNTER_clean_100.xlsx -cf ..\tests\cond_HUNTER.txt -stat -spw -pf ..\tests\proteases.txt
+python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ../tests/cond_HUNTER.txt -stat -spw -pf ../tests/proteases.txt
 ```
 
 We hope you find CLIPPER 2.0 useful for your research. Feel free to contact us for any questions, bug reports, or feature requests.
@@ -301,3 +325,4 @@ We hope you find CLIPPER 2.0 useful for your research. Feel free to contact us f
 - [ ] Add argument to control p-value and fold cutoff for volcano plots
 - [ ] Add argument to restrict the number of cores used in threading
 - [ ] Read email credentials from file to avoid hardcoding
+
