@@ -67,7 +67,7 @@ if __name__ == "__main__":
         lines = f.readlines()[0]
         structure_properties = literal_eval(lines)
 
-    structure_properties = calculate_structure_properties(acc, cleavage_sites_indices=csi, structure_properties=structure_properties, alphafold_folder=af)
+    structure_properties = calculate_structure_properties(acc, cleavage_sites_indices=csi, structure_properties=structure_properties, alphafold_folder_name=af)
 
     with open(tf, 'w') as f:
         f.write(str(structure_properties))

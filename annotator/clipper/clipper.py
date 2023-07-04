@@ -21,7 +21,7 @@ from .entry import Entry
 from .logo import create_logo_helper
 from .visualize import Visualizer
 from . import protease_prediction as pp
-from . globals import *
+from .globals import *
 
 class Clipper:
     """Annotator class for processing and analyzing peptide proteomics data. All
@@ -185,7 +185,7 @@ class Clipper:
             self.outfolder = self.resultfolder / self.timestamp
             self.outname = Path(self.infile).name.rsplit(".", 1)[0] + self.annotation_prefix + self.outfile_type
 
-        self.temp_folder = os.path.join(self.outfolder, "tmp")
+        self.temp_folder = self.outfolder / "tmp"
         self.protein_folder = self.outfolder / self.plot_protein_folder
         self.general_folder = self.outfolder / self.plot_general_folder
         self.fold_change_folder = self.outfolder / self.plot_fold_change_folder
@@ -1169,7 +1169,7 @@ class Clipper:
 
             # get the secondary structure and solvent accessibility of all cleavage sites
 
-            structure_tmp_filepath = os.path.join(self.temp_folder, "structure_properties.txt")
+            structure_tmp_filepath = self.temp_folder / "structure_properties.txt"
             structure_properties = annutils.get_structure_properties(acc_cleavage_sites, structure_tmp_filepath, self.pymol_verbose, self.available_models)
 
             with open(structure_tmp_filepath, 'r') as f:
@@ -1210,7 +1210,7 @@ class Clipper:
                                 acc_cleavage_sites.setdefault(acc, []).append((i, cleavage_site))
 
                         # get the secondary structure and solvent accessibility of all cleavage sites
-                        structure_tmp_filepath = os.path.join(self.temp_folder, "structure_properties.txt")
+                        structure_tmp_filepath = self.temp_folder / "structure_properties.txt"
                         structure_properties = annutils.get_structure_properties(acc_cleavage_sites, structure_tmp_filepath, self.pymol_verbose, self.available_models)
 
                         with open(structure_tmp_filepath, 'r') as f:

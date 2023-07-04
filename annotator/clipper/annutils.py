@@ -375,8 +375,9 @@ def initialize(arguments):
     """
 
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    basefolder = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')
-    logfile = os.path.join(basefolder, f"log/Annotator_{timestamp}.log")
+    basefolder = Path(__file__).resolve().parent.parent
+    print(basefolder)
+    logfile = basefolder / f"log/Annotator_{timestamp}.log"
 
     logger = initialize_logger(logfile)
     logger.debug(f"Arguments: {arguments}")
@@ -490,11 +491,12 @@ def read_alphafold_accessions(accession_file: str):
 
     return accessions
 
-def calculate_structure_properties(acc, cleavage_sites_indices, structure_properties, alphafold_folder, env_length = 4):
+def calculate_structure_properties(acc, cleavage_sites_indices, structure_properties, alphafold_folder_name, env_length = 4):
 
     # Load the model
     model_filename = f"AF-{acc}-F1-model_v4.cif.gz"
-    model_path = os.path.join(alphafold_folder, model_filename)
+    alphafold_folder = Path(alphafold_folder_name)
+    model_path = alphafold_folder / model_filename
 
     with tempfile.NamedTemporaryFile(suffix=".cif", delete=False) as temp_cif:
         # Open the gzipped CIF file
@@ -542,7 +544,6 @@ def get_structure_properties(acc_cleavage_sites, tmp_output_path, pymol_verbose,
     logging.info(" - Calculating surface area and secondary structure...")
 
     structure_properties = {}
-    alphafold_folder = Path(alphafold_folder_name)
 
     # initialize the tmp file with an empty dict to not mess up the subprocess read/write system
     os.makedirs(os.path.dirname(tmp_output_path), exist_ok=True)
@@ -554,7 +555,7 @@ def get_structure_properties(acc_cleavage_sites, tmp_output_path, pymol_verbose,
         with tqdm(acc_cleavage_sites.items(), leave = 0) as t:
             for acc, cleavage_sites_indices in t:
                 if available_models and acc in available_models:
-                    structure_properties = calculate_structure_properties(acc, cleavage_sites_indices, structure_properties, alphafold_folder)
+                    structure_properties = calculate_structure_properties(acc, cleavage_sites_indices, structure_properties, alphafold_folder_name)
                 else:
                     logging.warning(f"Model for {acc} not available")
             with open(tmp_output_path, 'w') as f:
@@ -567,13 +568,12 @@ def get_structure_properties(acc_cleavage_sites, tmp_output_path, pymol_verbose,
         with tqdm(acc_cleavage_sites.items(), leave = 0) as t:
             for acc, cleavage_sites_indices in t:
                 if available_models and acc in available_models:
-                    subprocess.run(['python', 'pymol_subprocess_ss.py', '-tf', str(tmp_output_path), '-acc', str(acc), '-af', str(alphafold_folder), '-csi', str(cleavage_sites_indices)], stdout=subprocess.DEVNULL)
+                    subprocess.run(['python', 'pymol_subprocess_ss.py', '-tf', str(tmp_output_path), '-acc', str(acc), '-af', str(alphafold_folder_name), '-csi', str(cleavage_sites_indices)], stdout=subprocess.DEVNULL)
                 else:
                     logging.warning(f"Model for {acc} not available")
             elapsed = t.format_dict['elapsed']
             logging.info(f"Structure calculations took {format_seconds_to_time(elapsed)}")
     
-
     return structure_properties
 
 
