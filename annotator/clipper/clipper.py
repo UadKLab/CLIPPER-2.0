@@ -132,7 +132,7 @@ class Clipper:
         """
 
         if self.infile_type == "infer":
-            if self.infile.endswith(".csv"):
+            if self.infile.endswith(".csv") or self.infile.endswith(".tsv") or self.infile.endswith(".txt"):
                 self.infile_type = "csv"
             elif self.infile.endswith(".xlsx") or self.infile.endswith(".xls"):
                 self.infile_type = "excel"
@@ -224,16 +224,20 @@ class Clipper:
                     self.df.loc[0, "PG.ProteinAccessions"]
                     self.software = "sm"
                 except KeyError:
-                    error_message = (
-                        f"Invalid input. Please make sure input format is correct "
-                        f"and contains accession and sequence columns with default "
-                        f"names, and try again."
-                    )
-                    logging.critical("Invalid input. Exiting with code 4.")
-                    raise TypeError(error_message)
-                except:
-                    logging.critical("Invalid input. Exiting with code 5.")
-                    raise TypeError("Invalid input")
+                    try:
+                        self.df.loc[0, "Leading razor protein"]
+                        self.software = "mq"   
+                    except KeyError:
+                        error_message = (
+                            f"Invalid input. Please make sure input format is correct "
+                            f"and contains accession and sequence columns with default "
+                            f"names, and try again."
+                        )
+                        logging.critical("Invalid input. Exiting with code 4.")
+                        raise TypeError(error_message)
+            except:
+                logging.critical("Invalid input. Exiting with code 5.")
+                raise TypeError("Invalid input")
 
         logging.info(f"Input software is {self.software}")
         self.patterns = self.get_patterns()
@@ -461,12 +465,26 @@ class Clipper:
                     df = pd.read_csv(self.infile, sep=",")
                 except pd.errors.ParserError:
                     logging.info("Failed to parse with ',', trying with ';'")
-                    df = pd.read_csv(self.infile, sep=";")
+                    try:
+                        df = pd.read_csv(self.infile, sep=";")
+                    except pd.errors.ParserError:
+                        logging.info("Failed to parse with ';', trying with '\t'")
+                        try:
+                            df = pd.read_csv(self.infile, sep="\t")
+                        except pd.errors.ParserError:
+                            raise ValueError(f"Unsupported csv type: {self.infile_type}")
+                        
             elif self.infile_type == "excel":
                 logging.info("Input is excel")
-                df = pd.read_excel(self.infile, engine="openpyxl")
+                try:
+                    df = pd.read_excel(self.infile, engine="openpyxl")
+                except pd.errors.ParserError:
+                    logging.info("Failed to parse excel file")
+                    raise ValueError(f"Unsupported excel type: {self.infile_type}")
+                
             else:
                 raise ValueError(f"Unsupported file type: {self.infile_type}")
+            
         except (OSError, Exception) as err:
             self.handle_file_error(err)
 
