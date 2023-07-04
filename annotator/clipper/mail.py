@@ -32,7 +32,7 @@ def send_email(email_address, jobid, filename, email, password):
 
 	mail = Mail(current_app)
 
-	msg = Message(f'Annotator results {jobid}', sender = 'annotator.dtu@gmail.com', 
+	msg = Message(f'Annotator results {jobid}', sender = email, 
 		recipients = [email_address])
 	msg.body = "Thanks for using our tool. Your results are ready. You can find them as an atachment in this email."
 	with current_app.open_resource(downloads / filename) as fh:
