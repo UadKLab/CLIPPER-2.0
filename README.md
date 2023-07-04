@@ -284,8 +284,9 @@ We hope you find CLIPPER 2.0 useful for your research. Feel free to contact us f
 - [x] Figure out way of pointing to Alphafold database that is device agnostic, and easy to change from user side
 - [x] Fix bug where model is not found in Alphafold database but still tries to read it
 - [x] Delete tmp folder in the cmd result folder
-- [ ] Add support for other software like Fragpipe
-- [ ] Use Path instead of os.path.join
+- [ ] Add support for Fragpipe
+- [ ] Add support for MaxQuant
+- [x] Use Path instead of os.path.join
 - [ ] Show column patterns in command line
 - [ ] Make docs and examples for software export, column descriptions, etc.
 - [ ] Change descriptions to reflect support for other software and new arguments
