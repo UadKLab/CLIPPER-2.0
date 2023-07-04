@@ -11,10 +11,10 @@ Please note that CLIPPER 2.0 is currently in beta, and we welcome any bug report
 
 ## Prerequisites
 
-* Conda (Either Anaconda or Miniconda will work)
- - https://www.anaconda.com/
- - https://docs.conda.io/en/latest/miniconda.html
-* [Graphvis](https://www.graphviz.org/download/), tested version is v7.1.0 (optional for enhanced layout options)
+- Conda (Either Anaconda or Miniconda will work)
+  - https://www.anaconda.com/
+  - https://docs.conda.io/en/latest/miniconda.html
+- [Graphvis](https://www.graphviz.org/download/), tested version is v7.1.0 (optional for enhanced layout options)
 
 ## Installation
 
