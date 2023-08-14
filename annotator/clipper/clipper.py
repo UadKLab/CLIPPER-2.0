@@ -1,11 +1,13 @@
 import os
 import re
+import time
 import shutil
 import logging
 import concurrent.futures
 from ast import literal_eval
 from itertools import combinations, permutations
 
+from datetime import datetime
 from pathlib import Path
 from tqdm import tqdm
 
@@ -77,6 +79,8 @@ class Clipper:
         # input attributes
         self.infile_type = args["infile_type"]
         self.infile = args["infile"]
+        self.preannotated = args["preannotated"]
+        self.alpha = args["alpha"]
         self.software = args["software"]
 
         # filtering and sanitizing
@@ -97,14 +101,17 @@ class Clipper:
         self.stat = args["stat"]
         self.pairwise = args["stat_pairwise"]
         self.significance = args["significance"]
-        self.multiple_testing = 'fdr_bh'
-        self.alpha = 0.05
+        self.multipletesting = args["multipletesting"]
+        self.multipletestingmethod = args['multipletestingmethod']
         self.available_models = None
 
         self.plot = args["visualize"]
         self.pymol_verbose = args["pymol_verbose"]
         self.cleavagevis = args["cleavagevis"]
         self.logo = args["logo"]
+        self.logo_fc = args["logo_fc"]
+        self.cleavagesitesize = args["cleavagesitesize"]
+        self.volcano_foldchange = args["volcano_foldchange"]
         self.pseudocounts = args["pseudocounts"]
         self.enrichment = args["enrichment"]
         self.pathway = args["pathway"]
@@ -115,9 +122,13 @@ class Clipper:
         self.outfile_type = args["output_filetype"]
         self.outname = args["output_name"]
 
-        self.conditions = None
-        self.comparisons = []
+        self.conditions = None          # when condition file is read, this will contain a dictionary with condition and identifyers for each replicate in a dict
+        self.conditionpermutations = [] # all permutations of conditions
+        self.conditioncombinations = [] # all combinations of conditions
         self.figures = {}
+        self.entwarnings = {'retrieval': [],    #used to store warnings during annotation, and will present them later in terminal for cleaner output
+                            'peptides not found': [],
+                            'model not available': []}
 
         self.basefolder = Path.cwd().absolute()
         self.resultfolder = self.basefolder / self.result_folder_name
@@ -309,11 +320,13 @@ class Clipper:
 
         try:
             if self.level == "nterm":
-                logging.info("Level is N-term")
+                logging.info("Level is set to include all N-terms")
                 pattern = self.patterns['nterm']
             elif self.level == "quant":
-                logging.info("Level is quant N-term")
+                logging.info("Level is set to include quantified N-terms")
                 pattern = self.patterns['nterm_label']
+            elif self.level == "all":
+                logging.info("Level is set to include all peptides")
             else:
                 logging.warning("Unrecognized level argument. Falling back to all")
                 return
@@ -370,8 +383,11 @@ class Clipper:
             os.mkdir(self.volcano_folder)
             os.mkdir(self.piechart_folder)
             if self.stat:
-                if self.cleavagevis:
+                if self.cleavagevis in ['seq', 'both']:
                     os.mkdir(self.protein_folder)
+                elif self.cleavagevis is not None:
+                    logging.warning(f"-clvis argument '{self.cleavagevis}' is unknown, falling back to 'None'")
+                    self.cleavagevis = None
                 if self.logo:
                     os.mkdir(self.logo_folder)
                 if self.enrichment:
@@ -389,6 +405,11 @@ class Clipper:
             self.conditions = {
                 line.split()[0]: line.split()[1:] for line in fh.readlines()
             }
+
+        for pair in combinations(self.conditions.keys(), 2):
+            self.conditioncombinations.append(f'{pair[0]} vs. {pair[1]}')
+        for pair in permutations(self.conditions.keys(), 2):
+            self.conditionpermutations.append(f'{pair[0]} vs. {pair[1]}')
 
     def read_MEROPS(self):
 
@@ -414,7 +435,7 @@ class Clipper:
         self.protein_atlas = pd.read_csv(self.datafolder / self.protein_atlas_filename, sep='\t')
         logging.info("Read Protein Atlas data.")
 
-    def initialize_annotation(self, length: int):
+    def initialize_annotation(self):
 
         """
         Initialize a dataframe with empty annotation columns, with the same number of rows as the input dataframe.
@@ -425,32 +446,53 @@ class Clipper:
             The number of rows in the input dataframe.
         """
 
-        self.annot = pd.DataFrame(
-            columns=[
-                "query_sequence",
-                "query_accession",
-                "name",
-                "full_sequence",
-                "description",
-                "keywords",
-                "go_codes",
-                "go_names",
-                "proteoform_certainty%",
-                "start_pep",
-                "end_pep",
-                "p1_position",
-                "cleavage_site",
-                "p4_p4prime",
-                "nterm_annot",
-                "protease_uniprot",
-                "protease_merops_code",
-                "protease_merops_name",
-            ],
-            index=range(length),
-        )
+        length = len(self.df)
+        annot_columns = [
+                        "query_sequence",
+                        "query_accession",
+                        "name",
+                        "full_sequence",
+                        "description",
+                        "keywords",
+                        "go_codes",
+                        "go_names",
+                        "proteoform_certainty%",
+                        "acc_length",
+                        "start_pep",
+                        "end_pep",
+                        "p1_position",
+                        "cleavage_site",
+                        f"p{self.cleavagesitesize}_p{self.cleavagesitesize}prime",
+                        "nterm_annot",
+                        "protease_uniprot",
+                        "protease_merops_code",
+                        "protease_merops_name",
+                        ]
 
+        # if previous annotation is not given, initialize an empty dataframe
+        if self.preannotated == False:
+            self.annot = pd.DataFrame(
+                columns=annot_columns,
+                index=range(length),
+            )
+
+        # if previous annotation is indicated, try loading from data to save time fetching from uniprot
+        else:
+            try:
+                self.annot = self.df.loc[:,annot_columns]
+                logging.info("Previous annotation was successfully loaded. Continuing to statistical analysis.")
+            except Exception:
+                logging.warning("Could not recognize a previous annotation. Falling back to reannotating the data.")
+                self.preannotated = False
+                self.initialize_annotation()
+        
+        # remove Merops columns if not wanted
         if self.nomerops:
             self.annot.drop(["protease_merops_code", "protease_merops_name"], axis=1, inplace=True)
+
+        logging.info("Initialized annotation dataframe.\n")
+
+
 
     def read_file(self):
             
@@ -516,6 +558,27 @@ class Clipper:
             f"file type {self.infile_type} is supported, and try again."
         )
 
+    def infer_infile_annotation_status(self, arguments):
+        """
+        will check if the input file has already been annotated, and then decide whether to annotate or not.
+        """
+        infileannotation = {'uniprot': False,
+                            'merops': False,
+                            'exopeptidase': False
+                            }
+        cols = self.df.columns
+        
+        if 'acc_length' in cols:
+            infileannotation['uniprot'] = True
+        if 'protease_merops_code' in cols:
+            infileannotation['protease_merops_code'] = True
+        if 'exopeptidase' in cols:
+            infileannotation['exopeptidase'] = True
+        
+        arguments['infileannotation'] = infileannotation
+        
+        return arguments
+    
     def process_columns(self, pat):
 
         """
@@ -719,6 +782,11 @@ class Clipper:
         else:
             logging.critical("Invalid software input. Exiting with code 4.")
             raise TypeError(f"Invalid software input. Please provide a valid software format and try again.")
+        
+        print(f'\n{datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[0:-3]} [INFO] The column name patterns which were detected are:')
+        for pattern, value in patterns.items():
+            print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[0:-3]} [INFO] - {pattern}: {value}')
+        print("")
 
         return patterns
 
@@ -733,7 +801,7 @@ class Clipper:
             lambda x: 100 / len([i.strip() for i in x.split(';')])
         )
     
-    def general_conditions(self):   # LATER: What is this used for? Not distinguishing N and C tags? Why is it necessary? REMOVE
+    def general_conditions(self):
         """
         Generates general statistics for the conditions supplied. If no conditions are given, default
         conditions are used. The method computes mean, standard deviation and coefficient of variation (CV)
@@ -793,7 +861,7 @@ class Clipper:
                     subframe = self.annot
                 elif self.significance == 'nterm':
                     is_internal = self.annot["nterm_annot"] == "Internal"
-                    subframe = self.annot[~is_internal] if column.endswith("low") else self.annot[is_internal]
+                    subframe = self.annot[~is_internal] if column.endswith("low") else self.annot[is_internal] # LATER: What is this?
                 else:
                     logging.info(f"Significance invalid argument {self.significance}, skipping")
                     continue
@@ -824,18 +892,13 @@ class Clipper:
             statistic, p_value = result[0], result[1]
             self.annot[column_name] = p_value
             self.annot[column_log] = np.log10(p_value)
-            
-
+        
         conditions = list(self.conditions.keys())
         if len(conditions) >= 2:
             test_func = ttest_ind if len(conditions) == 2 else f_oneway
-            if len(conditions) == 2:
-                self.comparisons.append(conditions[0] + ' vs. ' + conditions[1])
-
-            column_name = f"{'Independent T-test:' if len(conditions) == 2 else 'ANOVA:'} {' vs. '.join(conditions)}"
-            # LOG10 PVALUE ERROR
-            #column_log = f"Log10 pvalue: {column_name}"
-            column_log = f"Log10 pvalue: {' vs. '.join(conditions)}"
+            stat_name = f"{'Independent T-test p-value:' if len(conditions) == 2 else 'ANOVA p-value:'}"
+            column_name = f"{stat_name} {' vs. '.join(conditions)}"
+            column_log = f"Log10 {column_name}"
             cols_per_condition = []
             vals_per_condition = []
             for cond in conditions:
@@ -845,12 +908,17 @@ class Clipper:
                 cols_per_condition.append(replicates)
                 vals_per_condition.append(np.log2(self.df[replicates]).T)
             perform_test(test_func, column_name, column_log, cols_per_condition, vals_per_condition)
+        
+        else:
+            logging.warning("-stat (condition statistics) was requested, but <2 conditions were supplied through a condition file. Please recheck conditions.")
 
         if self.pairwise and len(conditions) > 2:
-            for pair in combinations(self.conditions.keys(), 2):
-                self.comparisons.append(pair[0] + ' vs. ' + pair[1])
-                column_name = f"Independent T-test: {pair[0]} vs. {pair[1]}"
-                column_log = f"Log10 pvalue: {pair[0]} vs. {pair[1]}"
+            for pair in permutations(self.conditions.keys(), 2):
+                #column_name = f"Independent T-test p-value: {pair[0]} vs. {pair[1]}"
+                #column_log = f"Log10 pvalue: {pair[0]} vs. {pair[1]}"
+                stat_name = "Independent T-test p-value:"
+                column_name = f"{stat_name} {pair[0]} vs. {pair[1]}"
+                column_log = f"Log10 {column_name}"
                 cols_per_condition = []
                 vals_per_condition = []
                 for cond in pair:
@@ -868,11 +936,11 @@ class Clipper:
         The corrected p-values are stored in the dataframe.
         """
             
-        if not self.multiple_testing or len(self.conditions) < 2:
+        if not self.multipletesting or len(self.conditions) < 2:
             logging.info("No multiple testing correction performed")
             return   
 
-        def perform_correction(pvals, column_name, column_log, original_column_name):
+        def _perform_correction(pvals, column_name, column_log, original_column_name):
             # Identify NaN values
             not_nan = ~np.isnan(pvals)
 
@@ -881,7 +949,7 @@ class Clipper:
 
             # Check if there are p-values to correct
             if len(pvals_no_nan) > 0:
-                corrected_pvals_no_nan = multipletests(pvals_no_nan, alpha=self.alpha, method=self.multiple_testing)[1]
+                corrected_pvals_no_nan = multipletests(pvals_no_nan, alpha=self.alpha, method=self.multipletestingmethod)[1]
 
                 # Save the corrected p-values back to their original index positions
                 corrected_pvals = np.empty_like(pvals)
@@ -893,25 +961,57 @@ class Clipper:
                 self.annot.insert(original_column_idx + 2, column_name, corrected_pvals)
                 self.annot.insert(original_column_idx + 3, column_log, np.log10(corrected_pvals))
 
-                logging.debug(f"Corrected p-values for {column_name} using {self.multiple_testing} method")
+                logging.debug(f"Corrected p-values for {column_name} using {self.multipletestingmethod} method")
             else:
                 logging.warning(f"No p-values to correct for {column_name}")
 
-        if self.pairwise:
-            col_stat = 'Independent T-test'
-            for pair in combinations(self.conditions.keys(), 2):
-                column_name = f"Corrected {col_stat}: {pair[0]} vs. {pair[1]}"
-                column_log = f"Log10 pvalue {column_name}"
-                original_column_name = f"{col_stat}: {pair[0]} vs. {pair[1]}"
-                pvals = self.annot[original_column_name].values
-                perform_correction(pvals, column_name, column_log, original_column_name)
-        else:
-            col_stat = 'Independent T-test' if len(self.conditions) == 2 else 'ANOVA'
-            column_name = f"Corrected {col_stat}: {' vs. '.join(self.conditions.keys())}"
-            column_log = f"Log10 pvalue {column_name}"
-            original_column_name = f"{col_stat}: {' vs. '.join(self.conditions.keys())}"
+        if len(self.conditions.keys()) >= 2:
+            stat_name = 'Independent T-test p-value' if len(self.conditions) == 2 else 'ANOVA p-value'
+            column_name = f"Corrected {stat_name}: {' vs. '.join(self.conditions.keys())}"
+            column_log = f"Log10 {column_name}"
+
+            original_column_name = f"{stat_name}: {' vs. '.join(self.conditions.keys())}"
             pvals = self.annot[original_column_name].values
-            perform_correction(pvals, column_name, column_log, original_column_name)
+            _perform_correction(pvals, column_name, column_log, original_column_name)
+
+        if self.pairwise and len(self.conditions.keys()) > 2:
+            stat_name = "Independent T-test p-value:"
+            for pair in permutations(self.conditions.keys(), 2):
+                original_column_name = f"{stat_name} {pair[0]} vs. {pair[1]}"
+                column_name = f"Corrected {original_column_name}"
+                column_log = f"Log10 {column_name}"
+                
+                pvals = self.annot[original_column_name].values
+                _perform_correction(pvals, column_name, column_log, original_column_name)
+
+
+        """
+        if self.pairwise:
+            #col_stat = 'Independent T-test p-value'
+            for pair in permutations(self.conditions.keys(), 2):
+                #column_name = f"Corrected {col_stat}: {pair[0]} vs. {pair[1]}"
+                #column_log = f"Log10 pvalue {column_name}"
+
+                stat_name = "Independent T-test p-value:"
+                original_column_name = f"{stat_name} {pair[0]} vs. {pair[1]}"
+                column_name = f"Corrected {original_column_name}"
+                column_log = f"Log10 {column_name}"
+                
+                pvals = self.annot[original_column_name].values
+                _perform_correction(pvals, column_name, column_log, original_column_name)
+                
+        else:
+            stat_name = 'Independent T-test p-value' if len(self.conditions) == 2 else 'ANOVA p-value'
+            column_name = f"Corrected {stat_name}: {' vs. '.join(self.conditions.keys())}"
+            column_log = f"Log10 {column_name}"
+
+            original_column_name = f"{stat_name}: {' vs. '.join(self.conditions.keys())}"
+            pvals = self.annot[original_column_name].values
+            _perform_correction(pvals, column_name, column_log, original_column_name)
+        """
+
+
+        logging.info(f"Finished multiple testing correction using the {self.multipletestingmethod} method.\n")
 
     def process_entry(self, loc):
 
@@ -928,34 +1028,31 @@ class Clipper:
             seq = annutils.parse_sequence(self.df.loc[loc, self.patterns['seq']])
         else:
             seq = self.df.loc[loc, self.patterns['seq']]
-
         ent = Entry(acc, seq)
         ent.get_record(self.sleeptime)
-
         if ent.record is not None:
             ent.parse_general()
-            ent.parse_cleavage()
-
+            ent.parse_cleavage(self.cleavagesitesize)
             if ent.cleavage_site is not None:
                 ent.parse_protease()
                 if self.nomerops is False:
                     ent.merops_protease(self.merops, self.merops_name)
-
-            return annutils.map_dict(self.annot.loc[loc], ent.annot)
+            return annutils.map_dict(self.annot.loc[loc], ent.annot), ent.warnings
         else:
-            return {"name": "HTTPError, not found"}
+            return {"name": "HTTPError, not found"}, ent.warnings
         
+    """
     def annotate(self):
 
-        """
+        """"""
         Function that calls all other annotating functions.
         This function processes and annotates all entries in the dataframe.
-        """
+        """"""
 
         length = len(self.df)
         if self.nomerops is False:
             self.read_MEROPS()
-            logging.info("Read MEROPS data.")
+            logging.info("Read MEROPS data")
 
         self.initialize_annotation(length)
         logging.info("Initialized annotation dataframe.\n")
@@ -963,9 +1060,21 @@ class Clipper:
 
         with tqdm(range(length), leave = 0) as t:
             for loc in t:
-                self.annot.loc[loc] = self.process_entry(loc)
+                self.annot.loc[loc], warnings = self.process_entry(loc)
+                for key, value in warnings.items():
+                    if warnings[key] != []:
+                        self.entwarnings[key].append(value)
+
             elapsed = t.format_dict['elapsed']
-            logging.info(f"Gathering info from Uniprot took {annutils.format_seconds_to_time(elapsed)}")
+        for key, values in self.entwarnings.items():
+            if self.entwarnings[key] != []:
+                logging.warning(f'There were "{key}" errors')
+                for value in values:
+                    logging.warning(f'  - {value[0]}')
+                self.entwarnings[key] = []
+        time.sleep(0.5)
+        logging.info(f"Gathering info from Uniprot took {annutils.format_seconds_to_time(elapsed)}")
+        """
     
     def entry_annotate(self, loc):
 
@@ -975,9 +1084,12 @@ class Clipper:
             loc (int): The location (index) of the entry in the dataframe.
         """
 
-        self.annot.loc[loc] = self.process_entry(loc)
+        self.annot.loc[loc], warnings = self.process_entry(loc)
+        for key, value in warnings.items():
+            if warnings[key] != []:
+                self.entwarnings[key].append(value)
 
-    def threaded_annotate(self):
+    def threaded_annotate(self, cores):
 
         """
         Annotation function using multiple threading. This function utilizes all available cores to
@@ -985,16 +1097,13 @@ class Clipper:
         """
 
         length = len(self.df)
-        batch_length = min(os.cpu_count(), length)
+        batch_length = min(cores, length)
 
         if self.nomerops is False:
             self.read_MEROPS()
             logging.info("Read MEROPS data")
 
-        self.initialize_annotation(length)
-        logging.info("Initialized annotation dataframe.\n")
         logging.info("Fetching information from Uniprot...")
-
         with tqdm(range(0, length, batch_length), leave = 0) as t:
             for i in t:
                 batch = list(range(i, i + batch_length))
@@ -1005,7 +1114,16 @@ class Clipper:
                     executor.map(self.entry_annotate, batch)
 
                 elapsed = t.format_dict['elapsed']
+
+        for key, values in self.entwarnings.items():
+            if self.entwarnings[key] != []:
+                logging.warning(f'There were "{key}" errors')
+                for value in values:
+                    logging.warning(f'  - {value[0]}')
+                self.entwarnings[key] = []
+        time.sleep(0.5)
         logging.info(f"Gathering info from Uniprot took {annutils.format_seconds_to_time(elapsed)}")
+        
 
     def annotate_protein_atlas(self):
 
@@ -1116,21 +1234,21 @@ class Clipper:
         logging.info(f"Protease codes: {protease_codes}")
 
         # Create PSSM for each protease and store in a dictionary
-        pssms = pp.construct_pssms(protease_codes, self.merops, self.merops_sub)
+        pssms = pp.construct_pssms(protease_codes, self.merops, self.merops_sub, cleavagesitesize)
         
         with tqdm(range(len(self.annot)), leave = 0) as t:
             for i in t:
                 # Get the peptide sequence
-                cleavage = self.annot.loc[i, "p4_p4prime"]
+                cleavage = self.annot.loc[i, f"p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"]
                 # Score the peptide with each PSSM
-                if isinstance(cleavage, str) and len(cleavage) == 8 and not '-' in cleavage:
+                if isinstance(cleavage, str) and len(cleavage) == self.cleavagesitesize*2 and not '-' in cleavage:
                     scores = pp.score_proteases(pssms, cleavage)
                     self.annot.loc[i, "predicted_protease_activity"] = scores
 
             elapsed = t.format_dict['elapsed']
             logging.info(f"Protease activity prediction took {annutils.format_seconds_to_time(elapsed)}")
 
-    def annotate_structure(self, cutoff):
+    def annotate_structure(self):
 
         """
         Annotates secondary structure and solvent accessibility for the cleavage site.
@@ -1142,15 +1260,15 @@ class Clipper:
         on a t-test or ANOVA.
         
         Args:
-            cutoff (float): The cutoff value for determining significant difference. Default is 0.05.
+            alpha (float): The cutoff value for determining significant difference. Default is 0.05.
         """
 
         if self.available_models is None:
             available_models = annutils.read_alphafold_accessions(self.datafolder / self.alphafold_models_filename)
             self.available_models = available_models
 
-        self.annot["secondary_structure p4_p4prime"] = np.nan
-        self.annot["solvent_accessibility p4_p4prime"] = np.nan
+        self.annot[f"secondary_structure p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"] = np.nan
+        self.annot[f"solvent_accessibility p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"] = np.nan
 
         if self.calcstructure == "all":
             # Create a dictionary where each accession is a key and the value is a list of tuples
@@ -1179,8 +1297,8 @@ class Clipper:
 
             # assign to the annotation dataframe
             for (acc, cleavage_site), (index, ss, sa) in structure_properties.items():
-                self.annot.loc[index, "secondary_structure p4_p4prime"] = ss
-                self.annot.loc[index, "solvent_accessibility p4_p4prime"] = sa
+                self.annot.loc[index, f"secondary_structure p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"] = ss
+                self.annot.loc[index, f"solvent_accessibility p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"] = sa
 
         elif self.calcstructure == "sig":
             cols = []
@@ -1189,15 +1307,18 @@ class Clipper:
                     if self.pairwise or len(self.conditions) == 2:
                         conditions_iter = combinations(self.conditions.keys(), 2)
                         for pair in conditions_iter:
-                            column_name = f"Independent T-test: {pair[0]} vs. {pair[1]}"
+                            if self.multipletesting:
+                                column_name = f"Corrected Independent T-test p-value: {pair[0]} vs. {pair[1]}"
+                            else:
+                                column_name = f"Independent T-test p-value: {pair[0]} vs. {pair[1]}"
                             cols.append(column_name)
                     else:
-                        column_name = "ANOVA: " + " vs. ".join(self.conditions.keys())
+                        column_name = "ANOVA p-value: " + " vs. ".join(self.conditions.keys())
                         cols.append(column_name)
 
                     # iterate over all columns and entries in the dataframe
                     for column_name in cols:
-                        subframe = self.annot[self.annot[column_name] <= cutoff]
+                        subframe = self.annot[self.annot[column_name] <= self.alpha]
                         acc_cleavage_sites = {}
                         for i, row in subframe.iterrows():  # use .iterrows() to keep track of the original index
                             # get the accession and cleavage site
@@ -1220,14 +1341,19 @@ class Clipper:
 
                         for (acc, cleavage_site), (index, ss, sa) in structure_properties.items():
                             # if the cleavage site is not nan (has not been annotated in previous iterations), annotate
-                            if isinstance(cleavage_site, int) and pd.isnull(self.annot.loc[i, "secondary_structure p4_p4prime"]) and pd.isnull(self.annot.loc[i, "solvent_accessibility p4_p4prime"]):
-                                self.annot.loc[index, "secondary_structure p4_p4prime"] = ss
-                                self.annot.loc[index, "solvent_accessibility p4_p4prime"] = sa
+                            if isinstance(cleavage_site, int) and pd.isnull(self.annot.loc[i, f"secondary_structure p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"]) and pd.isnull(self.annot.loc[i, f"solvent_accessibility p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"]):
+                                self.annot.loc[index, f"secondary_structure p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"] = ss
+                                self.annot.loc[index, f"solvent_accessibility p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"] = sa
+                
+                else:
+                    logging.warning("cannot do structure calculations on significant peptides, as no statistics has been done. Please consider adding the -stat flag to the query!")
+            else:
+                logging.warning("There are less than 2 conditions provided. Peptide plotting on protein structure cannot be done for significant peptides as no significant peptides can be found!")
 
         else:
             raise ValueError(f"calcstructure argument must be either None, 'all', or 'sig'. It was '{self.calcstructure}' and of type {type(self.calcstructure)}")
 
-    def visualize(self, cutoff):
+    def visualize(self):
 
         """
         Calls the Visualizer class to create various plots, and stores these as figure objects.
@@ -1240,7 +1366,7 @@ class Clipper:
         """
 
         # initialize Visualizer class, and generate figures for general statistics, CV plot, pie charts, heatmap and clustermap
-        vis = Visualizer(self.df, self.annot, self.conditions, self.software, self.patterns, self.temp_folder, self.pairwise)
+        vis = Visualizer(self.df, self.annot, self.conditions, self.software, self.patterns, self.temp_folder, self.pairwise, self.multipletesting)
         self.figures["General"] = vis.general()
         self.figures["CV"] = vis.cv_plot()
         self.figures["Piechart"] = vis.generate_pie_charts()
@@ -1250,34 +1376,40 @@ class Clipper:
         self.figures["UMAP"]  = vis.umap_visualization()
 
         if self.stat and self.enrichment:
-            self.figures["Enrichment"] = vis.plot_functional_enrichment(cutoff = cutoff)
+            self.figures["Enrichment"] = vis.plot_functional_enrichment(self.conditioncombinations, self.alpha)
+        else:
+            logging.warning("Functional enrichment could not be performed as -stat was False (enrichment requires statistics)")
 
         if self.stat and self.pathway:
             if len(self.conditions) == 2 or self.pairwise:
-                vis.plot_pathway_enrichment(cutoff = cutoff, folder=self.pathway_folder)
+                vis.plot_pathway_enrichment(self.conditioncombinations, self.alpha, folder=self.pathway_folder)
+            else:
+                logging.warning("Plotting of enriched pathways requires either 2 conditions or pairwise statistics to be performed. Please check that 2 conditions are provided, or if more than 2 conditions are provided that the flag -spw is given.")
+        else:
+            logging.warning("Enriched pathways could not be plotted as -stat was False (pathway enrichment requires statistics)")
 
         # if there are more than one condition, generate volcano, fold change and fold change at termini plots, and gallery of significant peptides
         if len(self.conditions) > 1:
             
-            self.figures["Volcano"] = vis.volcano(self.comparisons)
+            self.figures["Volcano"] = vis.volcano(self.volcano_foldchange, self.alpha)
             self.figures["Fold"] = vis.fold_plot()
             self.figures["Fold_nterm"] = vis.fold_termini()
 
             logging.info("Generating a PDF gallery of significant peptides...")
-            vis.gallery(cutoff=cutoff, stat=self.stat, folder=self.general_folder)
+            vis.gallery(self.alpha, stat=self.stat, folder=self.general_folder)
             logging.info("Finished gallery generation.")
             
-            if self.stat and self.cleavagevis and self.pairwise:
+            if self.stat and self.cleavagevis and (self.pairwise or len(self.conditions) == 2):
                 if self.available_models is None:
                     available_models = annutils.read_alphafold_accessions(self.datafolder / self.alphafold_models_filename)
                     self.available_models = available_models
 
                 logging.info("Starting protein plotting...")
                 if self.nomerops is False:
-                    vis.plot_protein(cutoff=cutoff, pymol_verbose=self.pymol_verbose, folder=self.protein_folder, merops=self.merops, alphafold=self.available_models, level=self.cleavagevis)
+                    vis.plot_protein(self.alpha, pymol_verbose=self.pymol_verbose, folder=self.protein_folder, merops=self.merops, alphafold=self.available_models, level=self.cleavagevis)
                     logging.info("Finished protein plotting.")
                 else:
-                    vis.plot_protein(cutoff=cutoff, pymol_verbose=self.pymol_verbose, folder=self.protein_folder, alphafold=self.available_models, level=self.cleavagevis)
+                    vis.plot_protein(self.alpha, pymol_verbose=self.pymol_verbose, folder=self.protein_folder, alphafold=self.available_models, level=self.cleavagevis)
                     logging.info("Finished protein plotting.")
 
 
@@ -1294,37 +1426,74 @@ class Clipper:
         """
 
         if len(self.conditions) > 1:
-            for comparison in self.comparisons:
-                pair = comparison.split(' vs. ')
+            try:
                 if self.stat:
-                    try:
-                        column_name_test = f"Log10 pvalue: {comparison}"
-                        column_name_fold = f"Log2 fold change: {comparison}"
-                        condition = column_name_test.split(': ')[1].strip()
-                        column_test = self.annot[column_name_test]
-                        column_fold = self.annot[column_name_fold]
-                        condition = column_name_test.split(': ')[1].strip()
-                        data = self.annot[(column_test < -1.5) & (column_fold > 1.5)]
-                        self.figures[f"Logo {comparison} high"] = create_logo_helper(data, comparison, self.pseudocounts, self.logo)
+                    if len(self.conditions.keys()) == 2 or (self.pairwise and len(self.conditions.keys()) > 2):
+                        # select columns to use based on whether to use multiple testing corrected values or not
+                        if self.multipletesting:
+                            column_log = "Corrected Independent T-test p-value:"
+                        else:
+                            column_log = "Independent T-test p-value:"
 
-                        data = self.annot[(column_test < -1.5) & (column_fold < -1.5)]
-                        self.figures[f"Logo {comparison} low"] = create_logo_helper(data, comparison, self.pseudocounts, self.logo)            
-                    except KeyError as err:
-                        print(f'ERROR in create_logos(): {err}')
-                        continue
-                else:
-                    column = f"Fold {comparison} significance"
-                    condition = column.split()[1].strip().replace(" vs. ", "_")
-                    data = self.annot[self.annot[column] == "significant high"]
-                    self.figures[f"Logo {pair[0]} high"] = create_logo_helper(data, comparison, self.pseudocounts, self.logo)
+                        # create logo plots
+                        for comparison in self.conditionpermutations:
+                            column_name_test = f"{column_log} {comparison}"
+                            column_name_fold = f"Log2 fold change: {comparison}"
+                            column_test = self.annot[column_name_test]
+                            column_fold = self.annot[column_name_fold]
+                            data = self.annot[(column_test < self.alpha) & (column_fold > self.logo_fc)]
+                            if len(data) == 0:
+                                logging.info(f"No significant peptides found when doing logo plots for {comparison} comparison with a fold change > {self.logo_fc}, plot will not be made")
+                            else:
+                                self.figures[f"Logo {comparison} high"] = create_logo_helper(data, comparison, self.pseudocounts, self.logo, self.cleavagesitesize)
 
-                    data = self.annot[self.annot[column] == "significant low"]
-                    self.figures[f"Logo {pair[0]} low"] = create_logo_helper(data, comparison, self.pseudocounts, self.logo)
-            
+                            data = self.annot[(column_test < self.alpha) & (column_fold < -self.logo_fc)]
+                            if len(data) == 0:
+                                logging.info(f"No significant peptides found when doing logo plots for {comparison} comparison with a fold change < -{self.logo_fc}, plot will not be made")
+                            else:
+                                self.figures[f"Logo {comparison} low"] = create_logo_helper(data, comparison, self.pseudocounts, self.logo, self.cleavagesitesize)
+                        logging.info("Created logo plots using peptides with statistically significant changed abundance between conditions")
+                    
+                    if len(self.conditions.keys()) > 2:
+                        # select columns to use based on whether to use multiple testing corrected values or not
+                        if self.multipletesting:
+                            column_log = "Corrected ANOVA p-value:"
+                        else:
+                            column_log = f"ANOVA p-value:"
+                        column_log = self.annot.columns[self.annot.columns.str.startswith(column_log)]
+
+                        if len(column_log) == 1:
+                            # create logo plots
+                            column_name_test = column_log[0]
+                            column_test = self.annot[column_name_test]
+                            data = self.annot[(column_test < self.alpha)]
+                            if len(data) == 0:
+                                logging.info("No significant peptides found when doing logo plots for ANOVA comparison, plot will not be made")
+                            else:
+                                self.figures[f"Logo ANOVA only p-values"] = create_logo_helper(data, 'ANOVA', self.pseudocounts, self.logo, self.cleavagesitesize)
+                                logging.info("Created logo plots for peptides with significant changes according to ANOVA alone")
+
+                        else:
+                            logging.info("Could not create logo plots with ANOVA p-values, as multiple similar columns were found")
+
+                elif self.significance: # LATER: does this make sense to include?
+                    for comparison in self.conditionpermutations:
+                        column = f"Fold {comparison} significance"
+                        data = self.annot[self.annot[column] == "significant high"]
+                        self.figures[f"Logo {comparison} high"] = create_logo_helper(data, comparison, self.pseudocounts, self.logo, self.cleavagesitesize)
+
+                        data = self.annot[self.annot[column] == "significant low"]
+                        self.figures[f"Logo {comparison} low"] = create_logo_helper(data, comparison, self.pseudocounts, self.logo, self.cleavagesitesize)
+
+                    logging.info("Created logo plots using peptides with the highest and lowest percentile (deafault 5%) abundance fold change between conditions")
+
+            except KeyError as err:
+                logging.error(f'ERROR in create_logos(): {err}')
+
         elif len(self.conditions) == 1:
-            
             condition = list(self.conditions.keys())[0]
-            self.figures[f"Logo_{condition}"] = create_logo_helper(self.annot, condition, self.pseudocounts, self.logo)
+            self.figures[f"Logo {condition}"] = create_logo_helper(self.annot, condition, self.pseudocounts, self.logo, self.cleavagesitesize)
+            logging.info("created logo plots with all provided peptides, as statistics is not possible with a single condition")
 
     def write_files(self):
 
@@ -1342,7 +1511,8 @@ class Clipper:
         if self.separate:
             final_df = self.annot
         else:
-            final_df = self.df.join(self.annot)
+            final_df = self.df.join(self.annot, rsuffix="_duplicatecol")
+            final_df.drop([i for i in final_df.columns if '_duplicatecol' in i], axis=1, inplace=True)
 
         # Define a mapping of output types to saving methods
         saving_methods = {

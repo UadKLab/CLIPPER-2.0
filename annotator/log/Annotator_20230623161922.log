@@ -1,6 +1,0 @@
-2023-06-23 16:19:22,679 [INFO] 
-2023-06-23 16:19:22,680 [INFO] Annotator started at 2023-06-23 16:19:22.
-2023-06-23 16:19:22,680 [DEBUG] Arguments: {'infile': '..testsHUNTER_clean_100.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': None, 'singlecpu': False, 'conditionfile': '..testscond_HUNTER.txt', 'stat': True, 'stat_pairwise': True, 'significance': 'all', 'visualize': True, 'logo': 'all', 'pseudocounts': True, 'cleavagevis': None, 'enrichment': True, 'pathway': True, 'proteasefile': None, 'output_name': None, 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False}
-2023-06-23 16:19:22,680 [INFO] Startup complete!
-
-2023-06-23 16:19:22,680 [CRITICAL] Exit with code 6.

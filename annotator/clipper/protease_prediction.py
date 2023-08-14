@@ -156,7 +156,7 @@ def create_protease_pssm(protease, df_cleavage, df_substrate, peptide_length=8, 
     return pssm.weighted_matrix
 
 
-def construct_pssms(protease_codes, df_cleavage, df_substrate):
+def construct_pssms(protease_codes, df_cleavage, df_substrate, cleavagesitesize):
     
     """
     Constructs PSSMs for each protease code and returns them in a dictionary.
@@ -179,7 +179,7 @@ def construct_pssms(protease_codes, df_cleavage, df_substrate):
     pssms = {}
     for code in protease_codes:
         # Construct the PSSM
-        pssm = create_protease_pssm(code, df_cleavage, df_substrate, peptide_length=8, pseudocounts=False)
+        pssm = create_protease_pssm(code, df_cleavage, df_substrate, peptide_length=cleavagesitesize*2, pseudocounts=False)
         pssms[code] = pssm
 
     return pssms

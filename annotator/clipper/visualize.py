@@ -1,4 +1,5 @@
 import os
+import re
 import tempfile
 import gzip
 import logging
@@ -29,6 +30,7 @@ from Bio.SeqFeature import SeqFeature, FeatureLocation
 from dna_features_viewer import GraphicFeature, GraphicRecord
 from gprofiler import GProfiler
 import networkx as nx
+from reactome2py import analysis
 
 from . import annutils
 
@@ -69,7 +71,7 @@ class Visualizer:
         plot_pathway_enrichment: Performs a pathway enrichment analysis and generates pathway plots for significant peptides.
     """
         
-    def __init__(self, df: pd.DataFrame, annot: str, conditions: list, software: str, patterns: dict, temp_folder: str, pairwise: bool=False) -> None:
+    def __init__(self, df: pd.DataFrame, annot: str, conditions: list, software: str, patterns: dict, temp_folder: str, pairwise: bool=False, mt: bool = False) -> None:
 
         self.df = df
         self.annot = annot
@@ -78,6 +80,17 @@ class Visualizer:
         self.patterns = patterns
         self.temp_folder = temp_folder
         self.pairwise = pairwise
+
+        if len(self.conditions) == 2 or self.pairwise:
+            if mt:
+                self.stat_columns_start_with = "Corrected Independent T-test p-value:"    
+            else:
+                self.stat_columns_start_with = "Independent T-test p-value:"
+        else:
+            if mt:
+                self.stat_columns_start_with = "Corrected ANOVA p-value:"    
+            else:
+                self.stat_columns_start_with = "ANOVA p-value:"
 
     def general(self) -> dict:
 
@@ -146,7 +159,7 @@ class Visualizer:
 
         return {"general": fig}
 
-    def volcano(self, comparisons) -> dict:
+    def volcano(self, volcano_foldchange, alpha) -> dict:
 
         """
         Creates a volcano plot for each condition pair.
@@ -156,20 +169,20 @@ class Visualizer:
         dict
             A dictionary with each key being a condition pair and the value being a corresponding matplotlib Figure object of the plot.
         """
-        columns_fold = self.annot.columns[self.annot.columns.str.contains("Log2 fold change:")]
-        columns_ttest = self.annot.columns[self.annot.columns.str.contains("Log10 pvalue:")]
+        alpha = np.log10(alpha)
+        columns_fold = self.annot.columns[self.annot.columns.str.startswith("Log2 fold change:")]
+        columns_ttest = self.annot.columns[self.annot.columns.str.startswith("Log10 " + self.stat_columns_start_with)]
         figures = {}
-
         for test in columns_ttest:
             conditions = [condition.strip() for condition in test.split(':')[1].split(" vs. ")]
-            for fold in columns_fold:
-                if len(conditions) == 2:
-                    comparison = conditions[0] + ' vs. ' + conditions[1]
+            if len(conditions) == 2:
+                comparison = conditions[0] + ' vs. ' + conditions[1]
+                for fold in columns_fold:
                     if comparison in fold:
                         frame = self.annot.loc[:, [fold, test]].dropna(how="any")
                         # log values are negative for ttest column, inverse
                         frame[test] = frame[test] * -1
-                        frame["coding"] = np.where((~frame[fold].between(-1.5, 1.5)) & (~frame[test].between(-1.5, 1.5)), "1", "0",)
+                        frame["coding"] = np.where((~frame[fold].between(-volcano_foldchange, volcano_foldchange)) & (~frame[test].between(alpha, -alpha)), "1", "0",)
                         frame = frame.sort_values("coding")
 
                         if len(frame.coding.unique()) == 1:
@@ -179,12 +192,12 @@ class Visualizer:
 
                         g = sns.scatterplot(data=frame, x=fold, y=test, hue="coding", palette=colors)
                         ax = plt.gca()
-                        ax.set_ylabel("- " + test)
+                        ax.set_ylabel(f"{test.split(':')[0]}\n{comparison}")
                         xmin, xmax = ax.get_xlim()
                         ymin, ymax = ax.get_ylim()
-                        ax.plot([xmin, xmax], [1.5, 1.5], "--b", alpha=0.2)
-                        ax.plot([1.5, 1.5], [0, ymax], "--b", alpha=0.2)
-                        ax.plot([-1.5, -1.5], [0, ymax], "--b", alpha=0.2)
+                        ax.plot([xmin, xmax], [-alpha, -alpha], "--b", alpha=0.2)
+                        ax.plot([volcano_foldchange, volcano_foldchange], [0, ymax], "--b", alpha=0.2)
+                        ax.plot([-volcano_foldchange, -volcano_foldchange], [0, ymax], "--b", alpha=0.2)
                         ax.legend().set_visible(False)
 
                         name = fold.split(":")[1].strip()
@@ -294,17 +307,25 @@ class Visualizer:
             dict: A dictionary with "heatmap" as a key and the seaborn heatmap figure as the value.
         """
 
-        columns = self.df.columns[self.df.columns.str.contains(self.patterns['quant'])]
+        quant_columns = self.df.columns[self.df.columns.str.contains(self.patterns['quant'])]
+        columns = []
+        columns_dict = {}
+        flat_condition_list = sorted([value for key, values in self.conditions.items() for value in values])
+        for condition in flat_condition_list:
+            colname = [column for column in quant_columns if condition in column]
+            if colname != []:
+                columns_dict[colname[0]] = condition
+                columns.append(colname[0])
 
         if len(columns) > 0:
-            heat = self.df[columns]
+            heat = self.df[columns].rename(columns_dict, axis=1)
             heat = np.log10(heat.replace(0, np.nan).dropna())
             fig = sns.heatmap(heat, yticklabels=False)
             plt.subplots_adjust(bottom=0.4)
             plt.close()
 
             return {"heatmap": fig}
-
+        
     def clustermap(self):
 
         """
@@ -317,10 +338,20 @@ class Visualizer:
             dict: A dictionary with "clustermap" as a key and the seaborn clustermap figure as the value.
         """
 
-        columns = self.df.columns[self.df.columns.str.contains(self.patterns['quant'])]
+        # get column names and sort to have similar conditions next to each other in the plot. Both full column names for script and "nice" names for plot are available
+        
+        quant_columns = self.df.columns[self.df.columns.str.contains(self.patterns['quant'])]
+        columns = []
+        columns_dict = {}
+        flat_condition_list = sorted([value for key, values in self.conditions.items() for value in values])
+        for condition in flat_condition_list:
+            colname = [column for column in quant_columns if condition in column]
+            if colname != []:
+                columns_dict[colname[0]] = condition
+                columns.append(colname[0])
 
         if len(columns) > 0:
-            cluster = self.df[columns]
+            cluster = self.df[columns].rename(columns_dict, axis=1)
             cluster = np.log10(cluster.replace(0, np.nan).dropna())
             fig = sns.clustermap(cluster, yticklabels=False)
             plt.close()
@@ -452,20 +483,20 @@ class Visualizer:
 
         return figures
 
-    def gallery(self, cutoff, stat=False, folder=None):
+    def gallery(self, alpha, stat=False, folder=None):
 
         """
         Generate a PDF gallery of significant peptides from the DataFrame based on a given cutoff.
         
         Args:
             stat (bool): A boolean flag to specify if the peptides to consider are statistically significant.
-            cutoff (float): A threshold for determining the significance of peptides.
+            alpha (float): A threshold for determining the significance of peptides.
             folder (str): A string representing the path to the folder where the gallery PDF will be saved.
 
         Note: If the folder does not exist, it will be created.
         """
 
-        indices = self.get_significant_indices(stat, cutoff)
+        indices = self.get_significant_indices(stat, alpha)
         accs = self.annot.loc[indices, "query_accession"].unique()
 
         sns.set("paper", "ticks")
@@ -504,27 +535,24 @@ class Visualizer:
 
         pp.close()
 
-    def get_significant_indices(self, stat, cutoff):
+    def get_significant_indices(self, stat, alpha):
 
         """
         Returns the indices of significant peptides in the DataFrame based on a given cutoff.
         
         Args:
             stat (bool): A boolean flag to specify if the peptides to consider are statistically significant.
-            cutoff (float): A threshold for determining the significance of peptides.
+            alpha (float): A threshold for determining the significance of peptides.
         
         Returns:
             list: A list of indices of the significant peptides.
         """
             
         if stat:
-            if len(self.conditions) == 2 or self.pairwise:
-                cols = self.annot.columns[self.annot.columns.str.startswith("Independent T-test:")]
-            else:
-                cols = self.annot.columns[self.annot.columns.str.startswith("ANOVA:")]
+            cols = self.annot.columns[self.annot.columns.str.startswith(self.stat_columns_start_with)]
             indices = []
             for col in cols:
-                ind = self.annot[self.annot[col] < cutoff].index
+                ind = self.annot[self.annot[col] < alpha].index
                 indices += list(ind)
             indices = list(set(indices))
         else:
@@ -655,13 +683,13 @@ class Visualizer:
 
         return {"UMAP": fig}
     
-    def plot_protein(self, cutoff, pymol_verbose, folder=None, merops=None, alphafold=None, level=None):
+    def plot_protein(self, alpha, pymol_verbose, folder=None, merops=None, alphafold=None, level=None):
 
         """
         Plots significant peptides for each condition on protein sequence and structure.
         
         Args:
-            cutoff (float): A threshold for determining the significance of peptides.
+            alpha (float): A threshold for determining the significance of peptides.
             folder (str): A string representing the path to the folder where the plots will be saved.
             merops (str): A string specifying the MEROPS database identifier for the protein.
             alphafold (str): A string specifying the AlphaFold model identifier for the protein.
@@ -670,16 +698,13 @@ class Visualizer:
         Note: If the folder does not exist, it will be created.
         """
         
-        if len(self.conditions) == 2 or self.pairwise:
-            cols = self.annot.columns[self.annot.columns.str.startswith("Independent T-test:")]
-        else:
-            cols = self.annot.columns[self.annot.columns.str.startswith("ANOVA:")]
+        cols = self.annot.columns[self.annot.columns.str.startswith(self.stat_columns_start_with)]
+
         logging.info(f"Plotting all significant peptides for {len(cols)} comparison(s) on protein sequences and structures.")
         log_warnings = []
         with tqdm(cols, leave = 0) as t:
             for col in t:
-                #logging.info(f"Plotting peptides on protein sequence and structures for {col.split(':')[1].strip()}")
-                df = self.annot[self.annot[col] < cutoff]
+                df = self.annot[self.annot[col] < alpha]
                 accs = df["query_accession"].unique()
 
                 if len(accs) != 0:
@@ -690,49 +715,55 @@ class Visualizer:
                         for acc in tqdm(accs, leave = 0):
                             subframe = df[df["query_accession"] == acc]
                             if len(subframe) > 0:
-                                plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level, self.temp_folder, pymol_verbose=pymol_verbose)
+                                acc_length = self.annot[self.annot['query_accession'] == acc]['acc_length'].values[0]
+                                col_ID = self.stat_columns_start_with
+                                warnings = plot_protein_figure(pp, subframe, acc, col, col_ID, acc_length, merops, alphafold, level, self.temp_folder, pymol_verbose=pymol_verbose)
+                                if warnings != None:
+                                    if f"Models were missing for condition {col.split(':')[1].strip()}" not in log_warnings:
+                                        log_warnings.append(f"Models were missing for condition {col.split(':')[1].strip()}")
+                                    log_warnings.append(f"  - {warnings}")
+
                 else:
                     log_warnings.append(f"There were no significant peptides for condition {col.split(':')[1].strip()}, no pdf is made.")
             elapsed = t.format_dict['elapsed']
             logging.info(f"Plotting peptide sequences and positions on structures took {annutils.format_seconds_to_time(elapsed)}")
         for item in log_warnings:
             logging.warning(item)
+        
+        
 
 
-    def plot_functional_enrichment(self, cutoff):
+    def plot_functional_enrichment(self, conditioncombinations, alpha):
 
         """
         Performs a functional enrichment analysis and generates a bar plot of the results.
         
         Args:
-            cutoff (float): A threshold for determining the significance of peptides.
+            alpha (float): A threshold for determining the significance of peptides.
         
         Returns:
             dict: A dictionary where the keys are condition names and the values are the corresponding figures.
         """
 
-        if len(self.conditions) == 2 or self.pairwise:
-            cols = self.annot.columns[self.annot.columns.str.startswith("Independent T-test:")]
-        else:
-            cols = self.annot.columns[self.annot.columns.str.startswith("ANOVA:")]
+        cols = self.annot.columns[self.annot.columns.str.startswith(self.stat_columns_start_with)]
 
         figures = {}
         for col in cols:
-            df = self.annot[self.annot[col] < cutoff]
+            df = self.annot[self.annot[col] < alpha]
             gene_names = df["name"].unique()
             genes = [g.split('_')[0] for g in gene_names]
             col_name = col.split(":")[1].strip()
-
-            if genes:
-                fig = plot_enrichment_figure(genes, col_name)
-                fig_name = col_name.replace('/', '_')
-                figures[fig_name] = fig
-            else:
-                logging.warning(f'No significant peptides with a cutoff value <{cutoff} for conditions {col_name}. No functional enrichment plots will be made for this comparison.')
+            if col_name in conditioncombinations:
+                if genes:
+                    fig = plot_enrichment_figure(genes, col_name, alpha)
+                    fig_name = col_name.replace('/', '_')
+                    figures[fig_name] = fig
+                else:
+                    logging.info(f'No significant peptides with a cutoff value <{alpha} for conditions {col_name}. No functional enrichment plots will be made for this comparison.')
 
         return figures
     
-    def plot_pathway_enrichment(self, cutoff, folder=None):
+    def plot_pathway_enrichment(self, conditioncombinations, alpha, folder=None):
 
         """
         Performs a pathway enrichment analysis and generates pathway plots for significant peptides.
@@ -744,17 +775,17 @@ class Visualizer:
         Note: If the folder does not exist, it will be created.
         """
 
-        cols = self.annot.columns[self.annot.columns.str.startswith("Independent T-test:")]
-
+        cols = self.annot.columns[self.annot.columns.str.startswith(self.stat_columns_start_with)]
         for col in cols:
-            col_fold = col.replace('Independent T-test', 'Log2 fold change') # LATER: Does the conversion of _ to / prohibit the use of underscores in condition naming? Convert to / in creation process
-            subframe = self.annot[self.annot[col] < cutoff]
+            col_fold = col.replace(self.stat_columns_start_with, 'Log2 fold change:')
+            subframe = self.annot[self.annot[col] < alpha]
 
             # Create a PDF file to save all figures
             condition_name = col.split(":")[1].strip()
-            pdf_path = os.path.join(folder, f"{condition_name.replace('/', '_')}_pathway_plots.pdf")
-            with PdfPages(pdf_path) as pp:
-                plot_pathway_figures(subframe, col_fold, condition_name, pp, cutoff)
+            if condition_name in conditioncombinations:
+                pdf_path = os.path.join(folder, f"{condition_name.replace('/', '_')}_pathway_plots.pdf")
+                with PdfPages(pdf_path) as pp:
+                    plot_pathway_figures(subframe, col_fold, condition_name, pp, alpha)
 
     
 def create_pie_chart(y, x, colors, explode):
@@ -950,7 +981,7 @@ def extract_protein_features(acc, record, merops, subframe):
         return features
 
 
-def get_pymol_image(acc, positions, colormap, vmin, vmax, peptide_protein_plot_path):
+def get_pymol_image(acc, acc_length, positions, colormap, vmin, vmax, peptide_protein_plot_path):
 
     """
     Get the image of the protein structure with the significant positions highlighted.
@@ -993,14 +1024,16 @@ def get_pymol_image(acc, positions, colormap, vmin, vmax, peptide_protein_plot_p
             pymol.cmd.load(temp_cif.name, acc)
 
         pymol.cmd.set('ray_trace_mode', '1')
-        pymol.cmd.set('ray_trace_color', 'black')
+        pymol.cmd.set('ray_trace_color', 'grey')
+        pymol.cmd.set('antialias', '2')
+        pymol.cmd.set('ray_trace_gain', '0.2')
         pymol.cmd.orient(acc)
         pymol.cmd.select('het_atoms', f'{acc} and hetatm')
         pymol.cmd.extract('het_atob', 'het_atoms')
         pymol.cmd.delete('het_atob')
 
         # Set the entire protein to grey
-        pymol.cmd.color('grey', acc)
+        pymol.cmd.color('hydrogen', acc)
 
         positions = sorted(positions, key=lambda tup: tup[2])
         max_fold_change_pos = None
@@ -1018,14 +1051,22 @@ def get_pymol_image(acc, positions, colormap, vmin, vmax, peptide_protein_plot_p
         # Orient the structure based on the highest fold change peptide
         if max_fold_change_pos is not None:
             pymol.cmd.orient(f'resi {max_fold_change_pos[0]}-{max_fold_change_pos[1]} and {acc}')
-            pymol.cmd.zoom(acc, complete=0.65)
-        pymol.cmd.ray(720, 720)
-        pymol.cmd.png(peptide_protein_plot_path, dpi=150)
+            pymol.cmd.zoom(acc, complete=2)
+
+        if acc_length < 500:
+            pymol.cmd.ray(500, 500)
+            pymol.cmd.png(peptide_protein_plot_path, dpi=100)
+        elif acc_length < 1000:
+            pymol.cmd.ray(720, 720)
+            pymol.cmd.png(peptide_protein_plot_path, dpi=150)
+        elif acc_length >= 1000:
+            pymol.cmd.ray(2000, 2000)
+            pymol.cmd.png(peptide_protein_plot_path, dpi=300)
 
     else:
         logging.warning(f'The file {model_filename} is not available at {alphafold_path}. Cannot create PyMol illustrations.')
 
-def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level, temp_folder, pymol_verbose):
+def plot_protein_figure(pp, subframe, acc, col, col_ID, acc_length, merops, alphafold, level, temp_folder, pymol_verbose):
 
     """
     Plots the protein sequence and structure with the significant peptides highlighted, and saves the figure to the PDF file.
@@ -1037,7 +1078,7 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level, temp_f
         acc (str): UniProt Accession of the protein of interest.
         col (str): Column name in the DataFrame to be considered for the plot.
         merops (str): Identifier for the MEROPS database.
-        alphafold (bool): If True, use AlphaFold to create protein structure. 
+        alphafold (str): A string specifying the AlphaFold model identifier for the protein.
         level (str): Level of detail in the plot.
 
     Returns:
@@ -1056,7 +1097,7 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level, temp_f
     features = extract_protein_features(acc, record, merops, subframe)
 
     # get the significant peptides
-    col_fold = col.replace('Independent T-test', 'Log2 fold change')
+    col_fold = col.replace(col_ID, 'Log2 fold change')
 
     # Collapse duplicate peptides and take the mean of fold changes
     subframe = subframe.groupby(['query_sequence', 'start_pep', 'end_pep']).agg({col_fold: 'mean'}).reset_index()
@@ -1100,16 +1141,16 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level, temp_f
         os.makedirs(os.path.dirname(temp_folder), exist_ok=True)
 
         if acc not in alphafold:
-            logging.warning(f"Alphafold model for {acc} not available.")
-            return None
+            return f"Alphafold model for {acc} not available."
 
         # if all pymol messages and output should be included in terminal set pymol_verbose = True
         if pymol_verbose:
-            get_pymol_image(acc, positions, cmap, -max_fold_change, max_fold_change, peptide_protein_plot_path)
+            get_pymol_image(acc, acc_length, positions, cmap, -max_fold_change, max_fold_change, peptide_protein_plot_path)
             
         # otherwise run the function as a subprocess to choke the otherwise very persistent output
         else:
-            subprocess.run(['python', 'pymol_subprocess_plot_protein.py', '-acc', str(acc), '-pos', str(positions), '-_mfc', str(-max_fold_change), '-mfc', str(max_fold_change), '-tf', str(peptide_protein_plot_path)], stdout=subprocess.DEVNULL)
+            with annutils.stdout_redirected():
+                get_pymol_image(acc, acc_length, positions, cmap, -max_fold_change, max_fold_change, peptide_protein_plot_path)
         try:
             img = plt.imread(peptide_protein_plot_path)
         except OSError as err:
@@ -1125,7 +1166,7 @@ def plot_protein_figure(pp, subframe, acc, col, merops, alphafold, level, temp_f
     plt.close()
 
 
-def plot_enrichment_figure(genes, col_name, organism='hsapiens'):
+def plot_enrichment_figure(genes, col_name, alpha, organism='hsapiens'):
 
     """
     Perform functional enrichment analysis with gprofiler and plot the results.
@@ -1146,10 +1187,10 @@ def plot_enrichment_figure(genes, col_name, organism='hsapiens'):
     enrichment_results = gp.profile(organism=organism, query=genes)
 
     # Filter significant results
-    significant_results = enrichment_results[enrichment_results['p_value'] < 0.05]
+    significant_results = enrichment_results[enrichment_results['p_value'] < alpha]
 
     if len(significant_results) == 0:
-        logging.info(f'No significant functional enrichment found for {col_name}')
+        logging.info(f'Significant peptides were present, but no significant functional enrichment found for {col_name}')
         return None
 
     # Pivot data for heatmap
@@ -1163,12 +1204,48 @@ def plot_enrichment_figure(genes, col_name, organism='hsapiens'):
     ax.set_title(col_name)
     plt.subplots_adjust(left=0.2, bottom=0.2)
     fig = ax.get_figure()
+    fig.show()
     plt.close()
 
     return fig
 
+def create_empty_pdf_page(text, fname):
+    firstPage = plt.figure(figsize=(20,2))
+    firstPage.clf()
+    firstPage.text(0.5,0.5,text, transform=firstPage.transFigure, size=24, ha="center")
+    plt.savefig(fname, format="pdf")
+    plt.close()
 
-def plot_pathway_figures(subframe, col_fold, condition_name, pp, cutoff):
+def get_enriched_pathways(accs, alpha):
+
+    """
+    Get enriched pathways from Reactome using reactome2py.
+    
+    Parameters:
+    accs (list): A list of protein accessions.
+    alpha (float, optional): The P-value cutoff for pathway enrichment.
+
+    Returns:
+    dict: A dictionary of enriched pathways and associated statistics.
+    """
+
+    # Use reactome2py to perform the analysis
+    query = ",".join(accs)
+    res = analysis.identifiers(ids=query)
+    
+    # Extract the token from the results
+    token = res.get('summary', {}).get('token', None)
+    if token is None:
+        raise ValueError("Could not retrieve analysis token from Reactome")
+    
+    # Use the token to get the detailed results
+    pathways = analysis.token(token, page_size='20', page='1', sort_by='ENTITIES_FDR', 
+                              order='ASC', resource='TOTAL', p_value=alpha, include_disease=True, 
+                              min_entities=None, max_entities=None)
+    
+    return pathways
+
+def plot_pathway_figures(subframe, col_fold, condition_name, pp, alpha):
 
     """
     Perform pathway enrichment analysis with Reactome and plot the results.
@@ -1177,7 +1254,7 @@ def plot_pathway_figures(subframe, col_fold, condition_name, pp, cutoff):
         subframe (DataFrame): DataFrame containing peptide information.
         col_fold (str): Column name representing fold changes in the DataFrame.
         pp (PdfPages object): Object to which the figure is saved.
-        cutoff (float): P-value cutoff for pathway enrichment. Default is 0.05.
+        alpha (float): P-value cutoff for pathway enrichment. Default is 0.05.
 
     Returns:
         None. The function saves a figure to the PDF file represented by `pp`.
@@ -1188,15 +1265,17 @@ def plot_pathway_figures(subframe, col_fold, condition_name, pp, cutoff):
 
     # Get the enriched pathways
     if list(accessions):
-        enriched_pathways = annutils.get_enriched_pathways(accessions, cutoff=cutoff)
+        enriched_pathways = get_enriched_pathways(accessions, alpha)
         pathways = enriched_pathways["pathways"]
 
         # Get the significant pathway identifiers
         significant_pathways_stIDs = [p["stId"] for p in pathways]
         if significant_pathways_stIDs == []:
             logging.info(f"No significantly enriched pathways found for {col_fold.split(':')[1].strip()}")
+            create_empty_pdf_page(f"No significantly enriched pathways found for {col_fold.split(':')[1].strip()}", pp)
         else:
-            logging.info(f"Significant pathways for {col_fold.split(':')[1].strip()}: {significant_pathways_stIDs}")
+            logging.info(f"{len(significant_pathways_stIDs)} significant pathways found for {col_fold.split(':')[1].strip()}. See log file or results for specifics.")
+            logging.debug(f"Significant pathways for {col_fold.split(':')[1].strip()}: {significant_pathways_stIDs}")
 
             # Plot the pathways
             with tqdm(enumerate(significant_pathways_stIDs), total=len(significant_pathways_stIDs), leave = 0) as t:
@@ -1220,10 +1299,12 @@ def plot_pathway_figures(subframe, col_fold, condition_name, pp, cutoff):
 
                     else:
                         logging.warning(f"No interaction map found for pathway: {pathway_stId}")
+                        create_empty_pdf_page(f"No interaction map found for pathway: {pathway_stId}", pp)
                 elapsed = t.format_dict['elapsed']
                 logging.info(f"Structure calculations took {annutils.format_seconds_to_time(elapsed)}")
     else:
-        logging.warning(f'No significant peptides with a cutoff value <{cutoff} for conditions {condition_name}. No pathway enrichment plots will be made for this comparison.')
+        logging.info(f'No significant peptides with a cutoff value <{alpha} for conditions {condition_name}. No pathway enrichment plots will be made for this comparison.')
+        create_empty_pdf_page(f'No significant peptides with a cutoff value <{alpha} for conditions {condition_name}. No pathway enrichment plots will be made for this comparison.', pp)
 
 
 def create_labels_colors(proteins, cleavages, subframe, accs, col_fold):

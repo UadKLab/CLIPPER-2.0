@@ -57,24 +57,24 @@ class Logo:
         """Create weighted matrix from normalized matrix."""
         return [{letter: 2 * (np.log(self.normalized_matrix[pos][letter] / self.background[letter]) / np.log(2)) if self.normalized_matrix[pos][letter] > 0 else 0 for letter in self.alphabet} for pos in range(self.length)]
 
-    def make_pssm(self):
+    def make_pssm(self, cleavagesitesize):
         """Returns figure with weighted PSSM."""
 
         weighted_matrix = self.make_weighted_matrix()
         df = pd.DataFrame.from_records(weighted_matrix)
         self.weighted_matrix = df
 
-        return self.make_logo(df, "weighted PSSM", "score")
-
-    def make_probability(self):
+        return self.make_logo(df, "weighted PSSM", "score", cleavagesitesize)
+    
+    def make_probability(self, cleavagesitesize):
         """Returns figure with frequency matrix."""
 
         df = pd.DataFrame.from_records(self.frequency_matrix)
         self.probability_matrix = df
 
-        return self.make_logo(df, "probability PPSM", "percentage")
-
-    def make_information(self):
+        return self.make_logo(df, "probability PPSM", "percentage", cleavagesitesize)
+    
+    def make_information(self, cleavagesitesize):
         """Returns figure with information content PSSM.
 
         Includes pseudocounts
@@ -89,9 +89,9 @@ class Logo:
 
         self.information_matrix = df
 
-        return self.make_logo(df, "information content, Shannon", "information (bits)")
+        return self.make_logo(df, "information content, Shannon", "information (bits)", cleavagesitesize)
 
-    def make_kullback(self):
+    def make_kullback(self, cleavagesitesize):
         """Returns figure with Kullback-Leibler information content PSSM.
 
         Includes pseudocounts
@@ -107,11 +107,10 @@ class Logo:
 
         self.kullback_matrix = df
 
-        return self.make_logo(df, "information content, Kullback", "information (bits)")
-
-    def make_logo(self, frame, title, ylabel):
+        return self.make_logo(df, "information content, Kullback", "information (bits)", cleavagesitesize)
+    
+    def make_logo(self, frame, title, ylabel, cleavagesitesize):
         """base class for all logo generation after dataframe caclucation."""
-
         fig, ax = plt.subplots(1, 1, figsize=[10, 6])
         logo = logomaker.Logo(
             frame,
@@ -140,11 +139,10 @@ class Logo:
                     if frame.loc[row][letter] > 0.75 * frame.loc[row].sum():
                         logo.highlight_position(p=row, color="gold", alpha=0.35)
 
-        # style using Axes methods
-        logo.ax.set_xticklabels(
-            x for x in ["P4", "P3", "P2", "P1", "P1'", "P2'", "P3'", "P4'"]
-        )
-        logo.ax.axvline(3.5, color="goldenrod", linewidth=2, linestyle="-")
+        xlabels = [x for x in [f"P{i}" for i in range(cleavagesitesize, 0, -1)] + [f"P{k}'" for k in range(1, cleavagesitesize + 1)]]
+        logo.ax.set_xticklabels(xlabels)
+        
+        logo.ax.axvline(cleavagesitesize - 0.5, color="goldenrod", linewidth=2, linestyle="-")
         logo.ax.set_xlim([-1, len(frame)])
 
         logo.ax.set_ylabel(ylabel)
@@ -153,16 +151,42 @@ class Logo:
         figure = logo.fig
         plt.close()
 
+        logo_heatmap(frame, xlabels, title)
+
         return figure
 
+def logo_heatmap(df, xlabels, title, axs = None):
+    import pandas as pd
+    import numpy as np
+    import matplotlib.pyplot as plt
+    import seaborn as sns
 
-def create_logo_helper(data, condition, pseudocounts, logo):
-    data = data["p4_p4prime"].astype(str)
+    # Create a sample dataframe
+
+    custom_x_labels = xlabels
+
+    # Normalize the dataframe values to range [0, 1]
+    df_normalized = (df - df.min().min()) / (df.max().max() - df.min().min())
+
+    # Create a heatmap using seaborn with transposed data
+    plt.figure(figsize=(6, 12))
+
+    # Set custom tick labels and center them
+    plt.xticks(ticks=np.arange(len(custom_x_labels)) + 0.5, labels=custom_x_labels, ha='center')
+    plt.yticks(ticks=np.arange(len(df.columns)) + 0.5, labels=df.columns, va='center')
+    plt.title(title)
+    sns.heatmap(df_normalized.T, cmap='RdBu_r', annot=False, cbar=False)
+    plt.show()
+
+    return plt
+
+def create_logo_helper(data, condition, pseudocounts, logo, cleavagesitesize):
+    data = data[f"p{cleavagesitesize}_p{cleavagesitesize}prime"].astype(str)
     filtered = data[~data.str.contains("-|Not found|nan|X|Z|U|B|J|O")]
     sequences = filtered.to_list()
 
     if len(sequences) > 0:
-        figures = generate_logos(sequences, condition, pseudocounts, logo)
+        figures = generate_logos(sequences, condition, pseudocounts, logo, cleavagesitesize)
         return figures
     else:
         logging.debug(
@@ -171,23 +195,22 @@ def create_logo_helper(data, condition, pseudocounts, logo):
         return None
 
 
-def generate_logos(sequences, condition, pseudocounts, logo):
+def generate_logos(sequences, condition, pseudocounts, logo, cleavagesitesize):
     """Generate different logos for the main class."""
 
     figures = {}
     pssm = Logo(sequences, condition, pseudocounts)
-
     if logo == "prob" or logo == "all":
-        pm_logo = pssm.make_probability()
+        pm_logo = pssm.make_probability(cleavagesitesize)
         figures["prob"] = pm_logo
     if logo == "pssm" or logo == "all":
-        pssm_logo = pssm.make_pssm()
+        pssm_logo = pssm.make_pssm(cleavagesitesize)
         figures["pssm"] = pssm_logo
     if logo == "shannon" or logo == "all":
-        info_logo = pssm.make_information()
+        info_logo = pssm.make_information(cleavagesitesize)
         figures["shannon"] = info_logo
     if logo == "kbl" or logo == "all":
-        kb_logo = pssm.make_kullback()
+        kb_logo = pssm.make_kullback(cleavagesitesize)
         figures["kbl"] = kb_logo
 
     return figures

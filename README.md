@@ -1,5 +1,5 @@
 # CLIPPER 2.0
-Advanced peptide-level annotation software
+Advanced peptide-level annotation software that can be used in conjunction with Proteome Discoverer, Spectromine/Spectronaut, and Fragpipe. We found MaxQuant to have certain limitations when it comes to degradomics data analysis, and therefore recommend Fragpipe as a free alternative.
 
 ---
 
@@ -15,6 +15,7 @@ Please note that CLIPPER 2.0 is currently in beta, and we welcome any bug report
   - https://www.anaconda.com/
   - https://docs.conda.io/en/latest/miniconda.html
 - [Graphvis](https://www.graphviz.org/download/), tested version is v7.1.0 (optional for enhanced layout options)
+- [alphafold] (https://alphafold.ebi.ac.uk/download#swissprot-section) Download Swiss-Prot (CIF files) from alphafold if you wish to use structure annotation or protein plotting features.
 
 ## Installation
 
@@ -148,6 +149,8 @@ Not extensively tested, this tool is still in beta version. Contact konka@dtu.dk
 ### Condition file (optional, but required for statistical tests and most visualizations)
 The condition file is a text file where each line represents a condition. The first string on the line is the name of the condition, and the rest of the strings are space-separated specific identifyers for the columns corresponding to that condition (An example is found in tests/...).
 
+**File name, condition name, and column names may not contain the characters “:” or “/“ or “.” as this MAY result in error.**
+
 Example of condition file format:
     
 ``` 
@@ -213,6 +216,8 @@ python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ../tests/cond_HUNTER.txt -cs
 ```bash
 python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ../tests/cond_HUNTER.txt -stat -spw -pf ../tests/proteases.txt
 ```
+
+If you wish to plot using specific filter requirements, we recommend performing an initial annotation on the full dataset without visualizations, filter the peptides based on your preference (that might be multiple testing corrected pvalues), delete the rows containing peptides which does not satisfy your criteria, and run the annotator again.
 
 We hope you find CLIPPER 2.0 useful for your research. Feel free to contact us for any questions, bug reports, or feature requests.
 
@@ -308,21 +313,34 @@ We hope you find CLIPPER 2.0 useful for your research. Feel free to contact us f
 - [x] Figure out way of pointing to Alphafold database that is device agnostic, and easy to change from user side
 - [x] Fix bug where model is not found in Alphafold database but still tries to read it
 - [x] Delete tmp folder in the cmd result folder
-- [ ] Add support for Fragpipe
-- [ ] Add support for MaxQuant
+- [x] Add pycache to git ignore
 - [x] Use Path instead of os.path.join
-- [ ] Show column patterns in command line
-- [ ] Make docs and examples for software export, column descriptions, etc.
+- [x] Show column patterns in command line
+- [x] Read email credentials from file to avoid hardcoding
+- [x] Add argument to restrict the number of cores used in threading
+- [x] Remove -sc argument
+- [x] Add argument to control p-value and fold cutoff for logos
+- [x] Add argument to control p-value and fold cutoff for volcano plots
+- [x] Provide ability to submit an already annotated file. Will skip annotation steps to speed up plotting.
+- [x] Remove Annotate function with no threading, as one can now just put threads = 1
+- [x] Add cleavage environment length as argument (right now is only 4)
+- [x] Use combinations instead of permutations with functional and pathway enrichment
+- [x] Add multiple testing correction option in visualizations
+- [x] Add ability to set cutoff for enrichment plots p-value
+- [x] Add ability to set global alpha value
+- [ ] Add heatmap with cleavage site specificity as an alternative to logos (in progress)
+- [ ] Add support for Fragpipe
+- [ ] Fix wrong warnings when not having -enr and -path arguments
+
+- [ ] Change condition naming back to "/" instaed of "vs."
+- [ ] Modify arguments in app (add -c, remove -sc, add -logo_fc, add -volcano_fc, more)
 - [ ] Change descriptions to reflect support for other software and new arguments
+- [ ] Make docs and examples for software export, column descriptions, etc.
+- [ ] Create github issues instead of writing things to do here
+
+- [ ] Change back log10 pval to -log10 pval in annotation dataframe (Aleksander: but it is not -log10?)
+
+Optional:
 - [ ] Add C-terminomics support
 - [ ] Add C-terminal exopeptidase activity check
-- [ ] Add heatmap with cleavage site specificity as an alternative to logos
-- [ ] Add pycache to git ignore
-- [ ] Create github issues instead of writing things to do here
-- [ ] Add cleavage environment length as argument (right now is only 4)
-- [ ] Change back log10 pval to -log10 pval in annotation dataframe
-- [ ] Add argument to control p-value and fold cutoff for logos
-- [ ] Add argument to control p-value and fold cutoff for volcano plots
-- [ ] Add argument to restrict the number of cores used in threading
-- [ ] Read email credentials from file to avoid hardcoding
 

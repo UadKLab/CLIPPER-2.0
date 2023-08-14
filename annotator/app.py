@@ -60,7 +60,6 @@ def get_new_job_details(jobid, upload_folder):
     """
     The form information is fetched and saved to the session dict.
     """
-    print("WOW I'm in getting a new job!")
     input_file = request.files['infile']
     cond_file = request.files['condfile']
     prot_file = request.files['protfile']
@@ -229,7 +228,7 @@ def create_arguments(jobid):
                     'noexo': session['form']['noexopeptidase'],
                     'nomerops': session['form']['nomerops'],
                     'calcstructure': session['form']['calcstructure'],
-                    'singlecpu': session['form']['singlecpu'],
+                    'threadingcores': session['form']['threadingcores'],
                     'conditionfile': cond_file,
                     'proteasefile': prot_file,
                     'stat': session['form']['statistic'], 
@@ -237,6 +236,7 @@ def create_arguments(jobid):
                     'significance': session['form']['significance'],
                     'visualize': session['form']['visualize'],
                     'logo': session['form']['logo'],
+                    'logo'
                     'pseudocounts': session['form']['pseudocounts'],
                     'cleavagevis': session['form']['cleavagevis'],
                     'enrichment': session['form']['enrichment'],

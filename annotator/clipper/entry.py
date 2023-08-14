@@ -20,6 +20,8 @@ class Entry:
         self.record: Optional[SwissProt.Record] = None
         self.annot: Dict[str, str] = {}
         self.missing_uniprot_records = []
+        self.warnings = {'retrieval': [],
+                         'peptides not found': []}
 
     def get_record(self, sleep_time: float = 0.5) -> None:
         time.sleep(sleep_time)
@@ -35,7 +37,8 @@ class Entry:
             except Exception as e:
                 if tries == 4:
                     tries += 1
-                    logging.warning(f"Error retrieving Uniprot record for {self.acc}: {str(e)}")
+                    #logging.warning(f"Error retrieving Uniprot record for {self.acc}: {str(e)}")
+                    self.warnings['retrieval'].append(f"Error retrieving Uniprot record for {self.acc}: {str(e)}")
                     return None
                 else:
                     tries += 1
@@ -62,7 +65,7 @@ class Entry:
         names = [ref[2] for ref in self.record.cross_references if ref[0] == "GO"]
         return codes, names
 
-    def parse_cleavage(self) -> None:
+    def parse_cleavage(self, cleavagesitesize) -> None:
         if not self.record:
             return
 
@@ -70,40 +73,41 @@ class Entry:
         match = full_sequence.find(self.seq)
 
         if match == -1:
-            self._handle_peptide_not_found()
+            self._handle_peptide_not_found(cleavagesitesize)
         else:
-            self._handle_peptide_found(match, full_sequence)
+            self._handle_peptide_found(match, full_sequence, cleavagesitesize)
 
-    def _handle_peptide_not_found(self) -> None:
+    def _handle_peptide_not_found(self, cleavagesitesize) -> None:
         
         self.annot["nterm_annot"] = "Not found"
         self.annot["start_pep"] = "Not found"
         self.annot["end_pep"] = "Not found"
         self.annot["cleavage_site"] = "Not found"
-        self.annot["p4_p4prime"] = "Not found"
+        self.annot[f"p{cleavagesitesize}_p{cleavagesitesize}prime"] = "Not found"
         self.cleavage_site = None
-        logging.warning(f"Peptide {self.seq} not found in protein sequence for {self.acc}.")
+        self.warnings['peptides not found'].append(f"Peptide {self.seq} not found in protein sequence for {self.acc}.")
 
-    def _handle_peptide_found(self, match: int, full_sequence: str) -> None:
+    def _handle_peptide_found(self, match: int, full_sequence: str, cleavagesitesize: int) -> None:
         
         pos = match
         self.cleavage_site = pos
         self.annot["p1_position"] = pos
 
         # generate cleavage site p4-p4', pad if not enough amino acids before cleavage
-        if pos > 3:
-            preseq = full_sequence[pos - 4 : pos]
-            self.annot["p4_p4prime"] = preseq + self.seq[:4]
+        if pos > cleavagesitesize - 1:
+            preseq = full_sequence[pos - cleavagesitesize : pos]
+            self.annot[f"p{cleavagesitesize}_p{cleavagesitesize}prime"] = preseq + self.seq[:cleavagesitesize]
         else:
             preseq = full_sequence[:pos]
-            padding = "-" * (4 - pos)
-            self.annot["p4_p4prime"] = padding + preseq + self.seq[:4]
+            padding = "-" * (cleavagesitesize - pos)
+            self.annot[f"p{cleavagesitesize}_p{cleavagesitesize}prime"] = padding + preseq + self.seq[:cleavagesitesize]
 
         self.preseq = full_sequence[:pos]
 
         self.annot["start_pep"] = pos + 1
         self.annot["end_pep"] = pos + len(self.seq)
         self.annot["cleavage_site"] = f"{preseq}({pos}).({pos+1}){self.seq}"
+        self.annot["acc_length"] = len(full_sequence)
 
         # for now, only one signal peptide and propeptide are considered
         # if the proteins has more than one propeptides, the second is ignored

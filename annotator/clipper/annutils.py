@@ -1,5 +1,6 @@
 import logging
 import os
+import sys
 import re
 import string
 import gzip
@@ -7,6 +8,7 @@ import tempfile
 import platform
 
 from argparse import ArgumentParser, HelpFormatter
+from contextlib import contextmanager
 from datetime import datetime
 from pathlib import Path
 
@@ -19,13 +21,10 @@ import pymol
 from reactome2py import analysis, content
 import networkx as nx
 
-import subprocess
-
 if platform.system() == 'Darwin':
-    alphafold_folder_name = r"/Volumes/Bio-Temp/Protease-Systems-Biology-temp/Kostas/CLIPPER/Datasets/Alphafold"
+    alphafold_folder_name = r"/Volumes/Bio-1/PSBT-g-Protease-Systems-Biology/Kostas/CLIPPER/Datasets/Alphafold"
 else:
     alphafold_folder_name = r"W:\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
-
 
 def format_seconds_to_time(s):
     hours, remainder = divmod(s, 3600)
@@ -84,10 +83,6 @@ def initialize_logger(logfile):
     print("******************  Welcome to CLIPPER 2.0, a degradomics data annotator  *****************")
     print("*******************************************************************************************\n")       
 
-
-
-
-
     return logger
 
 def initialize_arguments():
@@ -113,19 +108,50 @@ def initialize_arguments():
         dest="infile",
         type=str,
         required=True,
-        help="Input peptide group result file",
+        help="Input peptide group result file.",
     )
 
     parser.add_argument(
-    "-it",
-    "--infiletype",
-    default="infer",
-    action="store",
-    dest="infile_type",
-    type=str,
-    help="File type of input \
-                        file. Accepted values: excel/csv/infer",
+        "-it",
+        "--infiletype",
+        default="infer",
+        action="store",
+        dest="infile_type",
+        type=str,
+        help="File type of input file. Accepted values: [excel|csv|infer].",
     )
+
+    parser.add_argument(
+        "-pa",
+        "--preannotated",
+        action="store_true",
+        dest="preannotated",
+        help="Flag, if given assume that file is preannotated, and will not annotate from uniprot, proteinatlas, or do exopeptidasecheck.",
+    )
+
+    parser.add_argument(
+        "-cf",
+        "--conditionfile",
+        action="store",
+        type=str,
+        default=None,
+        dest="conditionfile",
+        help="A .txt file which maps labels to conditions. Adds columns for fold change for each pairwise \
+        comparison, average and CV of each condition to the dataframe. Each line must \
+        start with the condition name followed by the channels used, separated by a \
+        single space (see example files for examples).",
+    )
+
+    parser.add_argument(
+        "-a",
+        "--alpha",
+        action="store",
+        dest="alpha",
+        default=0.05,
+        type=float,
+        help="Float that sets the alpha value to be used for all relevant statistical thresholds and significance measurements. Default: 0.05.",
+    )
+
 
     parser.add_argument(
         "-sw",
@@ -135,7 +161,7 @@ def initialize_arguments():
         dest="software",
         type=str,
         help="Software the data were \
-                            analyzed with. Accepted values: pd/sm/infer",
+                            analyzed with. Accepted values: [pd|sm|infer].",
     )
 
     parser.add_argument(
@@ -146,7 +172,7 @@ def initialize_arguments():
         default="all",
         type=str,
         help="Filtering on specified level of N-termini,\
-                or labelled N-termini. Accepted values: all/nterm/quant.",
+                or labelled N-termini. Accepted values: [all|nterm|quant]. Default: all.",
     )
 
     parser.add_argument(
@@ -154,7 +180,7 @@ def initialize_arguments():
         "--dropna",
         action="store_true",
         dest="dropna",
-        help="Flag to indicate whether to filter for empty quant rows",
+        help="Flag to indicate whether to filter for empty quant rows.",
     )
 
     parser.add_argument(
@@ -162,7 +188,7 @@ def initialize_arguments():
         "--fillna",
         action="store",
         dest="fillna",
-        help="Value to fill empty quant rows or cells with",
+        help="Value to fill empty quant rows or cells with (must be a float). Must be an integer or float.",
     )
 
     parser.add_argument(
@@ -172,8 +198,8 @@ def initialize_arguments():
         dest="sleeptime",
         default=0.2,
         type=float,
-        help="Float that determine intervals between Biopython \
-                            queries to Uniprot",
+        help="Float that determine interval in seconds between Biopython \
+        queries to Uniprot. Default: 0.2.",
     )
 
     parser.add_argument(
@@ -181,7 +207,7 @@ def initialize_arguments():
         "--noexo",
         action="store_true",
         dest="noexo",
-        help="Do not check for dipeptidase or aminopeptidase activity",
+        help="Flag, if given do not check for dipeptidase or aminopeptidase activity.",
     )
 
     parser.add_argument(
@@ -189,39 +215,28 @@ def initialize_arguments():
         "--nomerops",
         action="store_true",
         dest="nomerops",
-        help="Do not check for cleavage site annotation in MEROPS database",
+        help="Flag, if given do not check for cleavage site annotation in MEROPS database.",
     )
 
     parser.add_argument(
         "-cs",
         "--calcstructure",
         type=str,
+        dest="calcstructure",
         default=None,
         action="store",
         help="Annotate cleavage site solvent accessibility and secondary structure \
-            for the significant peptides in the dataset using Pymol and Alphafold models \
-                Accepted values: all/sig.",
+        for the significant peptides in the dataset using Pymol and Alphafold models \
+        Accepted values: [all|sig].",
     )
 
     parser.add_argument(
-        "-sc",
-        "--singlecpu",
-        action="store_true",
-        dest="singlecpu",
-        help="Use a single process instead of threading for annotation",
-    )
-
-    parser.add_argument(
-        "-cf",
-        "--conditionfile",
+        "-c",
+        "--cores",
         action="store",
-        type=str,
-        default=None,
-        dest="conditionfile",
-        help="Map labels to conditions. Adds columns for fold change for each pairwise \
-        comparison, average and CV of each condition to the dataframe. Each line must \
-        start with the condition name followed by the channels used, separated by a \
-        single space",
+        dest="threadingcores",
+        default=os.cpu_count(),
+        help="integer, Allows specifying the number of CPU cores used for gathering information from Uniprot. Accepted values are 'max' (using all cores) or an integer indicating the intended number of cores to be used. Default is 'max'. The speed of Uniprot information fetching scales linearly with the number of cores used.",
     )
 
     parser.add_argument(
@@ -229,8 +244,8 @@ def initialize_arguments():
         "--statistic",
         action="store_true",
         dest="stat",
-        help="Performs statistical significance testing. Student T-test for two \
-        conditions, ANOVA from three or more",
+        help="Flag, if given perform statistical significance testing. Student T-test for two \
+        conditions, ANOVA from three or more. In addition it provides multiple testing corrected p-values using the Benjamini/Hochberg method."
     )
 
     parser.add_argument(
@@ -238,7 +253,7 @@ def initialize_arguments():
         "--stat_pairwise",
         action="store_true",
         dest="stat_pairwise",
-        help="Performs statistical significance t-test for all conditions pairwise",
+        help="Flag, if given perform statistical significance t-test for all conditions pairwise.",
     )
 
     parser.add_argument(
@@ -250,7 +265,25 @@ def initialize_arguments():
         dest="significance",
         help="Performs fold change distribution significance check \
                     for all conditions pairwise \
-                    Accepted values: all/nterm.",
+                    Accepted values: [all|nterm].",
+    )
+
+    parser.add_argument(
+        "-mt",
+        "--multipletesting",
+        action="store_true",
+        dest="multipletesting",
+        help="Flag, if given multiple testing corrected values are used to determine significance for all relevant procedures using the method defined in -mtmethod.",
+    )
+
+    parser.add_argument(
+        "-mtmethod",
+        "--multipletestingmethod",
+        type=str,
+        default='fdr_bh',
+        action="store",
+        dest="multipletestingmethod",
+        help="Sets the multiple testing method to be used. Accepted values: [None|bonferroni|sidak|holm-sidak|holm|simes-hochberg|hommel|fdr_bh|fdr_by|fdr_tsbh|fdr_tsbky]. For clarification see here: https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html. Default: fdr_bh.",
     )
 
     parser.add_argument(
@@ -258,7 +291,7 @@ def initialize_arguments():
         "--visualize",
         action="store_true",
         dest="visualize",
-        help="Draws various plots based on conditions passed from input and statistical tests",
+        help="Flag, if given draws various plots based on conditions passed from input and statistical tests",
     )
 
     parser.add_argument(
@@ -267,7 +300,38 @@ def initialize_arguments():
         action="store",
         dest="logo",
         default=None,
-        help="Draws various logo plots based on all peptides or condition significant peptides. Values supported: [all|prob|pssm|shannon|kbl]",
+        help="Draws various logo plots based on all peptides or condition significant peptides. Values supported: [all|prob|pssm|shannon|kbl].",
+    )
+
+    parser.add_argument(
+        "-logo_fc",
+        "--logofoldchange",
+        type=float,
+        action="store",
+        dest="logo_fc",
+        default=3,
+        help="Float, sets the peptide abundance fold change between conditions which is considered for the logo generation. Example: -logo_fc 3 --> Filters peptides with log2 fold change > 3 (high logo) and < 3 (low logo).  Requires that -logo and -stat is given. Default: 3.",
+    )
+
+    parser.add_argument(
+        "-cle",
+        "--cleavageenvironment",
+        type=int,
+        action="store",
+        dest="cleavagesitesize",
+        default=4,
+        help="Integer, size of the cleavage environment on both sides of the cleavage site. Default: 4.",
+    )
+
+    parser.add_argument(
+        "-vc_fc",
+        "--volcanofoldchange",
+        nargs=2,
+        type=float,
+        action="store",
+        dest="volcano_foldchange",
+        default=1.5,
+        help="Float, sets the cutoff value for fold change in volcano plots. Example: -vc_fc 1.5, which colors peptides with log2 fold change > 1.5 and < -1.5. P-value threshold is set by -a. Default: 1.5.",
     )
 
     parser.add_argument(
@@ -276,7 +340,7 @@ def initialize_arguments():
         action="store",
         dest="pseudocounts",
         default=True,
-        help="Add pseudocounts to normalized matrix calculation",
+        help="Flag, if given add pseudocounts to normalized matrix calculation for logo generation.",
     )
 
     parser.add_argument(
@@ -287,8 +351,8 @@ def initialize_arguments():
         action="store",
         dest="cleavagevis",
         help="Whether to visualize significant cleavages in \
-                    sequence or both structure and sequence \
-                    Accepted values: seq/both.",
+                    sequence or both structure and sequence. For a complete dataset this can take a VERY long time, especially if set to 'both'. When using this argument please consider only adding proteins/peptides to the input file which you are really interested in (might be based on high fold change, pvalue, or prior knowledge). \
+                    Accepted values: [None|seq|both]. Default: None.",
     )
 
     parser.add_argument(
@@ -296,8 +360,8 @@ def initialize_arguments():
         "--enrichment",
         action="store_true",
         dest="enrichment",
-        help="Draws heatmap plots based on conditions passed from input and statistical tests \
-                    for enrichment of GO terms and KEGG pathways with the gProfiler API",
+        help="Flag, if given draws heatmap plots based on conditions passed from input and statistical tests \
+                    for enrichment of GO terms and KEGG pathways with the gProfiler API.",
     )
 
     parser.add_argument(
@@ -305,8 +369,8 @@ def initialize_arguments():
         "--pathway",
         action="store_true",
         dest="pathway",
-        help="Draws pathway plots based on conditions passed from input and statistical tests \
-            and maps detected proteins and peptides",
+        help="Flag, if given draws pathway plots based on conditions passed from input and statistical tests \
+            and maps detected proteins and peptides.",
     )
 
     parser.add_argument(
@@ -316,7 +380,7 @@ def initialize_arguments():
         type=str,
         default=None,
         dest="proteasefile",
-        help="Protease MEROPS identifiers to predict activity of. Using weighted PSSM",
+        help="A file with protease MEROPS identifiers to predict activity of. Using weighted PSSM. See examples for examples.",
     )
 
     parser.add_argument(
@@ -326,7 +390,7 @@ def initialize_arguments():
         dest="output_name",
         type=str,
         default=None,
-        help="File name of output folder and annotated output file",
+        help="File name of output folder and annotated output file. Defaults to a timestamp for the initialization of Clipper 2.0.",
     )
 
     parser.add_argument(
@@ -337,7 +401,7 @@ def initialize_arguments():
         type=str,
         default="xlsx",
         help="File type of output \
-                            file Accepted values: xlsx/csv/tsv/pkl/json",
+                            file Accepted values: [xlsx|csv|tsv|pkl|json].",
     )
 
     parser.add_argument(
@@ -345,18 +409,15 @@ def initialize_arguments():
         "--separate",
         action="store_true",
         dest="separate",
-        help="Whether to merge or keep \
-                            annotation as a separate file. False by default",
+        help="Flag, if given the output file will not contain the original columns of the inputfile (separate original and annotated columns).",
     )
 
     parser.add_argument(
         "-pv",
         "--pymol_verbose",
-        action="store",
+        action="store_true",
         dest="pymol_verbose",
-        type=bool,
-        default=False,
-        help="Whether to output all pymol warnings/information to terminal during run or keep quiet.",
+        help="Flag, if given the commandline will display info messages from pymol when used. Looks pretty ugly and unnecessary in this context, so muted by default",
     )
 
     return vars(parser.parse_args())
@@ -391,6 +452,84 @@ def initialize(arguments):
 
     arguments["timestamp"] = timestamp
     arguments["logfile"] = logfile
+
+    args_ok = True
+    warnings = []
+
+    if arguments['stat'] and not arguments["conditionfile"]:
+        warning = 'Condition statistics was requested (-stat argument was supplied) but no condition file is given. Stats cannot be done, please add a condition file for propper function.'
+        warnings.append(warning)
+        args_ok = False
+
+    if arguments["conditionfile"] and not arguments["stat"]:
+        warning = 'You have supplied a condition file, but are not doing condition specific statistics. Consider adding the -stat flag to your query!'
+        warnings.append(warning)
+        args_ok = False
+    
+    if arguments["calcstructure"] == "sig" and not arguments["stat"]:
+        warning = 'Calculating structure properties on significant peptides is not possible without doing statistics. Please add the -stat flag to the query!'
+        warnings.append(warning)
+        args_ok = False
+
+    if arguments["pathway"] and not arguments["stat"]:
+        warning = 'Pathway analysis cannot be performed as the -stat flag is not given. Please rerun your query with the -stat flag for pathway plots'
+        warnings.append(warning)
+        args_ok = False
+
+    if arguments["stat"] and arguments["pathway"] and not arguments["stat_pairwise"]:
+        warning = 'If you have provided only 2 conditions ignore this message. If you have provided more than 2 conditions, please add the -spw flag (for pairwise statistics) to your query in order to do pathway analysis!'
+        warnings.append(warning)
+        args_ok = False
+
+    if arguments["enrichment"] and not arguments["stat"]:
+        warning = 'Functional enrichment analysis cannot be performed as the -stat flag is not given. Please rerun your query with the -stat flag for enrichment plots'
+        warnings.append(warning)
+        args_ok = False
+
+    if arguments["logo_fc"] and arguments["logo"] and not arguments["stat"]:
+        warning = '-Logo_fc only has an effect if both -logo and -stat are given'
+        warnings.append(warning)
+        args_ok = False
+
+    if arguments["cleavagevis"]:
+        warning = 'Cleavage visualization takes a VERY long time on full datasets (in our experience around 0.5-5 seconds per peptide depending on your computer), especially when set to "both". Please consider using this argument only with a filtered input list containing only the peptides you wish to have plotted on a protein structure.'
+        warnings.append(warning)
+        args_ok = False
+
+    if arguments["threadingcores"]:
+        max_cores= os.cpu_count()
+        cores = arguments["threadingcores"]
+
+        if cores == 'max':
+            cores = max_cores
+        else:
+            try:
+                cores = int(cores)
+                if cores > max_cores:
+                    warning = f"The number of cores provided to --cores was {cores}, however only {max_cores} cores were detected. Falling back to using {max_cores} cores."
+                    warnings.append(warning)
+                    args_ok = False    
+                    cores = max_cores
+            except Exception as err:
+                warning = f"An input error was registered related to the argument --cores (set as {cores}). {max_cores} cores were detected. Likely the argument is not an integer. Python error: {err}"
+                warnings.append(warning)
+                warning = f"Falling back to using {max_cores} cores for further processing"
+                warnings.append(warning)
+                args_ok = False    
+                cores = max_cores
+        arguments["threadingcores"] = cores
+
+    if not args_ok:
+        print("\n\n")
+        print("".center(91, '*'))
+        print("  ARGUMENT WARNINGS  ".center(91, '*'))
+        print("".center(91, '*'))
+        print("\n\n")
+        for warning in warnings:
+            logging.warning(warning)
+        print("\n\n")
+        print("".center(91, '*'))
+        print("\n\n")
 
     return arguments
 
@@ -484,10 +623,10 @@ def read_alphafold_accessions(accession_file: str):
     list: List of accessions.
     """
 
-    logging.info(" - Reading available AlphaFold models...")
+    logging.info("Reading available AlphaFold models...")
     with open(accession_file, "r") as f:
         accessions = f.read().splitlines()
-    logging.info(f" - Read available AlphaFold models.")
+    logging.info(f"Read available AlphaFold models.")
 
     return accessions
 
@@ -526,6 +665,28 @@ def calculate_structure_properties(acc, cleavage_sites_indices, structure_proper
 
     return structure_properties
 
+@contextmanager
+def stdout_redirected(to=os.devnull):
+    '''
+    Used to redirect stdout while running pymol commands. This removes the info messages from pymol in the terminal which obstructs tqdm bars.
+    '''
+    fd = sys.stdout.fileno()
+
+    def _redirect_stdout(to):
+        sys.stdout.close() # + implicit flush()
+        os.dup2(to.fileno(), fd) # fd writes to 'to' file
+        sys.stdout = os.fdopen(fd, 'w') # Python writes to fd
+
+    with os.fdopen(os.dup(fd), 'w') as old_stdout:
+        with open(to, 'w') as file:
+            _redirect_stdout(to=file)
+        try:
+            yield # allow code to be run with the redirected stdout
+        finally:
+            _redirect_stdout(to=old_stdout) # restore stdout.
+                                            # buffering and flags such as
+                                            # CLOEXEC may be different
+
 def get_structure_properties(acc_cleavage_sites, tmp_output_path, pymol_verbose, available_models=None):
 
     """
@@ -541,7 +702,7 @@ def get_structure_properties(acc_cleavage_sites, tmp_output_path, pymol_verbose,
     or None if the model is not available.
     """
 
-    logging.info(" - Calculating surface area and secondary structure...")
+    logging.info("Calculating surface area and secondary structure...")
 
     structure_properties = {}
 
@@ -551,29 +712,31 @@ def get_structure_properties(acc_cleavage_sites, tmp_output_path, pymol_verbose,
         f.write("{}")
 
     # if all pymol messages and output should be included in terminal set pymol_verbose = True
-    if pymol_verbose:
-        with tqdm(acc_cleavage_sites.items(), leave = 0) as t:
-            for acc, cleavage_sites_indices in t:
-                if available_models and acc in available_models:
+    warnings = []
+    with tqdm(acc_cleavage_sites.items(), leave = 0) as t:
+        for acc, cleavage_sites_indices in t:
+            if available_models and acc in available_models:
+                if pymol_verbose:
                     structure_properties = calculate_structure_properties(acc, cleavage_sites_indices, structure_properties, alphafold_folder_name)
                 else:
-                    logging.warning(f"Model for {acc} not available")
-            with open(tmp_output_path, 'w') as f:
-                f.write(str(structure_properties))
-            elapsed = t.format_dict['elapsed']
-            logging.info(f"Structure calculations took {format_seconds_to_time(elapsed)}")
+                    with stdout_redirected():
+                        structure_properties = calculate_structure_properties(acc, cleavage_sites_indices, structure_properties, alphafold_folder_name)
+            else:
+                warnings.append(f"Model for {acc} not available")
+        with open(tmp_output_path, 'w') as f:
+            f.write(str(structure_properties))
+        elapsed = t.format_dict['elapsed']
+        logging.info(f"Structure calculations took {format_seconds_to_time(elapsed)}")
 
-    # otherwise run the function as a subprocess to choke the otherwise very persistent output
-    else:
-        with tqdm(acc_cleavage_sites.items(), leave = 0) as t:
-            for acc, cleavage_sites_indices in t:
-                if available_models and acc in available_models:
-                    subprocess.run(['python', 'pymol_subprocess_ss.py', '-tf', str(tmp_output_path), '-acc', str(acc), '-af', str(alphafold_folder_name), '-csi', str(cleavage_sites_indices)], stdout=subprocess.DEVNULL)
-                else:
-                    logging.warning(f"Model for {acc} not available")
-            elapsed = t.format_dict['elapsed']
-            logging.info(f"Structure calculations took {format_seconds_to_time(elapsed)}")
+
+    if warnings != []:
+        logging.warning("Structure calculations were not possible for selected peptides, as alphafold models were not available")
+        for warning in warnings:
+            logging.warning(f'  - {warning}')
+
+
     
+
     return structure_properties
 
 
@@ -596,19 +759,19 @@ def map_accessions(accessions):
     human_accessions = [entry['mapsTo'][0]['identifier'] for entry in mapping if entry['mapsTo']]
 
     return human_accessions
-
+"""
 def get_enriched_pathways(accs, cutoff=0.05):
 
-    """
-    Get enriched pathways from Reactome using reactome2py.
-    
-    Parameters:
-    accs (list): A list of protein accessions.
-    cutoff (float, optional): The P-value cutoff for pathway enrichment.
-
-    Returns:
-    dict: A dictionary of enriched pathways and associated statistics.
-    """
+#    ""
+#    Get enriched pathways from Reactome using reactome2py.
+#    
+#    Parameters:
+#    accs (list): A list of protein accessions.
+#    cutoff (float, optional): The P-value cutoff for pathway enrichment.
+#
+#    Returns:
+#    dict: A dictionary of enriched pathways and associated statistics.
+#    ""
 
     # Use reactome2py to perform the analysis
     query = ",".join(accs)
@@ -625,6 +788,7 @@ def get_enriched_pathways(accs, cutoff=0.05):
                               min_entities=None, max_entities=None)
     
     return pathways
+"""
 
 def get_proteins_and_interactors(pathway_id):
 

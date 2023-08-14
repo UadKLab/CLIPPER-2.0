@@ -1,0 +1,146 @@
+2023-08-01 14:39:49,200 [INFO] 
+2023-08-01 14:39:49,200 [INFO] Annotator started at 2023-08-01 14:39:49.
+2023-08-01 14:39:49,201 [DEBUG] Arguments: {'infile': '../tests/Mahima_DIA_TAILS_small.xlsx', 'infile_type': 'infer', 'preannotated': False, 'conditionfile': '../tests/Mahima_DIA_TAILS_cond.txt', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': 'sig', 'threadingcores': 'max', 'stat': True, 'stat_pairwise': True, 'significance': 'all', 'multipletesting': False, 'visualize': True, 'logo': 'all', 'logo_fc': [3, 1.3], 'cleavagesitesize': 4, 'volcanocutoff': [1.0, 0.5], 'pseudocounts': True, 'cleavagevis': None, 'enrichment': True, 'pathway': True, 'proteasefile': None, 'output_name': None, 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False}
+2023-08-01 14:39:49,201 [INFO] Startup complete!
+
+2023-08-01 14:39:49,201 [INFO] Reading file...
+2023-08-01 14:39:49,201 [INFO] Input is excel
+2023-08-01 14:39:49,261 [INFO] Read dataframe.
+2023-08-01 14:39:49,261 [INFO] Read input with 62 peptides.
+2023-08-01 14:39:49,261 [INFO] Input software is sm
+2023-08-01 14:39:49,262 [DEBUG] Converted values in [1] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT1_UT_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,262 [DEBUG] Converted values in [2] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT1_TNP_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,263 [DEBUG] Converted values in [3] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT3_UT_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,263 [DEBUG] Converted values in [4] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT3_TNP_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,263 [DEBUG] Converted values in [5] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO2_UT_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,264 [DEBUG] Converted values in [6] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO2_TNP_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,264 [DEBUG] Converted values in [7] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO3_UT_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,265 [DEBUG] Converted values in [8] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO3_TNP_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,265 [DEBUG] Converted values in [9] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT3_TNP_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,266 [DEBUG] Converted values in [10] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT3_UT_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,266 [DEBUG] Converted values in [11] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT1_TNP_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,266 [DEBUG] Converted values in [12] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_WT1_UT_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,267 [DEBUG] Converted values in [13] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO2_TNP_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,267 [DEBUG] Converted values in [14] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO2_UT_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,268 [DEBUG] Converted values in [15] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO3_TNP_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,268 [DEBUG] Converted values in [16] 20230525_EV_EVO_KK_FAIMS_1CV_Endurance_15SPD_1655_Mahima_TAILS_KO3_UT_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,268 [DEBUG] Converted values in [17] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_PO_30_WT2_TNP_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,269 [DEBUG] Converted values in [18] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_NPO_30_WT2_TNP_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,269 [DEBUG] Converted values in [19] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_PO_27_WT2_UT_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,270 [DEBUG] Converted values in [20] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_NPO_27_WT2_UT_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,270 [DEBUG] Converted values in [21] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_PO_5_KO1_TNP_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,270 [DEBUG] Converted values in [22] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_NPO_5_KO1_TNP_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,271 [DEBUG] Converted values in [23] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_PO_2_KO1_UT_PO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,271 [DEBUG] Converted values in [24] 20230208_EV_EVO_EM_FAIMS_1CV_standard_15SPD_Mahima__DIA_TAILS_NPO_2_KO1_UT_NPO.raw.EG.TotalQuantity (Settings) to numeric type
+2023-08-01 14:39:49,271 [INFO] Finished converting quantification values to floats.
+2023-08-01 14:39:49,272 [DEBUG] Patterns are: {'acc': 'PG.ProteinAccessions', 'seq': 'PEP.StrippedSequence', 'amino': 'B|J|O|U|X|Z', 'mod': 'EG.PrecursorId', 'quant': 'EG\\.TotalQuantity', 'label': 'Dimeth', 'nterm': 'DimethNter0', 'nterm_label': '\\[DimethNter0\\]', 'lysine_label': 'K\\[DimethLys0\\]'}
+2023-08-01 14:39:49,272 [INFO] Successfully generated indexing patterns for sm input. See logfile for the found patterns.
+2023-08-01 14:39:49,272 [INFO] Format check complete.
+
+2023-08-01 14:39:49,272 [INFO] Initialization complete!
+
+2023-08-01 14:39:49,272 [INFO] Filtering and sanitizing input...
+2023-08-01 14:39:49,273 [WARNING] There were rows with no accession numbers in the loaded file, please check the log file for further information
+2023-08-01 14:39:49,273 [DEBUG] Empty accession rows: 52
+2023-08-01 14:39:49,273 [DEBUG] Empty accession rows: 53
+2023-08-01 14:39:49,273 [DEBUG] Empty accession rows: 54
+2023-08-01 14:39:49,273 [DEBUG] Empty accession rows: 55
+2023-08-01 14:39:49,273 [DEBUG] Empty accession rows: 56
+2023-08-01 14:39:49,273 [DEBUG] Empty accession rows: 57
+2023-08-01 14:39:49,273 [DEBUG] Empty accession rows: 58
+2023-08-01 14:39:49,273 [DEBUG] Empty accession rows: 59
+2023-08-01 14:39:49,273 [DEBUG] Empty accession rows: 60
+2023-08-01 14:39:49,273 [DEBUG] Empty accession rows: 61
+2023-08-01 14:39:49,273 [DEBUG] Empty accession rows: 62
+2023-08-01 14:39:49,273 [DEBUG] Starting annotation of peptides...
+2023-08-01 14:39:49,274 [INFO] Initialized annotation dataframe.
+
+2023-08-01 14:39:49,274 [INFO] Reading MEROPS data..
+2023-08-01 14:39:49,831 [INFO] Read MEROPS data
+2023-08-01 14:39:49,831 [INFO] Fetching information from Uniprot...
+2023-08-01 14:39:55,514 [INFO] Gathering info from Uniprot took 00:00:05 hh:mm:ss
+2023-08-01 14:39:55,514 [INFO] Finished annotation of peptides.
+
+2023-08-01 14:39:55,514 [INFO] Starting annotation of Protein Atlas data...
+2023-08-01 14:39:55,514 [INFO] Reading Protein Atlas data..
+2023-08-01 14:39:55,779 [INFO] Read Protein Atlas data.
+2023-08-01 14:39:55,782 [WARNING] Duplicates found in 'Uniprot' column of 'protein_atlas_sub'. Dropping duplicates.
+2023-08-01 14:39:55,787 [INFO] Finished annotation of Protein Atlas data.
+
+2023-08-01 14:39:55,787 [INFO] Starting proteoform check...
+2023-08-01 14:39:55,787 [INFO] Finished proteoform check.
+2023-08-01 14:39:55,787 [INFO] Starting exopeptidase activity check...
+2023-08-01 14:39:55,791 [DEBUG] 1 RFDTAFFLCCLR FDTAFFLCCLR
+2023-08-01 14:39:55,793 [INFO] Exopeptidase activity check took 00:00:00 hh:mm:ss
+2023-08-01 14:39:55,793 [INFO] Exopeptidase activity was found, check logfile or output for more details on exact peptide sequences
+2023-08-01 14:39:55,793 [INFO] Finished exopeptidase activity check.
+2023-08-01 14:39:55,793 [INFO] Parsed condition file
+2023-08-01 14:39:55,793 [INFO] Performing general condition statistics annotation...
+2023-08-01 14:39:55,812 [INFO] Finished general condition statistics annotation.
+2023-08-01 14:39:55,812 [INFO] Performing statistical testing...
+2023-08-01 14:39:55,821 [INFO] Finished statistical testing.
+2023-08-01 14:39:55,822 [DEBUG] Corrected p-values for Corrected Independent T-test p-value: WT_untreated vs. WT_Treated using fdr_bh method
+2023-08-01 14:39:55,822 [DEBUG] Corrected p-values for Corrected Independent T-test p-value: WT_untreated vs. KO_untreated using fdr_bh method
+2023-08-01 14:39:55,822 [DEBUG] Corrected p-values for Corrected Independent T-test p-value: WT_untreated vs. KO_treated using fdr_bh method
+2023-08-01 14:39:55,822 [DEBUG] Corrected p-values for Corrected Independent T-test p-value: WT_Treated vs. WT_untreated using fdr_bh method
+2023-08-01 14:39:55,822 [DEBUG] Corrected p-values for Corrected Independent T-test p-value: WT_Treated vs. KO_untreated using fdr_bh method
+2023-08-01 14:39:55,822 [DEBUG] Corrected p-values for Corrected Independent T-test p-value: WT_Treated vs. KO_treated using fdr_bh method
+2023-08-01 14:39:55,823 [DEBUG] Corrected p-values for Corrected Independent T-test p-value: KO_untreated vs. WT_untreated using fdr_bh method
+2023-08-01 14:39:55,823 [DEBUG] Corrected p-values for Corrected Independent T-test p-value: KO_untreated vs. WT_Treated using fdr_bh method
+2023-08-01 14:39:55,823 [DEBUG] Corrected p-values for Corrected Independent T-test p-value: KO_untreated vs. KO_treated using fdr_bh method
+2023-08-01 14:39:55,823 [DEBUG] Corrected p-values for Corrected Independent T-test p-value: KO_treated vs. WT_untreated using fdr_bh method
+2023-08-01 14:39:55,823 [DEBUG] Corrected p-values for Corrected Independent T-test p-value: KO_treated vs. WT_Treated using fdr_bh method
+2023-08-01 14:39:55,823 [DEBUG] Corrected p-values for Corrected Independent T-test p-value: KO_treated vs. KO_untreated using fdr_bh method
+2023-08-01 14:39:55,823 [INFO] Finished multiple testing correction using the fdr_bh method.
+
+2023-08-01 14:39:55,823 [INFO] Checking fold distribution...
+2023-08-01 14:39:55,849 [INFO] Finished fold distribution check.
+
+2023-08-01 14:39:55,849 [INFO] Computing structural properties...
+2023-08-01 14:39:55,849 [INFO] Reading available AlphaFold models...
+2023-08-01 14:39:55,863 [INFO] Read available AlphaFold models.
+2023-08-01 14:39:55,863 [INFO] 
+
+
+USING NORMAL VALUES IN calcstructure.
+
+
+
+2023-08-01 14:39:55,863 [INFO] 
+
+
+USING NORMAL VALUES IN calcstructure.
+
+
+
+2023-08-01 14:39:55,863 [INFO] 
+
+
+USING NORMAL VALUES IN calcstructure.
+
+
+
+2023-08-01 14:39:55,863 [INFO] 
+
+
+USING NORMAL VALUES IN calcstructure.
+
+
+
+2023-08-01 14:39:55,863 [INFO] 
+
+
+USING NORMAL VALUES IN calcstructure.
+
+
+
+2023-08-01 14:39:55,863 [INFO] 
+
+
+USING NORMAL VALUES IN calcstructure.
+
+
+
+2023-08-01 14:39:55,866 [INFO] Calculating surface area and secondary structure...
+2023-08-01 14:39:55,867 [INFO] Structure calculations took 00:00:00 hh:mm:ss
+2023-08-01 14:39:55,868 [INFO] Calculating surface area and secondary structure...

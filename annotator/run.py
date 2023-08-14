@@ -30,30 +30,41 @@ def main(args=None):
     # Prepare the input data for annotation
     annotator.prepare()
 
+    # Check if the input file has already been annotated
+    #args = annotator.infer_infile_annotation_status(args)
+
     # Perform peptide annotation
     logging.debug("Starting annotation of peptides...")
     write_terminal_headers("PEPTIDE ANNOTATION")
-    if not args["singlecpu"]:
-        annotator.threaded_annotate()
-    else:
-        annotator.annotate()
-    logging.info("Finished annotation of peptides.\n")
+    
+    #print(args['infileannotation'])
+    #if any(value == 1 for value in args['infileannotation'].values()):
+    #    logging.info(f"\nprevious annotation of the input file was detected, and {', '.join(args['infileannotation'].keys())} annotation will not be performed.\n")
+    
+    # load annotation dataframe, and verify, if flag is given, that previous annotation is valid. If not change argument and do annotation anyway
+    annotator.initialize_annotation()
 
-    # Annotate Protein Atlas data
-    logging.info("Starting annotation of Protein Atlas data...")
-    annotator.annotate_protein_atlas()
-    logging.info("Finished annotation of Protein Atlas data.\n")
+    # do annotation if previous annotation has not been done or is not valid
+    if annotator.preannotated == False:
+        # annotate from Uniprot
+        annotator.threaded_annotate(args['threadingcores'])
+        logging.info("Finished annotation of peptides.\n")
 
-    # Perform proteoform check
-    logging.info("Starting proteoform check...")
-    annotator.proteoform_check()
-    logging.info("Finished proteoform check.")
+        # Annotate Protein Atlas data
+        logging.info("Starting annotation of Protein Atlas data...")
+        annotator.annotate_protein_atlas()
+        logging.info("Finished annotation of Protein Atlas data.\n")
 
-    # Perform exopeptidase check if specified
-    if not args["noexo"]:
-        logging.info("Starting exopeptidase activity check...")
-        annotator.exopeptidase()
-        logging.info("Finished exopeptidase activity check.")
+        # Perform proteoform check
+        logging.info("Starting proteoform check...")
+        annotator.proteoform_check()
+        logging.info("Finished proteoform check.")
+
+        # Perform exopeptidase check if specified
+        if not args["noexo"]:
+            logging.info("Starting exopeptidase activity check...")
+            annotator.exopeptidase()
+            logging.info("Finished exopeptidase activity check.")
 
     write_terminal_headers("Statistical analysis")
 
@@ -64,9 +75,9 @@ def main(args=None):
         logging.info("Parsed condition file")
 
         # Perform general statistics annotation
-        logging.info("Performing general statistics annotation...")
-        annotator.general_conditions()  # LATER: Should this be removed?
-        logging.info("Finished general statistics annotation.")
+        logging.info("Performing general condition statistics annotation...")
+        annotator.general_conditions()
+        logging.info("Finished general condition statistics annotation.")
 
         # Perform pairwise or all-vs-all statistical testing if specified
         if args["stat"]:
@@ -75,7 +86,6 @@ def main(args=None):
             logging.info("Finished statistical testing.")
             
             annotator.correct_multiple_testing()
-            logging.info("Finished multiple testing correction.\n")
 
         # Perform fold distribution check if specified
         if args["significance"]:
@@ -85,7 +95,7 @@ def main(args=None):
 
     if args["calcstructure"]:
         logging.info("Computing structural properties...")
-        annotator.annotate_structure(cutoff=0.05)
+        annotator.annotate_structure()
         logging.info("Finished computing structural properties.")
 
     if args["proteasefile"]:
@@ -97,7 +107,7 @@ def main(args=None):
     if args["visualize"]:
         write_terminal_headers('Creating visualizations')
         logging.info("Generating figures...")
-        annotator.visualize(cutoff = 0.05)
+        annotator.visualize()
         logging.info("Finished generating figures.")
 
     # Generate logos if specified
