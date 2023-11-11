@@ -1,0 +1,29 @@
+2023-11-11 21:42:18,815 [INFO] 
+2023-11-11 21:42:18,815 [INFO] Annotator started at 2023-11-11 21:42:18.
+2023-11-11 21:42:18,815 [DEBUG] Arguments: {'infile': '../tests/tests for paper/MMP9_rep/MMP9_rep_annot_50.xlsx', 'infile_type': 'infer', 'conditionfile': '../tests/tests for paper/MMP9_rep/cond_MMP9_2.txt', 'alpha': 0.05, 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': True, 'nomerops': False, 'calcstructure': None, 'threadingcores': 8, 'stat': True, 'stat_pairwise': True, 'significance': 'all', 'multipletesting': False, 'multipletestingmethod': 'fdr_bh', 'visualize': True, 'logo': None, 'logo_fc': 3, 'cleavagesitesize': 4, 'volcano_foldchange': 1.5, 'pseudocounts': True, 'cleavagevis': None, 'enrichment': False, 'pathway': False, 'proteasefile': None, 'output_name': 'MMP9_rep_50_test', 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False}
+2023-11-11 21:42:18,816 [INFO] Startup complete!
+
+2023-11-11 21:42:18,816 [INFO] Reading file...
+2023-11-11 21:42:18,816 [INFO] Input is excel
+2023-11-11 21:42:18,879 [INFO] Read dataframe.
+2023-11-11 21:42:18,879 [INFO] Read input with 50 peptides.
+2023-11-11 21:42:18,879 [INFO] Input software is pd
+2023-11-11 21:42:18,880 [DEBUG] Converted values in Abundances (Scaled): F13: Sample, Ctrl to numeric type
+2023-11-11 21:42:18,880 [DEBUG] Converted values in Abundances (Scaled): F14: Sample, Ctrl to numeric type
+2023-11-11 21:42:18,881 [DEBUG] Converted values in Abundances (Scaled): F16: Sample, MMP9 to numeric type
+2023-11-11 21:42:18,881 [DEBUG] Converted values in Abundances (Scaled): F18: Sample, MMP9 to numeric type
+2023-11-11 21:42:18,881 [INFO] Finished converting quantification values to floats.
+2023-11-11 21:42:18,882 [DEBUG] Patterns are: {'acc': 'Master Protein Accessions', 'mod': 'Modifications', 'nterm': '\\[N-Term\\]', 'seq': 'Annotated Sequence', 'amino': '\\.[A-Z]*(B|J|O|U|X|Z)[A-Z]*\\.', 'quant': 'Abundances \\(?Scaled\\):.*', 'label': 'Dimethyl', 'nterm_label': 'Dimethyl \\[N-Term\\]', 'lysine_label': 'Dimethyl \\[K'}
+2023-11-11 21:42:18,882 [INFO] Successfully generated indexing patterns for pd input. See logfile for the found patterns.
+2023-11-11 21:42:18,882 [INFO] Format check complete.
+
+2023-11-11 21:42:18,882 [INFO] Initialization complete!
+
+2023-11-11 21:42:18,882 [INFO] Filtering and sanitizing input...
+2023-11-11 21:42:18,883 [DEBUG] Starting annotation of peptides...
+2023-11-11 21:42:18,883 [INFO] Initialized annotation dataframe.
+
+2023-11-11 21:42:18,883 [INFO] Reading MEROPS data..
+2023-11-11 21:42:19,401 [INFO] Read MEROPS data
+2023-11-11 21:42:19,401 [INFO] Fetching information from Uniprot...
+2023-11-11 21:42:27,068 [INFO] Gathering info from Uniprot took 00:00:07 hh:mm:ss

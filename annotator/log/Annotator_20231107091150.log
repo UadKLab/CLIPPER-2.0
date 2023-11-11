@@ -1,0 +1,6 @@
+2023-11-07 09:11:50,571 [INFO] 
+2023-11-07 09:11:50,571 [INFO] Annotator started at 2023-11-07 09:11:50.
+2023-11-07 09:11:50,571 [DEBUG] Arguments: {'infile': '../tests/tests for paper/GluC_Evo_TMTpro_peptide_groups', 'infile_type': 'infer', 'preannotated': False, 'conditionfile': '../tests/tests for paper/cond_GluC.txt', 'alpha': 0.05, 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': True, 'nomerops': False, 'calcstructure': None, 'threadingcores': 8, 'stat': True, 'stat_pairwise': True, 'significance': 'all', 'multipletesting': False, 'multipletestingmethod': 'fdr_bh', 'visualize': True, 'logo': None, 'logo_fc': 3, 'cleavagesitesize': 4, 'volcano_foldchange': 1.5, 'pseudocounts': True, 'cleavagevis': None, 'enrichment': False, 'pathway': False, 'proteasefile': None, 'output_name': 'GluC', 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False}
+2023-11-07 09:11:50,571 [INFO] Startup complete!
+
+2023-11-07 09:11:50,571 [CRITICAL] Invalid input format. Please select a valid input format and try again.. Exiting with code 1.

@@ -1,0 +1,53 @@
+2023-11-11 21:37:30,438 [INFO] 
+2023-11-11 21:37:30,439 [INFO] Annotator started at 2023-11-11 21:37:30.
+2023-11-11 21:37:30,439 [DEBUG] Arguments: {'infile': '../tests/tests for paper/MMP9_rep/MMP9_rep_annot_50.xlsx', 'infile_type': 'infer', 'conditionfile': '../tests/tests for paper/MMP9_rep/cond_MMP9_2.txt', 'alpha': 0.05, 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': True, 'nomerops': False, 'calcstructure': 'all', 'threadingcores': 8, 'stat': True, 'stat_pairwise': True, 'significance': 'all', 'multipletesting': False, 'multipletestingmethod': 'fdr_bh', 'visualize': True, 'logo': None, 'logo_fc': 3, 'cleavagesitesize': 4, 'volcano_foldchange': 1.5, 'pseudocounts': True, 'cleavagevis': 'both', 'enrichment': False, 'pathway': False, 'proteasefile': None, 'output_name': 'MMP9_rep_50', 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False}
+2023-11-11 21:37:30,439 [WARNING] Cleavage visualization takes a VERY long time on full datasets (in our experience around 0.5-5 seconds per peptide depending on your computer), especially when set to "both". Please consider using this argument only with a filtered input list containing only the peptides you wish to have plotted on a protein structure.
+2023-11-11 21:37:30,439 [INFO] Startup complete!
+
+2023-11-11 21:37:30,439 [INFO] Reading file...
+2023-11-11 21:37:30,439 [INFO] Input is excel
+2023-11-11 21:37:30,510 [INFO] Read dataframe.
+2023-11-11 21:37:30,510 [INFO] Read input with 50 peptides.
+2023-11-11 21:37:30,510 [INFO] Input software is pd
+2023-11-11 21:37:30,511 [DEBUG] Converted values in Abundances (Scaled): F13: Sample, Ctrl to numeric type
+2023-11-11 21:37:30,511 [DEBUG] Converted values in Abundances (Scaled): F14: Sample, Ctrl to numeric type
+2023-11-11 21:37:30,511 [DEBUG] Converted values in Abundances (Scaled): F16: Sample, MMP9 to numeric type
+2023-11-11 21:37:30,512 [DEBUG] Converted values in Abundances (Scaled): F18: Sample, MMP9 to numeric type
+2023-11-11 21:37:30,512 [INFO] Finished converting quantification values to floats.
+2023-11-11 21:37:30,512 [DEBUG] Patterns are: {'acc': 'Master Protein Accessions', 'mod': 'Modifications', 'nterm': '\\[N-Term\\]', 'seq': 'Annotated Sequence', 'amino': '\\.[A-Z]*(B|J|O|U|X|Z)[A-Z]*\\.', 'quant': 'Abundances \\(?Scaled\\):.*', 'label': 'Dimethyl', 'nterm_label': 'Dimethyl \\[N-Term\\]', 'lysine_label': 'Dimethyl \\[K'}
+2023-11-11 21:37:30,513 [INFO] Successfully generated indexing patterns for pd input. See logfile for the found patterns.
+2023-11-11 21:37:30,513 [INFO] Format check complete.
+
+2023-11-11 21:37:30,513 [INFO] Initialization complete!
+
+2023-11-11 21:37:30,513 [INFO] Filtering and sanitizing input...
+2023-11-11 21:37:30,513 [DEBUG] Starting annotation of peptides...
+2023-11-11 21:37:30,513 [INFO] Initialized annotation dataframe.
+
+2023-11-11 21:37:30,513 [INFO] Reading MEROPS data..
+2023-11-11 21:37:31,039 [INFO] Read MEROPS data
+2023-11-11 21:37:31,039 [INFO] Previous annotation of peptides detected, and annotation will be loaded from file.
+
+2023-11-11 21:37:31,049 [INFO] Loaded annotation from file.
+
+2023-11-11 21:37:31,049 [INFO] Starting annotation of Protein Atlas data...
+2023-11-11 21:37:31,050 [INFO] Reading Protein Atlas data..
+2023-11-11 21:37:31,280 [INFO] Read Protein Atlas data.
+2023-11-11 21:37:31,283 [WARNING] Duplicates found in 'Uniprot' column of 'protein_atlas_sub'. Dropping duplicates.
+2023-11-11 21:37:31,287 [INFO] Finished annotation of Protein Atlas data.
+
+2023-11-11 21:37:31,287 [INFO] Starting proteoform check...
+2023-11-11 21:37:31,287 [INFO] Finished proteoform check.
+2023-11-11 21:37:31,289 [INFO] Parsed condition file
+2023-11-11 21:37:31,289 [INFO] Performing general condition statistics annotation...
+2023-11-11 21:37:31,294 [INFO] Finished general condition statistics annotation.
+2023-11-11 21:37:31,294 [INFO] Performing statistical testing...
+2023-11-11 21:37:31,295 [INFO] Finished statistical testing.
+2023-11-11 21:37:31,295 [INFO] Multiple testing corrected values are NOT used for visualizations
+2023-11-11 21:37:31,295 [INFO] Checking fold distribution...
+2023-11-11 21:37:31,299 [INFO] Finished fold distribution check.
+
+2023-11-11 21:37:31,299 [INFO] Computing structural properties...
+2023-11-11 21:37:31,299 [INFO] Reading available AlphaFold models...
+2023-11-11 21:37:31,313 [INFO] Read available AlphaFold models.
+2023-11-11 21:37:31,314 [INFO] Calculating surface area and secondary structure...

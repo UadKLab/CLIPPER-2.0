@@ -1,5 +1,5 @@
 # CLIPPER 2.0
-Advanced peptide-level annotation software that can be used in conjunction with Proteome Discoverer, Spectromine/Spectronaut, and Fragpipe. We found MaxQuant to have certain limitations when it comes to degradomics data analysis, and therefore recommend Fragpipe as a free alternative.
+Advanced peptide-level annotation software that can be used natively in a pipeline with Proteome Discoverer and Spectromine/Spectronaut. Many other MS software such as fragpipe can be used by simply modifying column names to fit those of either PD or spectronaut. We found MaxQuant to have certain limitations when it comes to degradomics data analysis, and therefore recommend Fragpipe as a free alternative.
 
 ---
 
@@ -18,6 +18,8 @@ Please note that CLIPPER 2.0 is currently in beta, and we welcome any bug report
 - [alphafold] (https://alphafold.ebi.ac.uk/download#swissprot-section) Download Swiss-Prot (CIF files) from alphafold if you wish to use structure annotation or protein plotting features.
 
 ## Installation
+
+The following should be done in a command line interface, but the code below can be copy/pasted one at a time. If problems arise, feel free to contact konka@dtu.dk and alemol@dtu.dk.
 
 1. **For Mac only:** Some users have experienced the need for xcode command line developer tools for the setup to succeed. If you experience any problems related to the installation run the following and retry what you were doing:
 
@@ -70,6 +72,8 @@ cd annotator
 python run.py -h
 ```
 
+9. If you wish to do solvent accessibility calculations or plot peptides in sequence or 3D protein views, a local copy of the alphafold database is necessary (https://alphafold.ebi.ac.uk/download#proteomes-section, approx. 5.2 gb). Once downloaded, the path should be specified in the file "annutils.py" as alphafold_folder_name = r'INSERT_PATH_HERE'.
+
 ## Usage
 
 You can use CLIPPER 2.0 by executing the 'run.py' script with specific arguments.
@@ -89,57 +93,78 @@ python run.py -h
 ### Output and available arguments:
 
 ```
-usage: CLIPPER 2.0 [-h] -i INFILE [-it INFILE_TYPE] [-sw SOFTWARE] [-l LEVEL] [-dn] [-fn FILLNA] [-st SLEEPTIME] [-nx] [-nm] [-cs CALCSTRUCTURE] [-sc] [-cf CONDITIONFILE] [-stat] [-spw] [-sig SIGNIFICANCE]
-                   [-vis] [-logo LOGO] [-psc PSEUDOCOUNTS] [-clvis CLEAVAGEVIS] [-enr] [-path] [-pf PROTEASEFILE] [-o OUTPUT_NAME] [-ot OUTPUT_FILETYPE] [-sep] [-pv PYMOL_VERBOSE]
+usage: CLIPPER 2.0 [-h] -i INFILE [-it INFILE_TYPE] [-pa] [-cf CONDITIONFILE] [-a ALPHA] [-sw SOFTWARE] [-l LEVEL] [-dn] [-fn FILLNA] [-st SLEEPTIME] [-nx] [-nm] [-cs CALCSTRUCTURE] [-c THREADINGCORES] [-stat]
+                   [-spw] [-sig SIGNIFICANCE] [-mt] [-mtmethod MULTIPLETESTINGMETHOD] [-vis] [-logo LOGO] [-logo_fc LOGO_FC] [-cle CLEAVAGESITESIZE] [-vc_fc VOLCANO_FOLDCHANGE VOLCANO_FOLDCHANGE]
+                   [-psc PSEUDOCOUNTS] [-clvis CLEAVAGEVIS] [-enr] [-path] [-pf PROTEASEFILE] [-o OUTPUT_NAME] [-ot OUTPUT_FILETYPE] [-sep] [-pv]
 
 Peptide annotation and analysis of proteomics data utilizing databases and visulization tools
 
 options:
   -h, --help            show this help message and exit
   -i INFILE, --infile INFILE
-                        Input peptide group result file
+                        Input peptide group result file.
   -it INFILE_TYPE, --infiletype INFILE_TYPE
-                        File type of input file. Accepted values: excel/csv/infer
-  -sw SOFTWARE, --software SOFTWARE
-                        Software the data were analyzed with. Accepted values: pd/sm/infer
-  -l LEVEL, --level LEVEL
-                        Filtering on specified level of N-termini, or labelled N-termini. Accepted values: all/nterm/quant.
-  -dn, --dropna         Flag to indicate whether to filter for empty quant rows
-  -fn FILLNA, --fillna FILLNA
-                        Value to fill empty quant rows or cells with
-  -st SLEEPTIME, --sleeptime SLEEPTIME
-                        Float that determine intervals between Biopython queries to Uniprot
-  -nx, --noexo          Do not check for dipeptidase or aminopeptidase activity
-  -nm, --nomerops       Do not check for cleavage site annotation in MEROPS database
-  -cs CALCSTRUCTURE, --calcstructure CALCSTRUCTURE
-                        Annotate cleavage site solvent accessibility and secondary structure for the significant peptides in the dataset using Pymol and Alphafold models Accepted values: all/sig.
-  -sc, --singlecpu      Use a single process instead of threading for annotation
+                        File type of input file. Accepted values: [excel|csv|infer].
+  -pa, --preannotated   Flag, if given assume that file is preannotated, and will not annotate from uniprot, proteinatlas, or do exopeptidasecheck.
   -cf CONDITIONFILE, --conditionfile CONDITIONFILE
-                        Map labels to conditions. Adds columns for fold change for each pairwise comparison, average and CV of each condition to the dataframe. Each line must start with the condition name
-                        followed by the channels used, separated by a single space
-  -stat, --statistic    Performs statistical significance testing. Student T-test for two conditions, ANOVA from three or more
+                        A .txt file which maps labels to conditions. Adds columns for fold change for each pairwise comparison, average and CV of each condition to the dataframe. Each line must start with the
+                        condition name followed by the channels used, separated by a single space (see example files for examples).
+  -a ALPHA, --alpha ALPHA
+                        Float that sets the alpha value to be used for all relevant statistical thresholds and significance measurements. Default: 0.05.
+  -sw SOFTWARE, --software SOFTWARE
+                        Software the data were analyzed with. Accepted values: [pd|sm|infer].
+  -l LEVEL, --level LEVEL
+                        Filtering on specified level of N-termini, or labelled N-termini. Accepted values: [all|nterm|quant]. Default: all.
+  -dn, --dropna         Flag to indicate whether to filter for empty quant rows.
+  -fn FILLNA, --fillna FILLNA
+                        Value to fill empty quant rows or cells with (must be a float). Must be an integer or float.
+  -st SLEEPTIME, --sleeptime SLEEPTIME
+                        Float that determine interval in seconds between Biopython queries to Uniprot. Default: 0.2.
+  -nx, --noexo          Flag, if given do not check for dipeptidase or aminopeptidase activity.
+  -nm, --nomerops       Flag, if given do not check for cleavage site annotation in MEROPS database.
+  -cs CALCSTRUCTURE, --calcstructure CALCSTRUCTURE
+                        Annotate cleavage site solvent accessibility and secondary structure for the significant peptides in the dataset using Pymol and Alphafold models Accepted values: [all|sig].
+  -c THREADINGCORES, --cores THREADINGCORES
+                        integer, Allows specifying the number of CPU cores used for gathering information from Uniprot. Accepted values are 'max' (using all cores) or an integer indicating the intended number of
+                        cores to be used. Default is 'max'. The speed of Uniprot information fetching scales linearly with the number of cores used.
+  -stat, --statistic    Flag, if given perform statistical significance testing. Student T-test for two conditions, ANOVA from three or more. In addition it provides multiple testing corrected p-values using the
+                        Benjamini/Hochberg method.
   -spw, --stat_pairwise
-                        Performs statistical significance t-test for all conditions pairwise
+                        Flag, if given perform statistical significance t-test for all conditions pairwise.
   -sig SIGNIFICANCE, --significance SIGNIFICANCE
-                        Performs fold change distribution significance check for all conditions pairwise Accepted values: all/nterm.
-  -vis, --visualize     Draws various plots based on conditions passed from input and statistical tests
+                        Performs fold change distribution significance check for all conditions pairwise Accepted values: [all|nterm].
+  -mt, --multipletesting
+                        Flag, if given multiple testing corrected values are used to determine significance for all relevant procedures using the method defined in -mtmethod.
+  -mtmethod MULTIPLETESTINGMETHOD, --multipletestingmethod MULTIPLETESTINGMETHOD
+                        Sets the multiple testing method to be used. Accepted values: [None|bonferroni|sidak|holm-sidak|holm|simes-hochberg|hommel|fdr_bh|fdr_by|fdr_tsbh|fdr_tsbky]. For clarification see here:
+                        https://www.statsmodels.org/dev/generated/statsmodels.stats.multitest.multipletests.html. Default: fdr_bh.
+  -vis, --visualize     Flag, if given draws various plots based on conditions passed from input and statistical tests
   -logo LOGO, --logo LOGO
-                        Draws various logo plots based on all peptides or condition significant peptides. Values supported: [all|prob|pssm|shannon|kbl]
+                        Draws various logo plots based on all peptides or condition significant peptides. Values supported: [all|prob|pssm|shannon|kbl].
+  -logo_fc LOGO_FC, --logofoldchange LOGO_FC
+                        Float, sets the peptide abundance fold change between conditions which is considered for the logo generation. Example: -logo_fc 3 --> Filters peptides with log2 fold change > 3 (high logo)
+                        and < 3 (low logo). Requires that -logo and -stat is given. Default: 3.
+  -cle CLEAVAGESITESIZE, --cleavageenvironment CLEAVAGESITESIZE
+                        Integer, size of the cleavage environment on both sides of the cleavage site. Default: 4.
+  -vc_fc VOLCANO_FOLDCHANGE VOLCANO_FOLDCHANGE, --volcanofoldchange VOLCANO_FOLDCHANGE VOLCANO_FOLDCHANGE
+                        Float, sets the cutoff value for fold change in volcano plots. Example: -vc_fc 1.5, which colors peptides with log2 fold change > 1.5 and < -1.5. P-value threshold is set by -a. Default:
+                        1.5.
   -psc PSEUDOCOUNTS, --pseudocounts PSEUDOCOUNTS
-                        Add pseudocounts to normalized matrix calculation
+                        Flag, if given add pseudocounts to normalized matrix calculation for logo generation.
   -clvis CLEAVAGEVIS, --cleavagevisualization CLEAVAGEVIS
-                        Whether to visualize significant cleavages in sequence or both structure and sequence Accepted values: seq/both.
-  -enr, --enrichment    Draws heatmap plots based on conditions passed from input and statistical tests for enrichment of GO terms and KEGG pathways with the gProfiler API
-  -path, --pathway      Draws pathway plots based on conditions passed from input and statistical tests and maps detected proteins and peptides
+                        Whether to visualize significant cleavages in sequence or both structure and sequence. For a complete dataset this can take a VERY long time, especially if set to 'both'. When using this
+                        argument please consider only adding proteins/peptides to the input file which you are really interested in (might be based on high fold change, pvalue, or prior knowledge). Accepted
+                        values: [None|seq|both]. Default: None.
+  -enr, --enrichment    Flag, if given draws heatmap plots based on conditions passed from input and statistical tests for enrichment of GO terms and KEGG pathways with the gProfiler API.
+  -path, --pathway      Flag, if given draws pathway plots based on conditions passed from input and statistical tests and maps detected proteins and peptides.
   -pf PROTEASEFILE, --proteasefile PROTEASEFILE
-                        Protease MEROPS identifiers to predict activity of. Using weighted PSSM
+                        A file with protease MEROPS identifiers to predict activity of. Using weighted PSSM. See examples for examples.
   -o OUTPUT_NAME, --output_name OUTPUT_NAME
-                        File name of output folder and annotated output file
+                        File name of output folder and annotated output file. Defaults to a timestamp for the initialization of Clipper 2.0.
   -ot OUTPUT_FILETYPE, --output_filetype OUTPUT_FILETYPE
-                        File type of output file Accepted values: xlsx/csv/tsv/pkl/json
-  -sep, --separate      Whether to merge or keep annotation as a separate file. False by default
-  -pv PYMOL_VERBOSE, --pymol_verbose PYMOL_VERBOSE
-                        Whether to output all pymol warnings/information to terminal during run or keep quiet.
+                        File type of output file Accepted values: [xlsx|csv|tsv|pkl|json].
+  -sep, --separate      Flag, if given the output file will not contain the original columns of the inputfile (separate original and annotated columns).
+  -pv, --pymol_verbose  Flag, if given the commandline will display info messages from pymol when used. Looks pretty ugly and unnecessary in this context, so muted by default
 
 Not extensively tested, this tool is still in beta version. Contact konka@dtu.dk or alemol@dtu.dk for bug reports and requests.
 ```
@@ -149,14 +174,13 @@ Not extensively tested, this tool is still in beta version. Contact konka@dtu.dk
 ### Condition file (optional, but required for statistical tests and most visualizations)
 The condition file is a text file where each line represents a condition. The first string on the line is the name of the condition, and the rest of the strings are space-separated specific identifyers for the columns corresponding to that condition (An example is found in tests/...).
 
-**File name, condition name, and column names may not contain the characters “:” or “/“ or “.” as this MAY result in error.**
+**File name, condition name, and column names may NOT contain the characters “:” or “/“ or “.” as this MAY result in error.**
 
-Example of condition file format:
+Example of condition file format for a triplicate experiment with two conditions:
     
 ``` 
 Condition1 Column1a Column1b Column1c
 Condition2 Column2a Column2b Column2c
-...
 ```
 
 ### Protease file (optional, required for protease activity prediction)
@@ -219,128 +243,6 @@ python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ../tests/cond_HUNTER.txt -st
 
 If you wish to plot using specific filter requirements, we recommend performing an initial annotation on the full dataset without visualizations, filter the peptides based on your preference (that might be multiple testing corrected pvalues), delete the rows containing peptides which does not satisfy your criteria, and run the annotator again.
 
-We hope you find CLIPPER 2.0 useful for your research. Feel free to contact us for any questions, bug reports, or feature requests.
+When repeatedly running the same file, for example if you wish to test different argument configurations, it is recommended to specify the output folder as "-o FOLDER_NAME". CLIPPER 2.0 will look in the output folder for previous Uniprot annotation data, and if present (if the annotation was run in the same folder previously), CLIPPER 2.0 will not fetch data from uniprot, but reuse the present annotation file, speeding up processing time a lot.
 
-# Development notes
-
-## Program init
-- Init function
-
-## Program preprocess class - tasks/functions:
-- Infer software: use column headings
-- Infer format
-- Load data function: Load file to df, make a copy we can work on
-- Sanitize/preprocess
-- Initialize generic annotation
-- Initialize degradomics pipeline annotation
-- Pattern assessment and storing
-- Read condition file if present, otherwise get channels/quant columns used
-- Load databases here
-
-## Entry class
-- Threading or not
-- Parse accession
-- Parse sequence
-- Get record
-- Store general information (parse general)
-- Parse cleavage (annotate cleavage environment)
-- Parse protease cleavage uniprot
-- Parse protease cleavage MEROPS
-- Exopeptidase activity
-
-## Statistics class - general functions
-- Based on conditions, do general statistics: mean, CV, std
-- Based on conditions, do percentile fold
-- Ttest or ANOVA based on arguments and number of conditions
-- Multiple testing correction
-
-## Visualize class
-- General statistics: Numbers about quantified, identified etc.
-- CV plots
-- Pie charts
-- Heatmaps
-- Clustermaps
-- Volcano plots
-- Fold plots
-- Fold nterm
-- Gallery
-- Create logos (different class)
-
-## Annotator utils functions
-- initialize 
-- parse arguments
-- map dict ?
-- write files
-- pathway enrichment
-- secondary structure and solvent accessibility calculation
-
-## To do list:
-- [x] Refactor code (made branch annotator_refactor with a folder for refactored code)
-    - [x] Rewritten for readability and modularity, but not refactored as described above
-    - [x] Clean up destination folders and structured output better
-    - [x] Clean up paths and use Path for relative paths
-- [x] Spectronaut support
-- [x] Dimethylation support
-    - [x] Dimethylation support for Spectromine
-- [x] Dimensionality reduction (PCA & UMAP)
-    - [x] Added PCA
-    - [x] Added UMAP
-- [x] Multiple testing correction
-- [x] Protein atlas integration
-- [x] Visualize cleavages in sequences
-    - [x] Added sequence plots
-    - [x] Add colormap 
-    - [x] Merge with structure visualization
-- [x] Maybe only annotate MEROPS code in sequence visualization if within the peptides identified
-- [x] Visualize cleavages in structure
-    - [x] Downloaded Alphafold EBI database
-    - [x] Plot structures
-- [x] Remove peptide duplicates before plotting on seq and structure
-- [x] Add secondary structure annotation
-- [x] Add solvent accessibility annotation
-- [x] Modify ss and sasa calculations to read each protein once
-- [x] Gprofiler - metascape GO enrichment
-- [x] Pathway annotation/significance
-- [x] Protease prediction (PSSM/GOtosubstrates)
-- [x] Fix condition bug in volcano plots
-    - [x] Have not managed to recreate it yet, need to use input data with multiple (>4) conditions. Did not manage even with 6 conditions.
-- [x] Static Uniprot entry lookup
-    - [x] Will not be implemented
-- [x] Write doc strings and prepare documentation
-- [x] Clean up structure of folders
-- [x] Rename folders and scripts to make more sense i.e. Clipper 2.0 instead of annotator for base folder, app_main.py instead of general.py
-- [x] Merge with main
-- [x] Figure out way of pointing to Alphafold database that is device agnostic, and easy to change from user side
-- [x] Fix bug where model is not found in Alphafold database but still tries to read it
-- [x] Delete tmp folder in the cmd result folder
-- [x] Add pycache to git ignore
-- [x] Use Path instead of os.path.join
-- [x] Show column patterns in command line
-- [x] Read email credentials from file to avoid hardcoding
-- [x] Add argument to restrict the number of cores used in threading
-- [x] Remove -sc argument
-- [x] Add argument to control p-value and fold cutoff for logos
-- [x] Add argument to control p-value and fold cutoff for volcano plots
-- [x] Provide ability to submit an already annotated file. Will skip annotation steps to speed up plotting.
-- [x] Remove Annotate function with no threading, as one can now just put threads = 1
-- [x] Add cleavage environment length as argument (right now is only 4)
-- [x] Use combinations instead of permutations with functional and pathway enrichment
-- [x] Add multiple testing correction option in visualizations
-- [x] Add ability to set cutoff for enrichment plots p-value
-- [x] Add ability to set global alpha value
-- [ ] Add heatmap with cleavage site specificity as an alternative to logos (in progress)
-- [ ] Add support for Fragpipe
-- [ ] Fix wrong warnings when not having -enr and -path arguments
-
-- [ ] Change condition naming back to "/" instaed of "vs."
-- [ ] Modify arguments in app (add -c, remove -sc, add -logo_fc, add -volcano_fc, more)
-- [ ] Change descriptions to reflect support for other software and new arguments
-- [ ] Make docs and examples for software export, column descriptions, etc.
-- [ ] Create github issues instead of writing things to do here
-
-- [ ] Change back log10 pval to -log10 pval in annotation dataframe (Aleksander: but it is not -log10?)
-
-Optional:
-- [ ] Add C-terminomics support
-- [ ] Add C-terminal exopeptidase activity check
-
+We hope you find CLIPPER 2.0 useful for your research. Feel free to contact us for any questions, bug reports, or feature requests (mails konka@dtu.dk and alemol@dtu.dk).

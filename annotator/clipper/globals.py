@@ -3,11 +3,11 @@ result_folder_name = "results"
 data_folder_name = "data"
 annotation_prefix = "_annot."
 
-alphafold_models_filename = "alphafold_accs.txt"
-merops_filename = "cleavage.csv"
-merops_name_filename = "protein_name.csv"
-merops_sub_filename = "substrate.csv"
-protein_atlas_filename = "proteinatlas.tsv"
+alphafold_models_filename = "alphafold_accs.txt"    # a txt file with accessions of available alphafold models
+merops_filename = "cleavage.csv"                    # a MEROPS csv file with MEROPS cleavage data
+merops_name_filename = "protein_name.csv"           # a MEROPS csv file with MEROPS IDs matched to protein names
+merops_sub_filename = "substrate.csv"               # MEROPS csv file with MEROPS substrate data
+protein_atlas_filename = "proteinatlas.tsv"         # a static protein atlas database tsv file
 
 # output folders
 plot_protein_folder = "protein_plots"

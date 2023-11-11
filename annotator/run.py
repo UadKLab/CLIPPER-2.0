@@ -1,5 +1,7 @@
+import os
 import time
 import logging
+import pandas as pd
 from datetime import timedelta
 
 from clipper.clipper import Clipper
@@ -44,27 +46,41 @@ def main(args=None):
     # load annotation dataframe, and verify, if flag is given, that previous annotation is valid. If not change argument and do annotation anyway
     annotator.initialize_annotation()
 
+
+    if annotator.nomerops is False:
+        annotator.read_MEROPS()
+    
     # do annotation if previous annotation has not been done or is not valid
-    if annotator.preannotated == False:
+    # print(annotator.preannotated)
+    # if annotator.preannotated == False:
+    #     print("IN PREANNOTATED == FALSE")
+    if not os.path.isfile(os.path.join(annotator.outfolder, 'annot_initial.xlsx')):
         # annotate from Uniprot
         annotator.threaded_annotate(args['threadingcores'])
+        # writing annotated datafile to excel
+
+        annotator.annot.to_excel(os.path.join(annotator.outfolder, 'annot_initial.xlsx'))
         logging.info("Finished annotation of peptides.\n")
+    else:
+        logging.info("Previous annotation of peptides detected, and annotation will be loaded from file.\n")
+        annotator.annot = pd.read_excel(os.path.join(annotator.outfolder, 'annot_initial.xlsx'), index_col=0)
+        logging.info("Loaded annotation from file.\n")
 
-        # Annotate Protein Atlas data
-        logging.info("Starting annotation of Protein Atlas data...")
-        annotator.annotate_protein_atlas()
-        logging.info("Finished annotation of Protein Atlas data.\n")
+    # Annotate Protein Atlas data
+    logging.info("Starting annotation of Protein Atlas data...")
+    annotator.annotate_protein_atlas()
+    logging.info("Finished annotation of Protein Atlas data.\n")
 
-        # Perform proteoform check
-        logging.info("Starting proteoform check...")
-        annotator.proteoform_check()
-        logging.info("Finished proteoform check.")
+    # Perform proteoform check
+    logging.info("Starting proteoform check...")
+    annotator.proteoform_check()
+    logging.info("Finished proteoform check.")
 
-        # Perform exopeptidase check if specified
-        if not args["noexo"]:
-            logging.info("Starting exopeptidase activity check...")
-            annotator.exopeptidase()
-            logging.info("Finished exopeptidase activity check.")
+    # Perform exopeptidase check if specified
+    if not args["noexo"]:
+        logging.info("Starting exopeptidase activity check...")
+        annotator.exopeptidase()
+        logging.info("Finished exopeptidase activity check.")
 
     write_terminal_headers("Statistical analysis")
 
@@ -90,7 +106,7 @@ def main(args=None):
         # Perform fold distribution check if specified
         if args["significance"]:
             logging.info("Checking fold distribution...")
-            annotator.percentile_fold(0.05) # LATER: SHouldn't this be 0.025 since it's two-sided?
+            annotator.percentile_fold(0.05)
             logging.info("Finished fold distribution check.\n")
 
     if args["calcstructure"]:

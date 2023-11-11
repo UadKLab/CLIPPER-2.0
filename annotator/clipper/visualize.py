@@ -353,6 +353,8 @@ class Visualizer:
         if len(columns) > 0:
             cluster = self.df[columns].rename(columns_dict, axis=1)
             cluster = np.log10(cluster.replace(0, np.nan).dropna())
+            import sys
+            sys.setrecursionlimit(10000)
             fig = sns.clustermap(cluster, yticklabels=False)
             plt.close()
 
@@ -636,6 +638,7 @@ class Visualizer:
 
         # Get data and perform UMAP on quantification columns
         data_columns = self.df.columns[self.df.columns.str.contains(self.patterns['quant'])]
+        
         # Get data in arrays and replace Nan values with 0
         data = self.df[data_columns].fillna(0).values.T
 
@@ -755,9 +758,10 @@ class Visualizer:
             col_name = col.split(":")[1].strip()
             if col_name in conditioncombinations:
                 if genes:
-                    fig = plot_enrichment_figure(genes, col_name, alpha)
-                    fig_name = col_name.replace('/', '_')
-                    figures[fig_name] = fig
+                    figs = plot_enrichment_figure(genes, col_name, alpha)
+                    for source, fig in figs.items():
+                        fig_name = col_name.replace('/', '_') + '_' + source
+                        figures[fig_name] = fig
                 else:
                     logging.info(f'No significant peptides with a cutoff value <{alpha} for conditions {col_name}. No functional enrichment plots will be made for this comparison.')
 
@@ -1097,7 +1101,7 @@ def plot_protein_figure(pp, subframe, acc, col, col_ID, acc_length, merops, alph
     features = extract_protein_features(acc, record, merops, subframe)
 
     # get the significant peptides
-    col_fold = col.replace(col_ID, 'Log2 fold change')
+    col_fold = col.replace(col_ID, 'Log2 fold change:')
 
     # Collapse duplicate peptides and take the mean of fold changes
     subframe = subframe.groupby(['query_sequence', 'start_pep', 'end_pep']).agg({col_fold: 'mean'}).reset_index()
@@ -1153,9 +1157,9 @@ def plot_protein_figure(pp, subframe, acc, col, col_ID, acc_length, merops, alph
                 get_pymol_image(acc, acc_length, positions, cmap, -max_fold_change, max_fold_change, peptide_protein_plot_path)
         try:
             img = plt.imread(peptide_protein_plot_path)
+            os.remove(peptide_protein_plot_path)
         except OSError as err:
             logging.warning(f'The file for accession {acc} is not available at path {Path(annutils.alphafold_folder_name)}. Cannot create PyMol figures.')
-        os.remove(peptide_protein_plot_path)
         if img is not None:
             ax2.imshow(img)
     
@@ -1194,20 +1198,33 @@ def plot_enrichment_figure(genes, col_name, alpha, organism='hsapiens'):
         return None
 
     # Pivot data for heatmap
+    significant_results = significant_results.drop_duplicates(subset=["name"], keep='first')
     heatmap_data = significant_results.pivot(index='name', columns='source', values='p_value')
     heatmap_data = -np.log10(heatmap_data)
+    heatmap_data = heatmap_data.sort_values(by=[column for column in heatmap_data], ascending=False)
 
-    # Plot heatmap
-    plt.figure(figsize=(10, 10))
-    ax = sns.heatmap(heatmap_data, cmap="Reds", square=True, cbar_kws={'label': '-log10(p-value)'})
-    ax.tick_params(axis='both', which='major', labelsize=8)
-    ax.set_title(col_name)
-    plt.subplots_adjust(left=0.2, bottom=0.2)
-    fig = ax.get_figure()
-    fig.show()
-    plt.close()
+    enr_figs = {}
 
-    return fig
+    for column in heatmap_data:
+        heatmap_data_col = heatmap_data[[column]]
+        heatmap_data_col = heatmap_data_col.dropna().sort_values(by=column, ascending=False)[0:15]
+        
+        # Plot heatmap
+        plt.figure(figsize=(10, 10))
+        ax = sns.heatmap(heatmap_data_col, cmap="Reds", square=True, cbar_kws={'label': '-log10(p-value)'})
+        ax.tick_params(axis='both', which='major', labelsize=8)
+        ax.set_title(col_name)
+        #plt.setp(ax.get_xticklabels(), rotation=90, ha="right", rotation_mode="anchor")
+        ax.set_ylabel('')
+        plt.subplots_adjust(left=0.2, bottom=0.2)
+        fig = ax.get_figure()
+        fig.show()
+        plt.close()
+
+        enr_figs[column] = fig
+
+
+    return enr_figs
 
 def create_empty_pdf_page(text, fname):
     firstPage = plt.figure(figsize=(20,2))

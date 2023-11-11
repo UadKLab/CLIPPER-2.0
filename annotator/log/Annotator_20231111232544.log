@@ -1,0 +1,58 @@
+2023-11-11 23:25:44,666 [INFO] 
+2023-11-11 23:25:44,666 [INFO] Annotator started at 2023-11-11 23:25:44.
+2023-11-11 23:25:44,666 [DEBUG] Arguments: {'infile': '/Users/aleksanderhaack/Desktop/TAILS annotator v3/annotator/annotator/upload/MMP9_rep_annot_50.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'alpha': 0.05, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': None, 'threadingcores': 'max', 'conditionfile': None, 'proteasefile': None, 'stat': False, 'stat_pairwise': False, 'significance': None, 'multipletesting': False, 'multipletestingmethod': 'fdr_bh', 'visualize': False, 'logo': None, 'logo_fc': '3', 'volcano_foldchange': '1.5', 'cleavagesitesize': '4', 'pseudocounts': False, 'cleavagevis': 'None', 'enrichment': False, 'pathway': False, 'output_name': '20231111232544_annotated_data', 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False, 'jobid': '128', 'logfile': '/Users/aleksanderhaack/Desktop/TAILS annotator v3/annotator/annotator/log/128.log', 'resultdest': '/Users/aleksanderhaack/Desktop/TAILS annotator v3/annotator/annotator/results', 'datafolder': '/Users/aleksanderhaack/Desktop/TAILS annotator v3/annotator/annotator/data', 'email': ''}
+2023-11-11 23:25:44,666 [WARNING] Cleavage visualization takes a VERY long time on full datasets (in our experience around 0.5-5 seconds per peptide depending on your computer), especially when set to "both". Please consider using this argument only with a filtered input list containing only the peptides you wish to have plotted on a protein structure.
+2023-11-11 23:25:44,667 [INFO] Startup complete!
+
+2023-11-11 23:25:44,667 [INFO] Reading file...
+2023-11-11 23:25:44,667 [INFO] Input is excel
+2023-11-11 23:25:44,755 [INFO] Read dataframe.
+2023-11-11 23:25:44,755 [INFO] Read input with 50 peptides.
+2023-11-11 23:25:44,757 [INFO] Input software is pd
+2023-11-11 23:25:44,758 [DEBUG] Converted values in Abundances (Scaled): F13: Sample, Ctrl to numeric type
+2023-11-11 23:25:44,759 [DEBUG] Converted values in Abundances (Scaled): F14: Sample, Ctrl to numeric type
+2023-11-11 23:25:44,759 [DEBUG] Converted values in Abundances (Scaled): F16: Sample, MMP9 to numeric type
+2023-11-11 23:25:44,760 [DEBUG] Converted values in Abundances (Scaled): F18: Sample, MMP9 to numeric type
+2023-11-11 23:25:44,760 [INFO] Finished converting quantification values to floats.
+2023-11-11 23:25:44,762 [DEBUG] Patterns are: {'acc': 'Master Protein Accessions', 'mod': 'Modifications', 'nterm': '\\[N-Term\\]', 'seq': 'Annotated Sequence', 'amino': '\\.[A-Z]*(B|J|O|U|X|Z)[A-Z]*\\.', 'quant': 'Abundances \\(?Scaled\\):.*', 'label': 'Dimethyl', 'nterm_label': 'Dimethyl \\[N-Term\\]', 'lysine_label': 'Dimethyl \\[K'}
+2023-11-11 23:25:44,762 [INFO] Successfully generated indexing patterns for pd input. See logfile for the found patterns.
+2023-11-11 23:25:44,762 [INFO] Format check complete.
+
+2023-11-11 23:25:44,762 [INFO] Initialization complete!
+
+2023-11-11 23:25:44,762 [INFO] Filtering and sanitizing input...
+2023-11-11 23:25:44,762 [DEBUG] Starting annotation of peptides...
+2023-11-11 23:25:44,763 [INFO] Initialized annotation dataframe.
+
+2023-11-11 23:25:44,763 [INFO] Reading MEROPS data..
+2023-11-11 23:25:45,347 [INFO] Read MEROPS data
+2023-11-11 23:25:45,347 [INFO] Fetching information from Uniprot...
+2023-11-11 23:25:53,483 [INFO] Gathering info from Uniprot took 00:00:07 hh:mm:ss
+2023-11-11 23:25:53,531 [INFO] Finished annotation of peptides.
+
+2023-11-11 23:25:53,531 [INFO] Starting annotation of Protein Atlas data...
+2023-11-11 23:25:53,531 [INFO] Reading Protein Atlas data..
+2023-11-11 23:25:53,786 [INFO] Read Protein Atlas data.
+2023-11-11 23:25:53,792 [WARNING] Duplicates found in 'Uniprot' column of 'protein_atlas_sub'. Dropping duplicates.
+2023-11-11 23:25:53,797 [INFO] Finished annotation of Protein Atlas data.
+
+2023-11-11 23:25:53,797 [INFO] Starting proteoform check...
+2023-11-11 23:25:53,798 [INFO] Finished proteoform check.
+2023-11-11 23:25:53,798 [INFO] Starting exopeptidase activity check...
+2023-11-11 23:25:53,798 [INFO] Exopeptidase activity check took 00:00:00 hh:mm:ss
+2023-11-11 23:25:53,798 [INFO] Finished exopeptidase activity check.
+2023-11-11 23:25:53,798 [INFO] Writing output files...
+2023-11-11 23:25:53,896 [INFO] Finished. Wrote results to /Users/aleksanderhaack/Desktop/TAILS annotator v3/annotator/annotator/results/20231111232544_annotated_data.
+2023-11-11 23:25:53,899 [INFO] Finished writing output files
+2023-11-11 23:25:53,899 [INFO] 
+CLIPPER 2.0 pipeline completed in 0:00:09.233157.
+
+2023-11-11 23:25:53,922 [INFO] 127.0.0.1 - - [11/Nov/2023 23:25:53] "GET /128/result HTTP/1.1" 200 -
+2023-11-11 23:26:26,159 [INFO] 127.0.0.1 - - [11/Nov/2023 23:26:26] "GET / HTTP/1.1" 200 -
+2023-11-11 23:26:26,184 [INFO] 127.0.0.1 - - [11/Nov/2023 23:26:26] "[36mGET /static/index.css HTTP/1.1[0m" 304 -
+2023-11-11 23:26:26,185 [INFO] 127.0.0.1 - - [11/Nov/2023 23:26:26] "[36mGET /static/DTU_logo.png HTTP/1.1[0m" 304 -
+2023-11-11 23:27:17,608 [INFO] 127.0.0.1 - - [11/Nov/2023 23:27:17] "[32mPOST /new_job HTTP/1.1[0m" 302 -
+2023-11-11 23:27:17,615 [INFO] 127.0.0.1 - - [11/Nov/2023 23:27:17] "GET /129/submitted_job HTTP/1.1" 200 -
+2023-11-11 23:27:17,637 [INFO] 127.0.0.1 - - [11/Nov/2023 23:27:17] "[36mGET /static/index.css HTTP/1.1[0m" 304 -
+2023-11-11 23:27:17,637 [INFO] 127.0.0.1 - - [11/Nov/2023 23:27:17] "[36mGET /static/DTU_logo.png HTTP/1.1[0m" 304 -
+2023-11-11 23:27:17,644 [INFO] Annotator started, Saturday November 11 2023, 23:27:17

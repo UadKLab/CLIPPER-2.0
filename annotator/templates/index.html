@@ -78,7 +78,6 @@
 			<fieldset>
 				<legend>Condition file</legend>
 					<input type=file name=condfile>
-					<p>Note: TMT channels only.</p>
 			</fieldset>
 
 			<fieldset>
@@ -113,6 +112,16 @@
 			</fieldset>
 
 			<fieldset>
+				<legend>alpha</legend>
+
+				<label for="alpha">
+					<input type="number" id="alpha" name="alpha" step="0.001" min=0 max=1 value=0.05>
+					<span title="The alpha value for statistical significance testing">alpha threshold</span>
+				</label>
+
+			</fieldset>
+
+			<fieldset>
 				<legend>Statistics (only with condition file)</legend>
 				<ul>
 					<li>	
@@ -140,6 +149,27 @@
 							Natural - neo nterm
 						</label>
 					</li>
+
+					<li>	
+						<label for="multipletesting">
+							<input type="checkbox" id="multipletesting" name="multipletesting" value=True>
+							Use bonferroni multiple testing corrected p-values for significance testing (alternative methods can be used through the commandline application)
+						</label>
+					</li>
+
+					<li>
+						<label for="logo_fc">
+							<input type="number" id="logo_fc" name="logo_fc" step="0.1" min=0 max=50 value=3>
+							<span title="The fold change neccesary between conditions for a peptide to be considered for logo generation">Peptide fold change for inclusion in logo generation</span>
+						</label>
+					</li>
+
+					<li>
+						<label for="volcano_foldchange">
+							<input type="number" id="volcano_foldchange" name="volcano_foldchange" step="0.1" min=0 max=50 value=1.5>
+							<span title="The fold change for setting threshold in volcano plots">Peptide fold change for volcano plot threshold</span>
+						</label>
+					</li>
 				</ul>
 			</fieldset>
 
@@ -150,13 +180,6 @@
 						<label for="dropna">
 							<input type="checkbox" id="dropna" name="dropna" value=True>
 							<span title="Removes any empty/missing quantification value rows in the dataset. No values in any quantification channel must be present in order for the column to be discarded.">Drop rows not containing any quantification values (NaN)</span>
-						</label>
-					</li>
-
-					<li>	
-						<label for="singlecpu">
-							<input type="checkbox" id="singlecpu" name="singlecpu" value=True>
-							<span title="Only check if you know what you're doing. In most cases it would result to a significant performance decrease.">Use single core instead of concurrent processes</span>
 						</label>
 					</li>
 
@@ -178,6 +201,13 @@
 						<label for="sleeptime">
 							<input type="number" id="sleeptime" name="sleeptime" step="0.1" min=0 max=1 value=0.2>
 							<span title="This is the cpu sleeptime between Uniprot batch requests. Please keep at a number above 0 unless you really need the results urgently.">Sleeptime (between requests)</span>
+						</label>
+					</li>
+
+					<li>
+						<label for="cleavagesitesize">
+							<input type="number" id="cleavagesitesize" name="cleavagesitesize" step="1" min=0 max=10 value=4>
+							<span title="The number of amino acids on either side of the cleavage site">Cleavage environment size</span>
 						</label>
 					</li>
 				</ul>

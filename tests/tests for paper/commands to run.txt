@@ -1,0 +1,1 @@
+python run.py -i ../tests/tests\ for\ paper/GluC_Evo_TMTpro_peptide_groups.xlsx -cf ../tests/tests\ for\ paper/cond_GluC.txt -cs sig -stat -spw -sig all -mt -vis -logo all -enr -path

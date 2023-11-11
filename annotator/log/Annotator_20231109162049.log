@@ -1,0 +1,34 @@
+2023-11-09 16:20:49,114 [INFO] 
+2023-11-09 16:20:49,114 [INFO] Annotator started at 2023-11-09 16:20:49.
+2023-11-09 16:20:49,114 [DEBUG] Arguments: {'infile': '../tests/tests for paper/MMP9_rep/MMP9_dimethyl_peptide_report_rep.xlsx', 'infile_type': 'infer', 'preannotated': False, 'conditionfile': '../tests/tests for paper/MMP9_rep/cond_MMP9.txt', 'alpha': 0.05, 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': True, 'nomerops': False, 'calcstructure': None, 'threadingcores': 8, 'stat': True, 'stat_pairwise': True, 'significance': 'all', 'multipletesting': False, 'multipletestingmethod': 'fdr_bh', 'visualize': True, 'logo': 'all', 'logo_fc': 1.5, 'cleavagesitesize': 4, 'volcano_foldchange': 1.5, 'pseudocounts': True, 'cleavagevis': None, 'enrichment': True, 'pathway': False, 'proteasefile': None, 'output_name': 'MMP9_rep', 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False}
+2023-11-09 16:20:49,115 [INFO] Startup complete!
+
+2023-11-09 16:20:49,115 [INFO] Reading file...
+2023-11-09 16:20:49,115 [INFO] Input is excel
+2023-11-09 16:20:52,554 [INFO] Read dataframe.
+2023-11-09 16:20:52,554 [INFO] Read input with 17536 peptides.
+2023-11-09 16:20:52,555 [INFO] Input software is pd
+2023-11-09 16:20:52,569 [DEBUG] Converted values in Abundances (Scaled): F13: Sample, Ctrl to numeric type
+2023-11-09 16:20:52,582 [DEBUG] Converted values in Abundances (Scaled): F14: Sample, Ctrl to numeric type
+2023-11-09 16:20:52,595 [DEBUG] Converted values in Abundances (Scaled): F15: Sample, Ctrl to numeric type
+2023-11-09 16:20:52,607 [DEBUG] Converted values in Abundances (Scaled): F16: Sample, MMP9 to numeric type
+2023-11-09 16:20:52,619 [DEBUG] Converted values in Abundances (Scaled): F17: Sample, MMP9 to numeric type
+2023-11-09 16:20:52,631 [DEBUG] Converted values in Abundances (Scaled): F18: Sample, MMP9 to numeric type
+2023-11-09 16:20:52,631 [INFO] Finished converting quantification values to floats.
+2023-11-09 16:20:52,643 [DEBUG] Patterns are: {'acc': 'Master Protein Accessions', 'mod': 'Modifications', 'nterm': '\\[N-Term\\]', 'seq': 'Annotated Sequence', 'amino': '\\.[A-Z]*(B|J|O|U|X|Z)[A-Z]*\\.', 'quant': 'Abundances \\(?Scaled\\):.*', 'label': 'Dimethyl', 'nterm_label': 'Dimethyl \\[N-Term\\]', 'lysine_label': 'Dimethyl \\[K'}
+2023-11-09 16:20:52,643 [INFO] Successfully generated indexing patterns for pd input. See logfile for the found patterns.
+2023-11-09 16:20:52,643 [INFO] Format check complete.
+
+2023-11-09 16:20:52,643 [INFO] Initialization complete!
+
+2023-11-09 16:20:52,643 [INFO] Filtering and sanitizing input...
+2023-11-09 16:20:52,648 [WARNING] There were rows with no accession numbers in the loaded file, please check the log file for further information
+2023-11-09 16:20:52,648 [DEBUG] Empty accession rows: 8762
+2023-11-09 16:20:52,649 [DEBUG] Empty accession rows: 14402
+2023-11-09 16:20:52,649 [DEBUG] Empty accession rows: 16132
+2023-11-09 16:20:52,657 [DEBUG] Starting annotation of peptides...
+2023-11-09 16:20:52,660 [INFO] Initialized annotation dataframe.
+
+2023-11-09 16:20:52,661 [INFO] Reading MEROPS data..
+2023-11-09 16:20:53,270 [INFO] Read MEROPS data
+2023-11-09 16:20:53,270 [INFO] Fetching information from Uniprot...

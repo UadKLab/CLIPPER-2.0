@@ -21,10 +21,7 @@ import pymol
 from reactome2py import analysis, content
 import networkx as nx
 
-if platform.system() == 'Darwin':
-    alphafold_folder_name = r"/Volumes/Bio-1/PSBT-g-Protease-Systems-Biology/Kostas/CLIPPER/Datasets/Alphafold"
-else:
-    alphafold_folder_name = r"W:\Protease-Systems-Biology-temp\Kostas\CLIPPER\Datasets\Alphafold"
+alphafold_folder_name = r"/Users/aleksanderhaack/Downloads/UP000005640_9606_HUMAN_v4_2"
 
 def format_seconds_to_time(s):
     hours, remainder = divmod(s, 3600)
@@ -639,9 +636,14 @@ def calculate_structure_properties(acc, cleavage_sites_indices, structure_proper
 
     with tempfile.NamedTemporaryFile(suffix=".cif", delete=False) as temp_cif:
         # Open the gzipped CIF file
-        with gzip.open(model_path, 'rb') as f_in:
-            # Write the decompressed contents to the temporary file
-            temp_cif.write(f_in.read())
+        print(model_path)
+        try:
+            with gzip.open(model_path, 'rb') as f_in:
+                # Write the decompressed contents to the temporary file
+                temp_cif.write(f_in.read())
+        except FileNotFoundError:
+            logging.warning(f"The path {model_path} is not available...")
+            return structure_properties
 
         temp_cif.flush()  # Ensure the file is written
 
@@ -715,12 +717,14 @@ def get_structure_properties(acc_cleavage_sites, tmp_output_path, pymol_verbose,
     warnings = []
     with tqdm(acc_cleavage_sites.items(), leave = 0) as t:
         for acc, cleavage_sites_indices in t:
-            if available_models and acc in available_models:
+            if available_models and (acc in available_models):
                 if pymol_verbose:
                     structure_properties = calculate_structure_properties(acc, cleavage_sites_indices, structure_properties, alphafold_folder_name)
+                    
                 else:
                     with stdout_redirected():
                         structure_properties = calculate_structure_properties(acc, cleavage_sites_indices, structure_properties, alphafold_folder_name)
+                        
             else:
                 warnings.append(f"Model for {acc} not available")
         with open(tmp_output_path, 'w') as f:
@@ -728,14 +732,10 @@ def get_structure_properties(acc_cleavage_sites, tmp_output_path, pymol_verbose,
         elapsed = t.format_dict['elapsed']
         logging.info(f"Structure calculations took {format_seconds_to_time(elapsed)}")
 
-
     if warnings != []:
         logging.warning("Structure calculations were not possible for selected peptides, as alphafold models were not available")
         for warning in warnings:
             logging.warning(f'  - {warning}')
-
-
-    
 
     return structure_properties
 

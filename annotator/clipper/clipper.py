@@ -79,7 +79,7 @@ class Clipper:
         # input attributes
         self.infile_type = args["infile_type"]
         self.infile = args["infile"]
-        self.preannotated = args["preannotated"]
+        #self.preannotated = args["preannotated"]
         self.alpha = args["alpha"]
         self.software = args["software"]
 
@@ -373,27 +373,36 @@ class Clipper:
         """
         Creates necessary output folders in the specified directory.
         """
-
-        os.mkdir(self.outfolder)
-        os.mkdir(self.temp_folder)
+        if not os.path.exists(self.outfolder):
+            os.mkdir(self.outfolder)
+        if not os.path.exists(self.temp_folder):
+            os.mkdir(self.temp_folder)
 
         if self.plot:
-            os.mkdir(self.general_folder)
-            os.mkdir(self.fold_change_folder)
-            os.mkdir(self.volcano_folder)
-            os.mkdir(self.piechart_folder)
+            if not os.path.exists(self.general_folder):
+                os.mkdir(self.general_folder)
+            if not os.path.exists(self.fold_change_folder):
+                os.mkdir(self.fold_change_folder)
+            if not os.path.exists(self.volcano_folder):
+                os.mkdir(self.volcano_folder)
+            if not os.path.exists(self.piechart_folder):
+                os.mkdir(self.piechart_folder)
             if self.stat:
                 if self.cleavagevis in ['seq', 'both']:
-                    os.mkdir(self.protein_folder)
+                    if not os.path.exists(self.protein_folder):
+                        os.mkdir(self.protein_folder)
                 elif self.cleavagevis is not None:
                     logging.warning(f"-clvis argument '{self.cleavagevis}' is unknown, falling back to 'None'")
                     self.cleavagevis = None
                 if self.logo:
-                    os.mkdir(self.logo_folder)
+                    if not os.path.exists(self.logo_folder):
+                        os.mkdir(self.logo_folder)
                 if self.enrichment:
-                    os.mkdir(self.enrichment_folder)
+                    if not os.path.exists(self.enrichment_folder):
+                        os.mkdir(self.enrichment_folder)
                 if self.pathway:
-                    os.mkdir(self.pathway_folder)
+                    if not os.path.exists(self.pathway_folder):
+                        os.mkdir(self.pathway_folder)
 
     def read_condition_file(self):
             
@@ -424,6 +433,7 @@ class Clipper:
         self.merops_name = self.merops_name[self.merops_name.type == "real"]
 
         self.merops_sub = pd.read_csv(self.datafolder / self.merops_sub_filename)
+        logging.info("Read MEROPS data")
 
     def read_protein_atlas(self):
 
@@ -469,22 +479,22 @@ class Clipper:
                         "protease_merops_name",
                         ]
 
-        # if previous annotation is not given, initialize an empty dataframe
-        if self.preannotated == False:
-            self.annot = pd.DataFrame(
-                columns=annot_columns,
-                index=range(length),
-            )
+        #if previous annotation is not given, initialize an empty dataframe
+        #if self.preannotated == False:
+        self.annot = pd.DataFrame(
+            columns=annot_columns,
+            index=range(length),
+        )
 
-        # if previous annotation is indicated, try loading from data to save time fetching from uniprot
-        else:
-            try:
-                self.annot = self.df.loc[:,annot_columns]
-                logging.info("Previous annotation was successfully loaded. Continuing to statistical analysis.")
-            except Exception:
-                logging.warning("Could not recognize a previous annotation. Falling back to reannotating the data.")
-                self.preannotated = False
-                self.initialize_annotation()
+        # #if previous annotation is indicated, try loading from data to save time fetching from uniprot
+        # else:
+        #     try:
+        #         self.annot = self.df.loc[:,annot_columns]
+        #         logging.info("Previous annotation was successfully loaded. Continuing to statistical analysis.")
+        #     except Exception:
+        #         logging.warning("Could not recognize a previous annotation. Falling back to reannotating the data.")
+        #         self.preannotated = False
+        #         self.initialize_annotation()
         
         # remove Merops columns if not wanted
         if self.nomerops:
@@ -861,7 +871,7 @@ class Clipper:
                     subframe = self.annot
                 elif self.significance == 'nterm':
                     is_internal = self.annot["nterm_annot"] == "Internal"
-                    subframe = self.annot[~is_internal] if column.endswith("low") else self.annot[is_internal] # LATER: What is this?
+                    subframe = self.annot[~is_internal] if column.endswith("low") else self.annot[is_internal]
                 else:
                     logging.info(f"Significance invalid argument {self.significance}, skipping")
                     continue
@@ -937,7 +947,7 @@ class Clipper:
         """
             
         if not self.multipletesting or len(self.conditions) < 2:
-            logging.info("No multiple testing correction performed")
+            logging.info("Multiple testing corrected values are NOT used for visualizations")
             return   
 
         def _perform_correction(pvals, column_name, column_log, original_column_name):
@@ -1040,41 +1050,6 @@ class Clipper:
             return annutils.map_dict(self.annot.loc[loc], ent.annot), ent.warnings
         else:
             return {"name": "HTTPError, not found"}, ent.warnings
-        
-    """
-    def annotate(self):
-
-        """"""
-        Function that calls all other annotating functions.
-        This function processes and annotates all entries in the dataframe.
-        """"""
-
-        length = len(self.df)
-        if self.nomerops is False:
-            self.read_MEROPS()
-            logging.info("Read MEROPS data")
-
-        self.initialize_annotation(length)
-        logging.info("Initialized annotation dataframe.\n")
-        logging.info("Fetching information from Uniprot...")
-
-        with tqdm(range(length), leave = 0) as t:
-            for loc in t:
-                self.annot.loc[loc], warnings = self.process_entry(loc)
-                for key, value in warnings.items():
-                    if warnings[key] != []:
-                        self.entwarnings[key].append(value)
-
-            elapsed = t.format_dict['elapsed']
-        for key, values in self.entwarnings.items():
-            if self.entwarnings[key] != []:
-                logging.warning(f'There were "{key}" errors')
-                for value in values:
-                    logging.warning(f'  - {value[0]}')
-                self.entwarnings[key] = []
-        time.sleep(0.5)
-        logging.info(f"Gathering info from Uniprot took {annutils.format_seconds_to_time(elapsed)}")
-        """
     
     def entry_annotate(self, loc):
 
@@ -1099,9 +1074,9 @@ class Clipper:
         length = len(self.df)
         batch_length = min(cores, length)
 
-        if self.nomerops is False:
-            self.read_MEROPS()
-            logging.info("Read MEROPS data")
+        # if self.nomerops is False:
+        #     self.read_MEROPS()
+        #     logging.info("Read MEROPS data")
 
         logging.info("Fetching information from Uniprot...")
         with tqdm(range(0, length, batch_length), leave = 0) as t:
@@ -1281,7 +1256,7 @@ class Clipper:
                 cleavage_site = self.annot.loc[i, "p1_position"]
 
                 # if the cleavage site is not nan, add it to the dictionary
-                if isinstance(cleavage_site, int):
+                if float(cleavage_site).is_integer():
                     # Append the index and cleavage site to the list of the corresponding accession
                     acc_cleavage_sites.setdefault(acc, []).append((i, cleavage_site))
 
@@ -1319,6 +1294,7 @@ class Clipper:
                     # iterate over all columns and entries in the dataframe
                     for column_name in cols:
                         subframe = self.annot[self.annot[column_name] <= self.alpha]
+                        
                         acc_cleavage_sites = {}
                         for i, row in subframe.iterrows():  # use .iterrows() to keep track of the original index
                             # get the accession and cleavage site
@@ -1326,7 +1302,7 @@ class Clipper:
                             cleavage_site = row["p1_position"]
 
                             # if the cleavage site is not nan, add it to the dictionary
-                            if isinstance(cleavage_site, int):
+                            if float(cleavage_site).is_integer():
                                 # Append the original index and cleavage site to the list of the corresponding accession
                                 acc_cleavage_sites.setdefault(acc, []).append((i, cleavage_site))
 
@@ -1344,7 +1320,7 @@ class Clipper:
                             if isinstance(cleavage_site, int) and pd.isnull(self.annot.loc[i, f"secondary_structure p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"]) and pd.isnull(self.annot.loc[i, f"solvent_accessibility p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"]):
                                 self.annot.loc[index, f"secondary_structure p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"] = ss
                                 self.annot.loc[index, f"solvent_accessibility p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"] = sa
-                
+
                 else:
                     logging.warning("cannot do structure calculations on significant peptides, as no statistics has been done. Please consider adding the -stat flag to the query!")
             else:
@@ -1377,7 +1353,7 @@ class Clipper:
 
         if self.stat and self.enrichment:
             self.figures["Enrichment"] = vis.plot_functional_enrichment(self.conditioncombinations, self.alpha)
-        else:
+        elif self.enrichment:
             logging.warning("Functional enrichment could not be performed as -stat was False (enrichment requires statistics)")
 
         if self.stat and self.pathway:
@@ -1385,7 +1361,7 @@ class Clipper:
                 vis.plot_pathway_enrichment(self.conditioncombinations, self.alpha, folder=self.pathway_folder)
             else:
                 logging.warning("Plotting of enriched pathways requires either 2 conditions or pairwise statistics to be performed. Please check that 2 conditions are provided, or if more than 2 conditions are provided that the flag -spw is given.")
-        else:
+        elif self.pathway:
             logging.warning("Enriched pathways could not be plotted as -stat was False (pathway enrichment requires statistics)")
 
         # if there are more than one condition, generate volcano, fold change and fold change at termini plots, and gallery of significant peptides

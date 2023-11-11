@@ -92,8 +92,6 @@ def get_new_job_details(jobid, upload_folder):
     return
 
 
-
-
 @app.route('/<int:jobid>/submitted_job', methods=['GET'])
 def submission(jobid):
 
@@ -131,15 +129,18 @@ def download_results(jobid):
 
     except TypeError as err:
         print(f'Typeerror: {err}')
+        session['error'] = err
         return redirect(url_for('error', jobid=jobid))
 
     except KeyError as err:
         print(f"Key error: {err}")
+        session['error'] = err
         traceback.print_exc()
         return redirect(url_for('error', jobid=jobid))
     
     except Exception as err:
         print(f'Other error: {err}')
+        session['error'] = err
         traceback.print_exc()
         return redirect(url_for('error', jobid=jobid))
 
@@ -151,8 +152,8 @@ def coming():
 
 
 @app.route('/<int:jobid>/error', methods=['GET'])
-def error(jobid):
-    return render_template('error.html', jobid=jobid, error=session['error'])
+def error(jobid, err):
+    return render_template('error.html', jobid=jobid, error=err)
 
 
 def allowed_file(filename):
@@ -178,14 +179,14 @@ def create_arguments(jobid):
         session['form']['statistic'] = False
     if 'stat_pairwise' not in session['form']:
         session['form']['stat_pairwise'] = False
+    if 'multipletesting' not in session['form']:
+        session['form']['multipletesting'] = False
     if 'significance' not in session['form']:
         session['form']['significance'] = None
     if 'dropna' not in session['form']:
         session['form']['dropna'] = False
     if 'fillna' not in session['form']:
         session['form']['fillna'] = None
-    if 'singlecpu' not in session['form']:
-        session['form']['singlecpu'] = False
     if 'noexopeptidase' not in session['form']:
         session['form']['noexopeptidase'] = False
     if 'nomerops' not in session['form']:
@@ -209,7 +210,7 @@ def create_arguments(jobid):
     if 'email' not in session['form']:
         session['form']['email'] = False
 
-   
+
     timestamp = datetime.now()
     formatted_timestamp = timestamp.strftime(format="%A %B %d %Y, %H:%M:%S")
     logging.basicConfig(filename=logfile, filemode="w", level=logging.INFO)
@@ -217,6 +218,7 @@ def create_arguments(jobid):
   
     
     try:
+        print("I'M HERE IN CREATE ARGUMENTS")
         arguments = {
                     'infile': os.path.join(uploads, session['infile']),
                     'infile_type': session['form']['infile_type'],
@@ -224,19 +226,24 @@ def create_arguments(jobid):
                     'level': session['form']['filter'],
                     'dropna': session['form']['dropna'],
                     'fillna': session['form']['fillna'],
+                    'alpha': float(session['form']['alpha']),
                     'sleeptime': float(session['form']['sleeptime']),
                     'noexo': session['form']['noexopeptidase'],
                     'nomerops': session['form']['nomerops'],
                     'calcstructure': session['form']['calcstructure'],
-                    'threadingcores': session['form']['threadingcores'],
+                    'threadingcores': 'max',
                     'conditionfile': cond_file,
                     'proteasefile': prot_file,
                     'stat': session['form']['statistic'], 
                     'stat_pairwise': session['form']['stat_pairwise'], 
                     'significance': session['form']['significance'],
+                    'multipletesting': session['form']['multipletesting'],
+                    'multipletestingmethod': 'fdr_bh',
                     'visualize': session['form']['visualize'],
                     'logo': session['form']['logo'],
-                    'logo'
+                    'logo_fc': session['form']['logo_fc'],
+                    'volcano_foldchange': session['form']['volcano_foldchange'],
+                    'cleavagesitesize': session['form']['cleavagesitesize'],
                     'pseudocounts': session['form']['pseudocounts'],
                     'cleavagevis': session['form']['cleavagevis'],
                     'enrichment': session['form']['enrichment'],
@@ -251,9 +258,12 @@ def create_arguments(jobid):
                     'datafolder': datafolder,
                     'email': session['form']['email']
                     }
+        print(arguments)
     except Exception as err:
         print(f'Other error: {err}')
         traceback.print_exc()
+
+    
 
     return arguments
 

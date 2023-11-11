@@ -1,0 +1,61 @@
+2023-11-11 23:27:17,646 [INFO] 
+2023-11-11 23:27:17,646 [INFO] Annotator started at 2023-11-11 23:27:17.
+2023-11-11 23:27:17,646 [DEBUG] Arguments: {'infile': '/Users/aleksanderhaack/Desktop/TAILS annotator v3/annotator/annotator/upload/MMP9_rep_annot_50.xlsx', 'infile_type': 'infer', 'software': 'infer', 'level': 'all', 'dropna': 'True', 'fillna': None, 'alpha': 0.05, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': 'sig', 'threadingcores': 'max', 'conditionfile': '/Users/aleksanderhaack/Desktop/TAILS annotator v3/annotator/annotator/upload/cond_MMP9_2.txt', 'proteasefile': None, 'stat': False, 'stat_pairwise': 'True', 'significance': 'all', 'multipletesting': False, 'multipletestingmethod': 'fdr_bh', 'visualize': 'True', 'logo': 'kbl', 'logo_fc': '3', 'volcano_foldchange': '1.5', 'cleavagesitesize': '4', 'pseudocounts': False, 'cleavagevis': 'both', 'enrichment': 'True', 'pathway': 'True', 'output_name': '20231111232717_annotated_data', 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False, 'jobid': '129', 'logfile': '/Users/aleksanderhaack/Desktop/TAILS annotator v3/annotator/annotator/log/129.log', 'resultdest': '/Users/aleksanderhaack/Desktop/TAILS annotator v3/annotator/annotator/results', 'datafolder': '/Users/aleksanderhaack/Desktop/TAILS annotator v3/annotator/annotator/data', 'email': 'alemol@dtu.dk'}
+2023-11-11 23:27:17,646 [WARNING] You have supplied a condition file, but are not doing condition specific statistics. Consider adding the -stat flag to your query!
+2023-11-11 23:27:17,647 [WARNING] Calculating structure properties on significant peptides is not possible without doing statistics. Please add the -stat flag to the query!
+2023-11-11 23:27:17,647 [WARNING] Pathway analysis cannot be performed as the -stat flag is not given. Please rerun your query with the -stat flag for pathway plots
+2023-11-11 23:27:17,647 [WARNING] Functional enrichment analysis cannot be performed as the -stat flag is not given. Please rerun your query with the -stat flag for enrichment plots
+2023-11-11 23:27:17,647 [WARNING] -Logo_fc only has an effect if both -logo and -stat are given
+2023-11-11 23:27:17,647 [WARNING] Cleavage visualization takes a VERY long time on full datasets (in our experience around 0.5-5 seconds per peptide depending on your computer), especially when set to "both". Please consider using this argument only with a filtered input list containing only the peptides you wish to have plotted on a protein structure.
+2023-11-11 23:27:17,647 [INFO] Startup complete!
+
+2023-11-11 23:27:17,647 [INFO] Reading file...
+2023-11-11 23:27:17,648 [INFO] Input is excel
+2023-11-11 23:27:17,680 [INFO] Read dataframe.
+2023-11-11 23:27:17,680 [INFO] Read input with 50 peptides.
+2023-11-11 23:27:17,680 [INFO] Input software is pd
+2023-11-11 23:27:17,680 [DEBUG] Converted values in Abundances (Scaled): F13: Sample, Ctrl to numeric type
+2023-11-11 23:27:17,681 [DEBUG] Converted values in Abundances (Scaled): F14: Sample, Ctrl to numeric type
+2023-11-11 23:27:17,681 [DEBUG] Converted values in Abundances (Scaled): F16: Sample, MMP9 to numeric type
+2023-11-11 23:27:17,682 [DEBUG] Converted values in Abundances (Scaled): F18: Sample, MMP9 to numeric type
+2023-11-11 23:27:17,682 [INFO] Finished converting quantification values to floats.
+2023-11-11 23:27:17,683 [DEBUG] Patterns are: {'acc': 'Master Protein Accessions', 'mod': 'Modifications', 'nterm': '\\[N-Term\\]', 'seq': 'Annotated Sequence', 'amino': '\\.[A-Z]*(B|J|O|U|X|Z)[A-Z]*\\.', 'quant': 'Abundances \\(?Scaled\\):.*', 'label': 'Dimethyl', 'nterm_label': 'Dimethyl \\[N-Term\\]', 'lysine_label': 'Dimethyl \\[K'}
+2023-11-11 23:27:17,683 [INFO] Successfully generated indexing patterns for pd input. See logfile for the found patterns.
+2023-11-11 23:27:17,683 [INFO] Format check complete.
+
+2023-11-11 23:27:17,683 [INFO] Initialization complete!
+
+2023-11-11 23:27:17,683 [INFO] Filtering and sanitizing input...
+2023-11-11 23:27:17,684 [DEBUG] Starting annotation of peptides...
+2023-11-11 23:27:17,684 [INFO] Initialized annotation dataframe.
+
+2023-11-11 23:27:17,684 [INFO] Reading MEROPS data..
+2023-11-11 23:27:18,256 [INFO] Read MEROPS data
+2023-11-11 23:27:18,256 [INFO] Fetching information from Uniprot...
+2023-11-11 23:27:26,034 [INFO] Gathering info from Uniprot took 00:00:07 hh:mm:ss
+2023-11-11 23:27:26,082 [INFO] Finished annotation of peptides.
+
+2023-11-11 23:27:26,082 [INFO] Starting annotation of Protein Atlas data...
+2023-11-11 23:27:26,082 [INFO] Reading Protein Atlas data..
+2023-11-11 23:27:26,344 [INFO] Read Protein Atlas data.
+2023-11-11 23:27:26,347 [WARNING] Duplicates found in 'Uniprot' column of 'protein_atlas_sub'. Dropping duplicates.
+2023-11-11 23:27:26,351 [INFO] Finished annotation of Protein Atlas data.
+
+2023-11-11 23:27:26,351 [INFO] Starting proteoform check...
+2023-11-11 23:27:26,351 [INFO] Finished proteoform check.
+2023-11-11 23:27:26,351 [INFO] Starting exopeptidase activity check...
+2023-11-11 23:27:26,352 [INFO] Exopeptidase activity check took 00:00:00 hh:mm:ss
+2023-11-11 23:27:26,352 [INFO] Finished exopeptidase activity check.
+2023-11-11 23:27:26,352 [INFO] Parsed condition file
+2023-11-11 23:27:26,352 [INFO] Performing general condition statistics annotation...
+2023-11-11 23:27:26,357 [INFO] Finished general condition statistics annotation.
+2023-11-11 23:27:26,357 [INFO] Checking fold distribution...
+2023-11-11 23:27:26,361 [INFO] Finished fold distribution check.
+
+2023-11-11 23:27:26,361 [INFO] Computing structural properties...
+2023-11-11 23:27:26,361 [INFO] Reading available AlphaFold models...
+2023-11-11 23:27:26,375 [INFO] Read available AlphaFold models.
+2023-11-11 23:27:26,376 [WARNING] cannot do structure calculations on significant peptides, as no statistics has been done. Please consider adding the -stat flag to the query!
+2023-11-11 23:27:26,376 [INFO] Finished computing structural properties.
+2023-11-11 23:27:26,376 [INFO] Generating figures...
+2023-11-11 23:27:26,433 [DEBUG] Loaded backend macosx version unknown.

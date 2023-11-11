@@ -1,0 +1,7 @@
+2023-11-07 08:15:07,714 [INFO] 
+2023-11-07 08:15:07,714 [INFO] Annotator started at 2023-11-07 08:15:07.
+2023-11-07 08:15:07,714 [DEBUG] Arguments: {'infile': '../tests/tests for paper/MMP9_dimethyl_peptide_groups.xlsx', 'infile_type': 'infer', 'preannotated': False, 'conditionfile': '../tests/tests for paper/cond_MMP9', 'alpha': 0.05, 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': None, 'sleeptime': 0.2, 'noexo': False, 'nomerops': False, 'calcstructure': None, 'threadingcores': 8, 'stat': False, 'stat_pairwise': False, 'significance': None, 'multipletesting': False, 'multipletestingmethod': 'fdr_bh', 'visualize': False, 'logo': None, 'logo_fc': 3, 'cleavagesitesize': 4, 'volcano_foldchange': 1.5, 'pseudocounts': True, 'cleavagevis': None, 'enrichment': False, 'pathway': False, 'proteasefile': None, 'output_name': 'MMP9', 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False}
+2023-11-07 08:15:07,714 [WARNING] You have supplied a condition file, but are not doing condition specific statistics. Consider adding the -stat flag to your query!
+2023-11-07 08:15:07,714 [INFO] Startup complete!
+
+2023-11-07 08:15:07,714 [CRITICAL] Exit with code 6.

@@ -151,9 +151,9 @@ class Logo:
         figure = logo.fig
         plt.close()
 
-        logo_heatmap(frame, xlabels, title)
+        figure_heatmap = logo_heatmap(frame, xlabels, title)
 
-        return figure
+        return figure, figure_heatmap
 
 def logo_heatmap(df, xlabels, title, axs = None):
     import pandas as pd
@@ -169,16 +169,27 @@ def logo_heatmap(df, xlabels, title, axs = None):
     df_normalized = (df - df.min().min()) / (df.max().max() - df.min().min())
 
     # Create a heatmap using seaborn with transposed data
-    plt.figure(figsize=(6, 12))
+    #plt.figure(figsize=(6, 12))
 
     # Set custom tick labels and center them
-    plt.xticks(ticks=np.arange(len(custom_x_labels)) + 0.5, labels=custom_x_labels, ha='center')
-    plt.yticks(ticks=np.arange(len(df.columns)) + 0.5, labels=df.columns, va='center')
-    plt.title(title)
-    sns.heatmap(df_normalized.T, cmap='RdBu_r', annot=False, cbar=False)
+    #plt.xticks(ticks=np.arange(len(custom_x_labels)) + 0.5, labels=custom_x_labels, ha='center')
+    #plt.yticks(ticks=np.arange(len(df.columns)) + 0.5, labels=df.columns, va='center')
+    #plt.title(title)
+    #sns.heatmap(df_normalized.T, cmap='RdBu_r', annot=False, cbar=False)
     plt.show()
 
-    return plt
+    fig, ax = plt.subplots(1, 1, figsize=[6, 12])
+
+    ax.set_xticks(ticks=np.arange(len(custom_x_labels)) + 0.5, labels=custom_x_labels, ha='center')
+    ax.set_yticks(ticks=np.arange(len(df.columns)) + 0.5, labels=df.columns, va='center')
+
+    plt.title(title)
+    sns.heatmap(df_normalized.T, cmap='RdBu_r', annot=False, cbar=False)
+
+    figure = fig.tight_layout()
+    plt.close()
+
+    return figure
 
 def create_logo_helper(data, condition, pseudocounts, logo, cleavagesitesize):
     data = data[f"p{cleavagesitesize}_p{cleavagesitesize}prime"].astype(str)
@@ -202,15 +213,15 @@ def generate_logos(sequences, condition, pseudocounts, logo, cleavagesitesize):
     pssm = Logo(sequences, condition, pseudocounts)
     if logo == "prob" or logo == "all":
         pm_logo = pssm.make_probability(cleavagesitesize)
-        figures["prob"] = pm_logo
+        figures["prob"], figures["prob_heatmap"] = pm_logo
     if logo == "pssm" or logo == "all":
         pssm_logo = pssm.make_pssm(cleavagesitesize)
-        figures["pssm"] = pssm_logo
+        figures["pssm"], figures["pssm_heatmap"] = pssm_logo
     if logo == "shannon" or logo == "all":
         info_logo = pssm.make_information(cleavagesitesize)
-        figures["shannon"] = info_logo
+        figures["shannon"], figures["shannon_heatmap"] = info_logo
     if logo == "kbl" or logo == "all":
         kb_logo = pssm.make_kullback(cleavagesitesize)
-        figures["kbl"] = kb_logo
+        figures["kbl"], figures["kbl_heatmap"] = kb_logo
 
     return figures
