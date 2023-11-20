@@ -1,6 +1,4 @@
-<p align="center">
-  <span style="font-family:Papyrus; font-size:25em;">CLIPPER 2.0</span>
-</p>
+# CLIPPER 2.0
 
 <p align="center">
   <img src="./CLIPPER_logo.png">
