@@ -1,5 +1,5 @@
 <p align="center">
-# CLIPPER 2.0
+  <span style="font-family:Papyrus; font-size:5em;">CLIPPER 2.0</span>
 </p>
 
 <p align="center">
