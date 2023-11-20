@@ -1,6 +1,5 @@
-# CLIPPER 2.0
-
 <p align="center">
+# CLIPPER 2.0
   <img src="./CLIPPER_logo.png">
 </p>
 
