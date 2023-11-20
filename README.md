@@ -1,7 +1,7 @@
 # CLIPPER 2.0
 
 <p align="center">
-  <img width="460" height="300" src="./CLIPPER_logo.png">
+  <img src="./CLIPPER_logo.png">
 </p>
 
 Advanced peptide-level annotation software that can be used natively in a pipeline with Proteome Discoverer and Spectromine/Spectronaut. Many other MS software such as fragpipe can be used by simply modifying column names to fit those of either PD or spectronaut. We found MaxQuant to have certain limitations when it comes to degradomics data analysis, and therefore recommend Fragpipe as a free alternative.
