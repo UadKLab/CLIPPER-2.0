@@ -1,7 +1,6 @@
 import os
 import re
 import time
-import shutil
 import logging
 import concurrent.futures
 from ast import literal_eval
@@ -1481,6 +1480,7 @@ class Clipper:
         It also saves any generated figures to the corresponding folders. At the end of the execution, 
         the logfile is copied to the output folder, and the output folder is compressed into a zip file.
         """
+        import shutil
 
         outfile = self.outfolder / self.outname
 
@@ -1513,6 +1513,12 @@ class Clipper:
 
         shutil.make_archive(self.outfolder, "zip", self.outfolder)
 
-        os.rmdir(self.temp_folder)
+        # if temp_folder is there, delete even if it contains files
+        if self.temp_folder.exists():
+            shutil.rmtree(self.temp_folder)
+
+
+        # if self.temp_folder is not None:
+        # os.rmdir(self.temp_folder)
 
         return None

@@ -1044,13 +1044,16 @@ def get_pymol_image(acc, acc_length, positions, colormap, vmin, vmax, peptide_pr
         max_fold_change = vmin
 
         for ind, pos in enumerate(positions):
-            color = colormap((pos[2] - vmin) / (vmax - vmin))
-            pymol.cmd.select('sel', f'resi {pos[0]}-{pos[1]} and {acc}')
-            pymol.cmd.color('0x' + colors.to_hex(color)[1:], 'sel')
+            try:
+                color = colormap((pos[2] - vmin) / (vmax - vmin))
+                pymol.cmd.select('sel', f'resi {pos[0]}-{pos[1]} and {acc}')
+                pymol.cmd.color('0x' + colors.to_hex(color)[1:], 'sel')
 
-            if pos[2] > max_fold_change:
-                max_fold_change = pos[2]
-                max_fold_change_pos = pos
+                if pos[2] > max_fold_change:
+                    max_fold_change = pos[2]
+                    max_fold_change_pos = pos
+            except:
+                logging.warning(f'Could not highlight peptide at position {pos} for {acc} when plotting on structure.')
 
         # Orient the structure based on the highest fold change peptide
         if max_fold_change_pos is not None:
@@ -1158,11 +1161,11 @@ def plot_protein_figure(pp, subframe, acc, col, col_ID, acc_length, merops, alph
         try:
             img = plt.imread(peptide_protein_plot_path)
             os.remove(peptide_protein_plot_path)
+            if img is not None:
+                ax2.imshow(img)
         except OSError as err:
             logging.warning(f'The file for accession {acc} is not available at path {Path(annutils.alphafold_folder_name)}. Cannot create PyMol figures.')
-        if img is not None:
-            ax2.imshow(img)
-    
+        
     ax2.axis('off')
     plt.suptitle(title, x=0.02, fontsize=14, horizontalalignment='left')
     plt.subplots_adjust()
