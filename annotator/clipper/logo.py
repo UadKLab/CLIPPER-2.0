@@ -74,6 +74,7 @@ class Logo:
 
         return self.make_logo(df, "probability PPSM", "percentage", cleavagesitesize)
     
+
     def make_information(self, cleavagesitesize):
         """Returns figure with information content PSSM.
 
@@ -82,14 +83,17 @@ class Logo:
 
         df = pd.DataFrame.from_records(self.normalized_matrix)
 
-        tic = np.log2(len(alphabet))
-        entropy = df.apply(lambda x: -x * np.log2(x + np.finfo(float).eps)).sum(axis=1)
-        fic = tic - entropy
-        df = df.multiply(fic, axis=0)
+        for i in df.index:
+            for j in df.columns:
+                df.loc[i][j] = df.loc[i][j] * np.log2(df.loc[i][j] / 0.05)
+                if np.isnan(df.loc[i][j]) or df.loc[i][j] < 0:
+                    df.loc[i][j] = 0
+
 
         self.information_matrix = df
 
         return self.make_logo(df, "information content, Shannon", "information (bits)", cleavagesitesize)
+
 
     def make_kullback(self, cleavagesitesize):
         """Returns figure with Kullback-Leibler information content PSSM.
