@@ -900,14 +900,14 @@ class Clipper:
             result = test_func(*vals_per_condition)
             statistic, p_value = result[0], result[1]
             self.annot[column_name] = p_value
-            self.annot[column_log] = np.log10(p_value)
+            self.annot[column_log] = -np.log10(p_value)
         
         conditions = list(self.conditions.keys())
         if len(conditions) >= 2:
             test_func = ttest_ind if len(conditions) == 2 else f_oneway
             stat_name = f"{'Independent T-test p-value:' if len(conditions) == 2 else 'ANOVA p-value:'}"
             column_name = f"{stat_name} {' vs. '.join(conditions)}"
-            column_log = f"Log10 {column_name}"
+            column_log = f"-Log10 {column_name}"
             cols_per_condition = []
             vals_per_condition = []
             for cond in conditions:
@@ -923,11 +923,9 @@ class Clipper:
 
         if self.pairwise and len(conditions) > 2:
             for pair in permutations(self.conditions.keys(), 2):
-                #column_name = f"Independent T-test p-value: {pair[0]} vs. {pair[1]}"
-                #column_log = f"Log10 pvalue: {pair[0]} vs. {pair[1]}"
                 stat_name = "Independent T-test p-value:"
                 column_name = f"{stat_name} {pair[0]} vs. {pair[1]}"
-                column_log = f"Log10 {column_name}"
+                column_log = f"-Log10 {column_name}"
                 cols_per_condition = []
                 vals_per_condition = []
                 for cond in pair:
@@ -968,7 +966,7 @@ class Clipper:
                 # Insert the corrected p-value columns next to the original p-value columns
                 original_column_idx = self.annot.columns.get_loc(original_column_name)
                 self.annot.insert(original_column_idx + 2, column_name, corrected_pvals)
-                self.annot.insert(original_column_idx + 3, column_log, np.log10(corrected_pvals))
+                self.annot.insert(original_column_idx + 3, column_log, -np.log10(corrected_pvals))
 
                 logging.debug(f"Corrected p-values for {column_name} using {self.multipletestingmethod} method")
             else:
@@ -977,7 +975,7 @@ class Clipper:
         if len(self.conditions.keys()) >= 2:
             stat_name = 'Independent T-test p-value' if len(self.conditions) == 2 else 'ANOVA p-value'
             column_name = f"Corrected {stat_name}: {' vs. '.join(self.conditions.keys())}"
-            column_log = f"Log10 {column_name}"
+            column_log = f"-Log10 {column_name}"
 
             original_column_name = f"{stat_name}: {' vs. '.join(self.conditions.keys())}"
             pvals = self.annot[original_column_name].values
@@ -988,37 +986,10 @@ class Clipper:
             for pair in permutations(self.conditions.keys(), 2):
                 original_column_name = f"{stat_name} {pair[0]} vs. {pair[1]}"
                 column_name = f"Corrected {original_column_name}"
-                column_log = f"Log10 {column_name}"
+                column_log = f"-Log10 {column_name}"
                 
                 pvals = self.annot[original_column_name].values
                 _perform_correction(pvals, column_name, column_log, original_column_name)
-
-
-        """
-        if self.pairwise:
-            #col_stat = 'Independent T-test p-value'
-            for pair in permutations(self.conditions.keys(), 2):
-                #column_name = f"Corrected {col_stat}: {pair[0]} vs. {pair[1]}"
-                #column_log = f"Log10 pvalue {column_name}"
-
-                stat_name = "Independent T-test p-value:"
-                original_column_name = f"{stat_name} {pair[0]} vs. {pair[1]}"
-                column_name = f"Corrected {original_column_name}"
-                column_log = f"Log10 {column_name}"
-                
-                pvals = self.annot[original_column_name].values
-                _perform_correction(pvals, column_name, column_log, original_column_name)
-                
-        else:
-            stat_name = 'Independent T-test p-value' if len(self.conditions) == 2 else 'ANOVA p-value'
-            column_name = f"Corrected {stat_name}: {' vs. '.join(self.conditions.keys())}"
-            column_log = f"Log10 {column_name}"
-
-            original_column_name = f"{stat_name}: {' vs. '.join(self.conditions.keys())}"
-            pvals = self.annot[original_column_name].values
-            _perform_correction(pvals, column_name, column_log, original_column_name)
-        """
-
 
         logging.info(f"Finished multiple testing correction using the {self.multipletestingmethod} method.\n")
 
