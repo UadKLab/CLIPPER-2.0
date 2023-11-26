@@ -1179,7 +1179,7 @@ class Clipper:
         logging.info(f"Protease codes: {protease_codes}")
 
         # Create PSSM for each protease and store in a dictionary
-        pssms = pp.construct_pssms(protease_codes, self.merops, self.merops_sub, cleavagesitesize)
+        pssms = pp.construct_pssms(protease_codes, self.merops, self.merops_sub, self.cleavagesitesize)
         
         with tqdm(range(len(self.annot)), leave = 0) as t:
             for i in t:

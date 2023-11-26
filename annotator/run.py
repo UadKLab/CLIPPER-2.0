@@ -62,7 +62,7 @@ def main(args=None):
         annotator.annot.to_excel(os.path.join(annotator.outfolder, 'annot_initial.xlsx'))
         logging.info("Finished annotation of peptides.\n")
     else:
-        logging.info("Previous annotation of peptides detected, and annotation will be loaded from file.\n")
+        logging.info("Previous annotation of peptides detected, and annotation will be loaded from file.")
         annotator.annot = pd.read_excel(os.path.join(annotator.outfolder, 'annot_initial.xlsx'), index_col=0)
         logging.info("Loaded annotation from file.\n")
 

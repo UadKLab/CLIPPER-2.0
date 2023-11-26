@@ -1,2 +1,0 @@
-ctrl F36 F37 F38
-MMP9 F39 F40 F41

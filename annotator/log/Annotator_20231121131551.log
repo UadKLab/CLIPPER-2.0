@@ -1,8 +1,0 @@
-2023-11-21 13:15:51,726 [INFO] 
-2023-11-21 13:15:51,726 [INFO] Annotator started at 2023-11-21 13:15:51.
-2023-11-21 13:15:51,726 [DEBUG] Arguments: {'infile': '../tests/Veronica/20230922_MK_EVO_AMH_FAIMS_3CV_Whisper15_58min_1475_Veronica_PO_NT_500ng-(1)_peptides.xlsx', 'infile_type': 'infer', 'preannotated': False, 'conditionfile': '../tests/Veronica', 'alpha': 0.05, 'software': 'infer', 'level': 'all', 'dropna': False, 'fillna': '1', 'sleeptime': 0.2, 'noexo': True, 'nomerops': False, 'calcstructure': None, 'threadingcores': 8, 'stat': False, 'stat_pairwise': True, 'significance': 'all', 'multipletesting': False, 'multipletestingmethod': 'fdr_bh', 'visualize': True, 'logo': 'all', 'logo_fc': 3, 'cleavagesitesize': 4, 'volcano_foldchange': 1.5, 'pseudocounts': True, 'cleavagevis': None, 'enrichment': False, 'pathway': False, 'proteasefile': None, 'output_name': 'Veronica_gluC_PO_NT_500-stat', 'output_filetype': 'xlsx', 'separate': False, 'pymol_verbose': False}
-2023-11-21 13:15:51,726 [WARNING] You have supplied a condition file, but are not doing condition specific statistics. Consider adding the -stat flag to your query!
-2023-11-21 13:15:51,726 [WARNING] -Logo_fc only has an effect if both -logo and -stat are given
-2023-11-21 13:15:51,726 [INFO] Startup complete!
-
-2023-11-21 13:15:51,726 [CRITICAL] Invalid condition file format. Please select a valid condition file format and try again.. Exiting with code 1.

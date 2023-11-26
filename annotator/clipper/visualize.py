@@ -171,7 +171,7 @@ class Visualizer:
         """
         alpha = np.log10(alpha)
         columns_fold = self.annot.columns[self.annot.columns.str.startswith("Log2 fold change:")]
-        columns_ttest = self.annot.columns[self.annot.columns.str.startswith("Log10 " + self.stat_columns_start_with)]
+        columns_ttest = self.annot.columns[self.annot.columns.str.startswith("-Log10 " + self.stat_columns_start_with)]
         figures = {}
         for test in columns_ttest:
             conditions = [condition.strip() for condition in test.split(':')[1].split(" vs. ")]
@@ -181,7 +181,7 @@ class Visualizer:
                     if comparison in fold:
                         frame = self.annot.loc[:, [fold, test]].dropna(how="any")
                         # log values are negative for ttest column, inverse
-                        frame[test] = frame[test] * -1
+                        frame[test] = frame[test]
                         frame["coding"] = np.where((~frame[fold].between(-volcano_foldchange, volcano_foldchange)) & (~frame[test].between(alpha, -alpha)), "1", "0",)
                         frame = frame.sort_values("coding")
 

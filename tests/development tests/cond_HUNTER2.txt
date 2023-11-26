@@ -1,3 +1,0 @@
-gluc 127C 128C
-control 129C 130C
-ctrl 131C 132C

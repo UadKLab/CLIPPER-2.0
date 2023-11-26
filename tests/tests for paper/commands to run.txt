@@ -1,1 +1,7 @@
-python run.py -i ../tests/tests\ for\ paper/GluC_Evo_TMTpro_peptide_groups.xlsx -cf ../tests/tests\ for\ paper/cond_GluC.txt -cs sig -stat -spw -sig all -mt -vis -logo all -enr -path
+
+MMP9:
+python run.py -i ../tests/tests\ for\ paper/MMP9/MMP9_peptide_report_duplicates.xlsx -cf ../tests/tests\ for\ paper/MMP9/cond_MMP9_duplicates.txt -o MMP9 -stat -spw -sig all -vis -pf ../tests/tests\ for\ paper/MMP9/proteases.txt -logo all -cs all -clvis both -enr -path
+
+GluC:
+python run.py -i ../tests/tests\ for\ paper/GluC/GluC_peptide_groups.xlsx -cf ../tests/tests\ for\ paper/GluC/cond_GluC.txt -o GluC -stat -spw -sig all -vis -nx -logo all 
+

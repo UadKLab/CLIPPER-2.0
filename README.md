@@ -77,7 +77,9 @@ cd annotator
 python run.py -h
 ```
 
-9. If you wish to do solvent accessibility calculations or plot peptides in sequence or 3D protein views, a local copy of the alphafold database is necessary (https://alphafold.ebi.ac.uk/download#proteomes-section, approx. 5.2 gb). Once downloaded, the path should be specified in the file "annutils.py" as alphafold_folder_name = r'INSERT_PATH_HERE'.
+9. If you wish to do solvent accessibility calculations or plot peptides in sequence or 3D protein views, a local copy of the alphafold database is necessary (https://alphafold.ebi.ac.uk/download#proteomes-section, approx. 5.2 gb). Once downloaded, the path should be specified in the file "annutils.py" as alphafold_folder_name = r'INSERT_PATH_HERE' on line 24.
+
+10. If you wish to set up a server with the browser GUI, and have emails sent with completed results, a valid gmail email and password combination should be specified in "annotator/data/credentials.json".
 
 ## Usage
 

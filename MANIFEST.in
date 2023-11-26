@@ -1,5 +1,7 @@
-graft data
-graft results
-graft log
+graft annotator
 graft tests
+graft requirements.txt
+graft README.md
+graft LICENSE
+graft CLIPPER_logo.png
 global-exclude *.pyc
