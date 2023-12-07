@@ -17,3 +17,5 @@ seaborn==0.12.2
 statsmodels==0.13.5
 tqdm==4.65.0
 umap-learn==0.5.3
+flask==3.0.0
+flask_mail==0.9.1

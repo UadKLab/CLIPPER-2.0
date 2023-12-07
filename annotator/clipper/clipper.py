@@ -239,9 +239,7 @@ class Clipper:
                         self.software = "mq"   
                     except KeyError:
                         error_message = (
-                            f"Invalid input. Please make sure input format is correct "
-                            f"and contains accession and sequence columns with default "
-                            f"names, and try again."
+                            f"Invalid input. Please make sure input format is corre and contains accession and sequence columns with default names, and try again."
                         )
                         logging.critical("Invalid input. Exiting with code 4.")
                         raise TypeError(error_message)
@@ -645,7 +643,11 @@ class Clipper:
         patterns['amino'] = "B|J|O|U|X|Z"
 
         try:
-            annutils.parse_acc(self.df.loc[0, patterns['acc']])
+            test_for_first_row_nan = annutils.parse_acc(self.df.loc[0, patterns['acc']])
+            print(test_for_first_row_nan)
+            print(type(test_for_first_row_nan))
+            if test_for_first_row_nan is None:
+                logging.critical("The first row in the input file does not have an accession number. Please delete this row (or rows) manually and try again.")
             self.df.loc[0, patterns['seq']]
         except:
             logging.critical("Invalid input. Exiting with code 4.")
@@ -691,12 +693,18 @@ class Clipper:
             patterns['nterm_label'] = r"\[DimethNter0\]"
             patterns['lysine_label'] = r"K\[DimethLys0\]"
         else:
-            logging.critical("Invalid input. Exiting with code 4.")
-            raise TypeError(
-                f"Invalid input. Please make sure input format {self.software} \
-                contains valid modification types (TMT or Dimethyl), \
-                and try again."
-            )
+            logging.warning("Could not identify modification type. Continuing without modification information")
+            patterns['label'] = ""
+            patterns['nterm'] = ""
+            patterns['nterm_label'] = ""
+            patterns['lysine_label'] = ""
+        # else:
+        #     logging.critical("Invalid input. Exiting with code 4.")
+        #     raise TypeError(
+        #         f"Invalid input. Please make sure input format {self.software} \
+        #         contains valid modification types (TMT or Dimethyl), \
+        #         and try again."
+        #     )
 
         return patterns
 
@@ -717,9 +725,18 @@ class Clipper:
         patterns['nterm'] = r"\[N-Term\]"
         patterns['seq'] = "Sequence"
         patterns['amino'] = "B|J|O|U|X|Z"
+        
+
+        # go here
+        first_row_is_nan = True
+        while first_row_is_nan:
+            if self.df.loc[0, patterns['acc']] is np.nan:
+                self.df = self.df.drop([0]).reset_index(drop=True)
+                logging.warning("Removed the current first row of the input file as the accession was not available.")
+            else:
+                first_row_is_nan = False
 
         try:
-            # check if sequence column is present
             annutils.parse_acc(self.df.loc[0, patterns['acc']])
             self.df.loc[0, patterns['seq']]
         except KeyError:
@@ -1002,7 +1019,6 @@ class Clipper:
         Returns:
             dict: A dictionary of annotation results.
         """
-
         acc = annutils.parse_acc(self.df.loc[loc, self.patterns['acc']])
         if self.patterns['seq'] == 'Annotated Sequence':
             seq = annutils.parse_sequence(self.df.loc[loc, self.patterns['seq']])

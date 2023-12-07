@@ -32,7 +32,7 @@ The following should be done in a command line interface, but the code below can
 xcode-select --install
 ```
 
-2. Open the command line and create a conda environment with Python version 3.11.3:
+2. Open the Anaconda Prompt on windows or terminal on mac, and create a conda environment with Python version 3.11.3:
 
 ```bash
 conda create -n clipper python=3.11.3
@@ -247,6 +247,8 @@ python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ../tests/cond_HUNTER.txt -cs
 ```bash
 python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ../tests/cond_HUNTER.txt -stat -spw -pf ../tests/proteases.txt
 ```
+
+## Extra tips
 
 If you wish to plot using specific filter requirements, we recommend performing an initial annotation on the full dataset without visualizations, filter the peptides based on your preference (that might be multiple testing corrected pvalues), delete the rows containing peptides which does not satisfy your criteria, and run the annotator again.
 

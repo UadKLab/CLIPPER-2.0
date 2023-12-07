@@ -232,7 +232,7 @@ def initialize_arguments():
         "--cores",
         action="store",
         dest="threadingcores",
-        default=os.cpu_count(),
+        default=min(os.cpu_count(), 16),
         help="integer, Allows specifying the number of CPU cores used for gathering information from Uniprot. Accepted values are 'max' (using all cores) or an integer indicating the intended number of cores to be used. Default is 'max'. The speed of Uniprot information fetching scales linearly with the number of cores used.",
     )
 
@@ -494,11 +494,13 @@ def initialize(arguments):
         args_ok = False
 
     if arguments["threadingcores"]:
-        max_cores= os.cpu_count()
+        max_cores= min(os.cpu_count(), 16)
         cores = arguments["threadingcores"]
 
         if cores == 'max':
             cores = max_cores
+        if cores > 16:
+            logging.warning(f"The number of cores provided to --cores was {cores}, and {max_cores} cores were detected. However CLIPPER is currently capped at 16 cores on larger systems because.")
         else:
             try:
                 cores = int(cores)
@@ -580,11 +582,11 @@ def parse_acc(acc_string: str):
     Returns:
     str: The first uniprot id in the list.
     """
-
     if not acc_string:
         return None
-
+    
     accs = acc_string.split(";")
+    
     if len(accs) > 0:
         return accs[0]
     else:
