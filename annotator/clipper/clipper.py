@@ -239,7 +239,7 @@ class Clipper:
                         self.software = "mq"   
                     except KeyError:
                         error_message = (
-                            f"Invalid input. Please make sure input format is corre and contains accession and sequence columns with default names, and try again."
+                            f"Invalid input. Please make sure input format is correct and contains accession and sequence columns with default names, and try again."
                         )
                         logging.critical("Invalid input. Exiting with code 4.")
                         raise TypeError(error_message)
@@ -644,8 +644,6 @@ class Clipper:
 
         try:
             test_for_first_row_nan = annutils.parse_acc(self.df.loc[0, patterns['acc']])
-            print(test_for_first_row_nan)
-            print(type(test_for_first_row_nan))
             if test_for_first_row_nan is None:
                 logging.critical("The first row in the input file does not have an accession number. Please delete this row (or rows) manually and try again.")
             self.df.loc[0, patterns['seq']]
