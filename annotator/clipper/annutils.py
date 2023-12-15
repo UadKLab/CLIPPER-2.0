@@ -434,7 +434,6 @@ def initialize(arguments):
 
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     basefolder = Path(__file__).resolve().parent.parent
-    print(basefolder)
     logfile = basefolder / f"log/Annotator_{timestamp}.log"
 
     logger = initialize_logger(logfile)
@@ -638,7 +637,6 @@ def calculate_structure_properties(acc, cleavage_sites_indices, structure_proper
 
     with tempfile.NamedTemporaryFile(suffix=".cif", delete=False) as temp_cif:
         # Open the gzipped CIF file
-        print(model_path)
         try:
             with gzip.open(model_path, 'rb') as f_in:
                 # Write the decompressed contents to the temporary file

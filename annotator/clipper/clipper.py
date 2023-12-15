@@ -690,12 +690,12 @@ class Clipper:
             patterns['nterm'] = r"DimethNter0"
             patterns['nterm_label'] = r"\[DimethNter0\]"
             patterns['lysine_label'] = r"K\[DimethLys0\]"
-        else:
-            logging.warning("Could not identify modification type. Continuing without modification information")
-            patterns['label'] = ""
-            patterns['nterm'] = ""
-            patterns['nterm_label'] = ""
-            patterns['lysine_label'] = ""
+        # else:
+        #     logging.warning("Could not identify modification type. Continuing without modification information")
+        #     patterns['label'] = ""
+        #     patterns['nterm'] = ""
+        #     patterns['nterm_label'] = ""
+        #     patterns['lysine_label'] = ""
         # else:
         #     logging.critical("Invalid input. Exiting with code 4.")
         #     raise TypeError(
