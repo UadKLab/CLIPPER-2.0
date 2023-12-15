@@ -769,56 +769,56 @@ class Visualizer:
     
 
 
-def plot_functional_enrichment(self, conditioncombinations, alpha):
+    def plot_functional_enrichment(self, conditioncombinations, alpha):
 
-    """
-    Performs a functional enrichment analysis and generates a bar plot of the results.
-    
-    Args:
-        alpha (float): A threshold for determining the significance of peptides.
-    
-    Returns:
-        dict: A dictionary where the keys are condition names and the values are the corresponding figures.
-    """
-
-    statcols = self.annot.columns[self.annot.columns.str.startswith(self.stat_columns_start_with)]
-    quant_columns_starts_with = "Log2 fold change:"
-    fold_change_threshold = 2
-
-    figures = {}
-    for col in cols:
-        cond = col.split(":")[1].strip()
-        df = self.annot[self.annot[col] < alpha]
-        df_high = df[df[quant_columns_starts_with + ": " + cond] > fold_change_threshold]
-        gene_names_high = df_high["name"].unique()
-        genes_high = [g.split('_')[0] for g in gene_names_high]
+        """
+        Performs a functional enrichment analysis and generates a bar plot of the results.
         
-        if cond in conditioncombinations:
-            if genes_high:
-                figs_high = plot_enrichment_figure(genes, cond, alpha)
-                for source, fig in figs_high.items():
-                    fig_name = cond.replace('/', '_') + '_high_' + source
-                    figures[fig_name] = fig
-            else:
-                logging.info(f'No significant peptides with a cutoff value <{alpha} for conditions {col_name}. No functional enrichment plots will be made for this comparison.')
-
-    for col in cols:
-        cond = col.split(":")[1].strip()
-        df = self.annot[self.annot[col] < alpha]
-        df_low = df[df[quant_columns_starts_with + ": " + cond] < -fold_change_threshold]
-        gene_names_low = df_low["name"].unique()
-        genes_low = [g.split('_')[0] for g in gene_names_low]
+        Args:
+            alpha (float): A threshold for determining the significance of peptides.
         
-        if cond in conditioncombinations:
-            if genes_low:
-                figs_low = plot_enrichment_figure(genes, cond, alpha)
-                for source, fig in figs_low.items():
-                    fig_name = cond.replace('/', '_') + '_low_' + source
-                    figures[fig_name] = fig
-            else:
-                logging.info(f'No significant peptides with a cutoff value <{alpha} for conditions {col_name}. No functional enrichment plots will be made for this comparison.')
+        Returns:
+            dict: A dictionary where the keys are condition names and the values are the corresponding figures.
+        """
 
-    return figures
+        cols = self.annot.columns[self.annot.columns.str.startswith(self.stat_columns_start_with)]
+        quant_columns_starts_with = "Log2 fold change:"
+        fold_change_threshold = 2
+
+        figures = {}
+        for col in cols:
+            cond = col.split(":")[1].strip()
+            df = self.annot[self.annot[col] < alpha]
+            df_high = df[df[quant_columns_starts_with + " " + cond] > fold_change_threshold]
+            gene_names_high = df_high["name"].unique()
+            genes_high = [g.split('_')[0] for g in gene_names_high]
+            
+            if cond in conditioncombinations:
+                if genes_high:
+                    figs_high = plot_enrichment_figure(genes_high, cond, alpha)
+                    for source, fig in figs_high.items():
+                        fig_name = cond.replace('/', '_') + '_high_' + source
+                        figures[fig_name] = fig
+                else:
+                    logging.info(f'No significant peptides with a cutoff value <{alpha} for conditions {col_name}. No functional enrichment plots will be made for this comparison.')
+
+        for col in cols:
+            cond = col.split(":")[1].strip()
+            df = self.annot[self.annot[col] < alpha]
+            df_low = df[df[quant_columns_starts_with + " " + cond] < -fold_change_threshold]
+            gene_names_low = df_low["name"].unique()
+            genes_low = [g.split('_')[0] for g in gene_names_low]
+            
+            if cond in conditioncombinations:
+                if genes_low:
+                    figs_low = plot_enrichment_figure(genes_low, cond, alpha)
+                    for source, fig in figs_low.items():
+                        fig_name = cond.replace('/', '_') + '_low_' + source
+                        figures[fig_name] = fig
+                else:
+                    logging.info(f'No significant peptides with a cutoff value <{alpha} for conditions {col_name}. No functional enrichment plots will be made for this comparison.')
+
+        return figures
 
     def plot_pathway_enrichment(self, conditioncombinations, alpha, folder=None):
 
