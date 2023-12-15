@@ -338,8 +338,12 @@ class Visualizer:
             dict: A dictionary with "clustermap" as a key and the seaborn clustermap figure as the value.
         """
 
+        # if the dataframe contains more than 20000 rows, return empty dict
+        if len(self.df) > 20000:
+            logging.warning(f"Clustermap was not generated due to potential memory limitations because the dataframe contains more than 20000 rows.")
+            return None
+            
         # get column names and sort to have similar conditions next to each other in the plot. Both full column names for script and "nice" names for plot are available
-        
         quant_columns = self.df.columns[self.df.columns.str.contains(self.patterns['quant'])]
         columns = []
         columns_dict = {}

@@ -1331,7 +1331,9 @@ class Clipper:
         self.figures["CV"] = vis.cv_plot()
         self.figures["Piechart"] = vis.generate_pie_charts()
         self.figures["Heatmap"] = vis.heatmap()
-        self.figures["Clustermap"] = vis.clustermap()
+        clustmap = vis.clustermap()
+        if clustmap is not None:
+            self.figures["Clustermap"] = clustmap
         self.figures["PCA"]  = vis.pca_visualization()
         self.figures["UMAP"]  = vis.umap_visualization()
 
