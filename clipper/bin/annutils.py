@@ -119,14 +119,6 @@ def initialize_arguments():
     )
 
     parser.add_argument(
-        "-pa",
-        "--preannotated",
-        action="store_true",
-        dest="preannotated",
-        help="Flag, if given assume that file is preannotated, and will not annotate from uniprot, proteinatlas, or do exopeptidasecheck.",
-    )
-
-    parser.add_argument(
         "-cf",
         "--conditionfile",
         action="store",

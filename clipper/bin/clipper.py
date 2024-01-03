@@ -78,7 +78,6 @@ class Clipper:
         # input attributes
         self.infile_type = args["infile_type"]
         self.infile = args["infile"]
-        #self.preannotated = args["preannotated"]
         self.alpha = args["alpha"]
         self.software = args["software"]
 
@@ -476,22 +475,10 @@ class Clipper:
                         "protease_merops_name",
                         ]
 
-        #if previous annotation is not given, initialize an empty dataframe
-        #if self.preannotated == False:
         self.annot = pd.DataFrame(
             columns=annot_columns,
             index=range(length),
         )
-
-        # #if previous annotation is indicated, try loading from data to save time fetching from uniprot
-        # else:
-        #     try:
-        #         self.annot = self.df.loc[:,annot_columns]
-        #         logging.info("Previous annotation was successfully loaded. Continuing to statistical analysis.")
-        #     except Exception:
-        #         logging.warning("Could not recognize a previous annotation. Falling back to reannotating the data.")
-        #         self.preannotated = False
-        #         self.initialize_annotation()
         
         # remove Merops columns if not wanted
         if self.nomerops:
