@@ -160,6 +160,9 @@ class Logo:
         return figure, figure_heatmap
 
 def logo_heatmap(df, xlabels, title, axs = None):
+
+    """currently not working optimally"""
+
     import pandas as pd
     import numpy as np
     import matplotlib.pyplot as plt

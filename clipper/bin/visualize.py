@@ -736,42 +736,6 @@ class Visualizer:
             logging.info(f"Plotting peptide sequences and positions on structures took {annutils.format_seconds_to_time(elapsed)}")
         for item in log_warnings:
             logging.warning(item)
-        
-        
-
-
-    # def plot_functional_enrichment(self, conditioncombinations, alpha):
-
-    #     """
-    #     Performs a functional enrichment analysis and generates a bar plot of the results.
-        
-    #     Args:
-    #         alpha (float): A threshold for determining the significance of peptides.
-        
-    #     Returns:
-    #         dict: A dictionary where the keys are condition names and the values are the corresponding figures.
-    #     """
-
-    #     cols = self.annot.columns[self.annot.columns.str.startswith(self.stat_columns_start_with)]
-
-    #     figures = {}
-    #     for col in cols:
-    #         df = self.annot[self.annot[col] < alpha]
-    #         gene_names = df["name"].unique()
-    #         genes = [g.split('_')[0] for g in gene_names]
-    #         col_name = col.split(":")[1].strip()
-    #         if col_name in conditioncombinations:
-    #             if genes:
-    #                 figs = plot_enrichment_figure(genes, col_name, alpha)
-    #                 for source, fig in figs.items():
-    #                     fig_name = col_name.replace('/', '_') + '_' + source
-    #                     figures[fig_name] = fig
-    #             else:
-    #                 logging.info(f'No significant peptides with a cutoff value <{alpha} for conditions {col_name}. No functional enrichment plots will be made for this comparison.')
-
-    #     return figures
-    
-
 
     def plot_functional_enrichment(self, conditioncombinations, alpha):
 
@@ -1241,7 +1205,7 @@ def plot_enrichment_figure(genes, col_name, alpha, organism='hsapiens'):
         organism (str): Organism to be considered for enrichment analysis. Default is 'hsapiens' (Homo sapiens).
 
     Returns:
-        fig (Figure object): The generated figure, or None if no significant results were found.    # LATER: Add type of figure?
+        fig (Figure object): The generated figure, or None if no significant results were found.
     """
 
     # Initialize gprofiler

@@ -677,19 +677,6 @@ class Clipper:
             patterns['nterm'] = r"DimethNter0"
             patterns['nterm_label'] = r"\[DimethNter0\]"
             patterns['lysine_label'] = r"K\[DimethLys0\]"
-        # else:
-        #     logging.warning("Could not identify modification type. Continuing without modification information")
-        #     patterns['label'] = ""
-        #     patterns['nterm'] = ""
-        #     patterns['nterm_label'] = ""
-        #     patterns['lysine_label'] = ""
-        # else:
-        #     logging.critical("Invalid input. Exiting with code 4.")
-        #     raise TypeError(
-        #         f"Invalid input. Please make sure input format {self.software} \
-        #         contains valid modification types (TMT or Dimethyl), \
-        #         and try again."
-        #     )
 
         return patterns
 
@@ -1425,7 +1412,7 @@ class Clipper:
                         else:
                             logging.info("Could not create logo plots with ANOVA p-values, as multiple similar columns were found")
 
-                elif self.significance: # LATER: does this make sense to include?
+                elif self.significance:
                     for comparison in self.conditionpermutations:
                         column = f"Fold {comparison} significance"
                         data = self.annot[self.annot[column] == "significant high"]
@@ -1437,7 +1424,7 @@ class Clipper:
                     logging.info("Created logo plots using peptides with the highest and lowest percentile (deafault 5%) abundance fold change between conditions")
 
             except KeyError as err:
-                logging.error(f'ERROR in create_logos(): {err}')
+                logging.debug(f'ERROR in create_logos(): {err}')
 
         elif len(self.conditions) == 1:
             condition = list(self.conditions.keys())[0]

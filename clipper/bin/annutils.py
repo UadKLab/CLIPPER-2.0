@@ -751,36 +751,6 @@ def map_accessions(accessions):
     human_accessions = [entry['mapsTo'][0]['identifier'] for entry in mapping if entry['mapsTo']]
 
     return human_accessions
-"""
-def get_enriched_pathways(accs, cutoff=0.05):
-
-#    ""
-#    Get enriched pathways from Reactome using reactome2py.
-#    
-#    Parameters:
-#    accs (list): A list of protein accessions.
-#    cutoff (float, optional): The P-value cutoff for pathway enrichment.
-#
-#    Returns:
-#    dict: A dictionary of enriched pathways and associated statistics.
-#    ""
-
-    # Use reactome2py to perform the analysis
-    query = ",".join(accs)
-    res = analysis.identifiers(ids=query)
-    
-    # Extract the token from the results
-    token = res.get('summary', {}).get('token', None)
-    if token is None:
-        raise ValueError("Could not retrieve analysis token from Reactome")
-    
-    # Use the token to get the detailed results
-    pathways = analysis.token(token, page_size='20', page='1', sort_by='ENTITIES_FDR', 
-                              order='ASC', resource='TOTAL', p_value=cutoff, include_disease=True, 
-                              min_entities=None, max_entities=None)
-    
-    return pathways
-"""
 
 def get_proteins_and_interactors(pathway_id):
 
