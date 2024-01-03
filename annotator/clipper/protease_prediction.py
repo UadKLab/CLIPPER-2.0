@@ -184,32 +184,35 @@ def construct_pssms(protease_codes, df_cleavage, df_substrate, cleavagesitesize)
 
     return pssms
 
-
 def score_peptide(peptide, matrix):
-
+ 
     """
     Scores a peptide sequence against a PSSM.
-
+ 
     Parameters
     ----------
     peptide : str
         The peptide sequence to be scored.
     matrix : list of dicts
         The PSSM used for scoring.
-
+ 
     Returns
     -------
     float
         The score of the peptide against the given PSSM.
     """
-
+ 
     # Initialize the score
     acum = 0
-    
+   
+    # rewrite above to use regex
+    if re.search('[XUBZOJ]', peptide):
+        return None
+ 
     # For each residue in the peptide, add its PSSM score to the total score
     for i in range(len(peptide)):
         acum += matrix[i][peptide[i]]
-    
+   
     # Return the final score
     return acum
 
