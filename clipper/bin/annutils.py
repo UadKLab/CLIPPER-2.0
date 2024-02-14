@@ -17,7 +17,11 @@ import pandas as pd
 
 from tqdm import tqdm
 
-import pymol
+try:
+    import pymol
+except:
+    logging.info("Pymol not installed, please use conda to install pymol for secondary structure calculation and structure plotting")
+
 from reactome2py import analysis, content
 import networkx as nx
 

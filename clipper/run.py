@@ -4,8 +4,8 @@ import logging
 import pandas as pd
 from datetime import timedelta
 
-from clipper.clipper import Clipper
-from clipper.annutils import initialize, initialize_arguments, write_terminal_headers
+from bin.clipper import Clipper
+from bin.annutils import initialize, initialize_arguments, write_terminal_headers
 
 
 def main(args=None):

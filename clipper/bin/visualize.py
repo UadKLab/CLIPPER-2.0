@@ -22,7 +22,6 @@ import matplotlib.colors as colors
 import matplotlib.collections as collections
 from matplotlib.backends.backend_pdf import PdfPages
 
-import pymol
 from Bio import ExPASy
 from Bio import SwissProt
 from Bio import Seq
@@ -33,6 +32,11 @@ import networkx as nx
 from reactome2py import analysis
 
 from . import annutils
+
+try:
+    import pymol
+except:
+    logging.info("Pymol not installed, please use conda to install pymol for secondary structure calculation and structure plotting")
 
 
 class Visualizer:

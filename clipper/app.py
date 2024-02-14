@@ -10,8 +10,8 @@ import ast
 import time
 
 import run
-from clipper import mail
-from clipper.globals import *
+from bin import mail
+from bin.globals import *
 
 app = Flask(__name__, instance_relative_config=True)
 app.config.from_mapping(

@@ -64,7 +64,7 @@ conda install --channel conda-forge pygraphviz
 
 7. Download the Clipper 2.0 application.
 
-8. From the commandline navigate to the Clipper 2.0 application (the "*annotator*" folder with the "*requirements.txt*" file) and install dependencies with *pip*:
+8. From the commandline navigate to the Clipper 2.0 application (the folder with the "*requirements.txt*" file) and install dependencies with *pip*:
 
 ```bash
 pip install -r requirements.txt
@@ -73,13 +73,13 @@ pip install -r requirements.txt
 Verify your installation by running the following commands:
 
 ```bash
-cd annotator
+cd clipper
 python run.py -h
 ```
 
 9. If you wish to do solvent accessibility calculations or plot peptides in sequence or 3D protein views, a local copy of the alphafold database is necessary (https://alphafold.ebi.ac.uk/download#proteomes-section, approx. 5.2 gb). Once downloaded, the path should be specified in the file "annutils.py" as alphafold_folder_name = r'INSERT_PATH_HERE' on line 24.
 
-10. If you wish to set up a server with the browser GUI, and have emails sent with completed results, a valid gmail email and password combination should be specified in "annotator/data/credentials.json".
+10. If you wish to set up a server with the browser GUI, and have emails sent with completed results, a valid gmail email and password combination should be specified in "clipper/data/credentials.json".
 
 ## Usage
 
@@ -250,7 +250,7 @@ python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ../tests/cond_HUNTER.txt -st
 
 ## Extra tips
 
-If you wish to plot using specific filter requirements, we recommend performing an initial annotation on the full dataset without visualizations, filter the peptides based on your preference (that might be multiple testing corrected pvalues), delete the rows containing peptides which does not satisfy your criteria, and run the annotator again.
+If you wish to plot using specific filter requirements, we recommend performing an initial annotation on the full dataset without visualizations, filter the peptides based on your preference (that might be multiple testing corrected pvalues), delete the rows containing peptides which does not satisfy your criteria, and run CLIPPER 2.0 again.
 
 When repeatedly running the same file, for example if you wish to test different argument configurations, it is recommended to specify the output folder as "-o FOLDER_NAME". CLIPPER 2.0 will look in the output folder for previous Uniprot annotation data, and if present (if the annotation was run in the same folder previously), CLIPPER 2.0 will not fetch data from uniprot, but reuse the present annotation file, speeding up processing time a lot.
 
