@@ -44,7 +44,7 @@ conda create -n clipper python=3.11.3
 conda activate clipper
 ```
 
-4. To take advantage of the secondary structure calculation and structure plotting, install *pymol* with *conda*:
+4. (Optional) To take advantage of the secondary structure calculation and structure plotting, install *pymol* with *conda*:
 
 ```bash
 conda install -c conda-forge pymol-open-source
