@@ -274,9 +274,6 @@ Depending on the arguments used, the output folder will contain the following fi
   - **Pathway plots**: Pathway plots of the peptides.
   - **Enrichment plots**: Enrichment plots of the peptides.
   
-
-
-
 ## Extra tips
 
 If you wish to plot using specific filter requirements, we recommend performing an initial annotation on the full dataset without visualizations, filter the peptides based on your preference (that might be multiple testing corrected pvalues), delete the rows containing peptides which does not satisfy your criteria, and run CLIPPER 2.0 again.
@@ -287,10 +284,10 @@ When repeatedly running the same file, for example if you wish to test different
 
 <p align="center">
   <a href="https://www.dtu.dk/">
-    <img src="img\DTU_logo.png" alt="DTU logo" width="400"/>
+    <img src="img\DTU_logo.png" alt="DTU logo" width="400" height="400"/>
   </a>
   <a href="https://www.bioengineering.dtu.dk/research/research-sections/section-for-protein-science-and-biotherapeutics">
-    <img src="img\PSB_logo.png" alt="PSB logo" width="400"/>
+    <img src="img\PSB_logo.png" alt="PSB logo" width="400" height="400"/>
   </a>
 </p>
 
