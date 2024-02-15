@@ -284,10 +284,10 @@ When repeatedly running the same file, for example if you wish to test different
 
 <p align="center">
   <a href="https://www.dtu.dk/">
-    <img src="img\DTU_logo.png" alt="DTU logo" width="50" height="60"/>
+    <img src="img\DTU_logo.png" alt="DTU logo" width="100" height="140"/>
   </a>
   <a href="https://www.bioengineering.dtu.dk/research/research-sections/section-for-protein-science-and-biotherapeutics">
-    <img src="img\PSB_logo.png" alt="PSB logo" width="60" height="60"/>
+    <img src="img\PSB_logo.png" alt="PSB logo" width="140" height="140"/>
   </a>
 </p>
 
