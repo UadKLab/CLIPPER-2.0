@@ -1,7 +1,7 @@
 # CLIPPER 2.0
 
 <p align="center">
-  <img src="./CLIPPER_logo.png">
+  <img src="img/CLIPPER_logo.png">
 </p>
 
 Advanced peptide-level annotation software that can be used natively in a pipeline with Proteome Discoverer and Spectromine/Spectronaut. Many other MS software such as fragpipe can be used by simply modifying column names to fit those of either PD or spectronaut. We found MaxQuant to have certain limitations when it comes to degradomics data analysis, and therefore recommend Fragpipe as a free alternative.
@@ -176,6 +176,17 @@ options:
 Not extensively tested, this tool is still in beta version. Contact konka@dtu.dk or alemol@dtu.dk for bug reports and requests.
 ```
 
+### Run the GUI in local host instead of the command line interface
+You can run the GUI in local host by running the following command using the terminal in the clipper folder:
+
+```bash
+python app.py
+```
+
+You should be able to access the GUI by opening a web browser and navigating to http:// ip address and the port number specified in the terminal. We recommend using Google Chrome for the best experience.
+
+You will still be able to monitor the progress of the analysis in the terminal, and the results will be downloaded once the analysis is complete. The email feature will not work in the GUI unless you specified your own email as mentioned above. We are working on hosting the GUI on a server, and will update the documentation when this is available.
+
 ## Input files
 
 ### Condition file (optional, but required for statistical tests and most visualizations)
@@ -204,7 +215,7 @@ MEROPSProteaseCode2
 
 ## Examples
 
-Here are some examples of how you can use CLIPPER 2.0:
+Here are some examples of how you can use CLIPPER 2.0 throught the command line interface:
 
 1. Basic usage
 
@@ -248,10 +259,39 @@ python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ../tests/cond_HUNTER.txt -cs
 python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ../tests/cond_HUNTER.txt -stat -spw -pf ../tests/proteases.txt
 ```
 
+## Description of the output
+Results are saved in a folder with the name of the input file and a timestamp (also saved as a zipped folder), unless and output folder name is specified. 
+
+Depending on the arguments used, the output folder will contain the following files and folders:
+
+1. **Annotated file**: A file containing the original input data with added columns for annotation and statistical tests. The file is saved in the format specified by the user (default is .xlsx). The added columns to the original files and their descriptions are: 
+  - **Uniprot annotation**: The Uniprot annotation of the protein the peptide is derived from.
+  - **Protein Atlas annotation**: The Protein Atlas annotation of the protein the peptide is derived from.
+2. **Plots**: A number of folders are generated, containing plots specified.
+  - **General plots**: Volcano plots of the fold change and p-values of the peptides.
+  - **Logo plots**: Sequence logo plots of the peptides.
+  - **Heatmap plots**: Heatmap plots of the peptides.
+  - **Pathway plots**: Pathway plots of the peptides.
+  - **Enrichment plots**: Enrichment plots of the peptides.
+  
+
+
+
 ## Extra tips
 
 If you wish to plot using specific filter requirements, we recommend performing an initial annotation on the full dataset without visualizations, filter the peptides based on your preference (that might be multiple testing corrected pvalues), delete the rows containing peptides which does not satisfy your criteria, and run CLIPPER 2.0 again.
 
 When repeatedly running the same file, for example if you wish to test different argument configurations, it is recommended to specify the output folder as "-o FOLDER_NAME". CLIPPER 2.0 will look in the output folder for previous Uniprot annotation data, and if present (if the annotation was run in the same folder previously), CLIPPER 2.0 will not fetch data from uniprot, but reuse the present annotation file, speeding up processing time a lot.
+
+## Contact
+
+<p align="center">
+  <a href="https://www.dtu.dk/">
+    <img src="img\DTU_logo.png" alt="DTU logo" width="400"/>
+  </a>
+  <a href="https://www.bioengineering.dtu.dk/research/research-sections/section-for-protein-science-and-biotherapeutics">
+    <img src="img\PSB_logo.png" alt="PSB logo" width="400"/>
+  </a>
+</p>
 
 We hope you find CLIPPER 2.0 useful for your research. Feel free to contact us for any questions, bug reports, or feature requests (mails konka@dtu.dk and alemol@dtu.dk).

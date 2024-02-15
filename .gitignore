@@ -1,4 +1,4 @@
 .DS_Store
 .conda
-annotator/__pycache__/
-annotator/clipper/__pycache__
+clipper/__pycache__/
+clipper/bin/__pycache__
