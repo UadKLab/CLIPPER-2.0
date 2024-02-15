@@ -284,7 +284,7 @@ When repeatedly running the same file, for example if you wish to test different
 
 <p align="center">
   <a href="https://www.dtu.dk/">
-    <img src="img\DTU_logo.png" alt="DTU logo" width="400" height="400"/>
+    <img src="img\DTU_logo.png" alt="DTU logo" width="200" height="400"/>
   </a>
   <a href="https://www.bioengineering.dtu.dk/research/research-sections/section-for-protein-science-and-biotherapeutics">
     <img src="img\PSB_logo.png" alt="PSB logo" width="400" height="400"/>
