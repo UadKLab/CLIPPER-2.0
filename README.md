@@ -259,21 +259,73 @@ python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ../tests/cond_HUNTER.txt -cs
 python run.py -i ../tests/HUNTER_clean_100.xlsx -cf ../tests/cond_HUNTER.txt -stat -spw -pf ../tests/proteases.txt
 ```
 
-## Description of the output
+## Description of output files and folders
 Results are saved in a folder with the name of the input file and a timestamp (also saved as a zipped folder), unless and output folder name is specified. 
 
 Depending on the arguments used, the output folder will contain the following files and folders:
 
-1. **Annotated file**: A file containing the original input data with added columns for annotation and statistical tests. The file is saved in the format specified by the user (default is .xlsx). The added columns to the original files and their descriptions are: 
-  - **Uniprot annotation**: The Uniprot annotation of the protein the peptide is derived from.
-  - **Protein Atlas annotation**: The Protein Atlas annotation of the protein the peptide is derived from.
+1. **Annotated file**: A file containing the original input data with added columns for annotation and statistical tests. The file is saved in the format specified by the user (default is .xlsx with '_annot' in filename). The added columns to the original files and their descriptions are: 
+  - **query_sequence**: Peptide sequence used for the annotation.
+  - **query_accession**: Uniprot protein accession used for the annotation.
+  - **name**: Gene name of the protein.
+  - **full_sequence**: Full sequence of the protein.
+  - **description**: Description of the protein.
+  - **keywords**: keywords of the protein from Uniprot entry in the same column,  separated by '|'.
+  - **go_codes**: Gene ontology codes of the protein from Uniprot entry in the same column, separated by '|'.
+  - **go_names**: Gene ontology names of the protein from Uniprot entry in the same column, separated by '|'.
+  - **proteoform_certainty%**: The certainty of the proteoform annotation, based on the number of proteins the peptide sequence is present.
+  - **acc_length**: The number of residues in the protein.
+  - **start_pep**: The location of the peptide in the protein, as the first residue.
+  - **end_pep**: The location of the peptide in the protein, as the last residue.
+  - **p1_position**: The cleavage site of the peptide in the protein, as the site of the residue before cleavage (p1 position).
+  - **cleavage_site**: The cleavage site environment of the peptide in the protein, annotated as the 4 residues before the cleavage site, the location
+  of the p1 residue in parenthesis, a period to indicate the cleavage site, the location of the p1' residue, and the full peptide identified.
+  - **p4_p4prime**: The cleavage environment of the peptide as 4 residues before and after the cleavage site.
+  - **nterm_annot**: Annotation of the cleavage event based on UniProt annotation, if available.
+  - **protease_uniprot**: Proteases known to generate this cleavage site, based on UniProt annotation.
+  - **protease_merops**: MEROPS code of proteases known to generate this cleavage site, based on MEROPS annotation.
+  - **protease_merops_name**: Name of proteases known to generate this cleavage site, based on MEROPS annotation.
+  - **ProteinAtlas_RNA tissue specific nTPM**: Normalized transcript per million (nTPM) expression of the protein in tissues as provided by ProteinAtlas,
+  separated by a comma in the same column.
+  - **ProteinAtlas_Chromosome**: Location of the protein in the chromosome as provided by ProteinAtlas.
+  - **ProteinAtlas_Position**: Position of the protein in the chromosome as provided by ProteinAtlas.
+  - **ProteinAtlas_Protein class**: Protein class of the protein as provided by ProteinAtlas.
+  - **ProteinAtlas_Biological process**: Biological process of the protein as provided by ProteinAtlas.
+  - **ProteinAtlas_Molecular function**: Molecular function of the protein as provided by ProteinAtlas.
+  - **ProteinAtlas_Disease involvement**: Disease involvement of the protein as provided by ProteinAtlas.
+  - **exopeptidase**: Annotation of the peptide as a potential exopeptidase substrate based on identication of upstream peptide in the same dataset.
+  - **condition_mean**: The mean of the peptide abundance in the condition.
+  - **condition_deviation**: The standard deviation of the peptide abundance in the condition.
+  - **condition_cv**: The coefficient of variation of the peptide abundance in the condition.
+  - **Fold change:**: The fold change of the peptide abundance between conditions. The first of the two conditions is the numerator, and the second is the denominator.
+  - **Log2 fold change:**: The log2 fold change of the peptide abundance between conditions. The first of the two conditions is the numerator, and the second is the denominator.
+  - **Independent T-test p-value:**: The p-value of the independent T-test between the two conditions.
+  - **-Log10 Independent T-test p-value:**: The -log10 p-value of the independent T-test between the two conditions.
+  - **Fold condition comparison significance**: The significance of the fold change between the two conditions, based on the distribution of peptide fold changes
+  between conditions (5% tail). The first of the two conditions is the numerator, and the second is the denominator.
+  - **predicted_protease_activity**: The predicted activity of the protease based on the peptide sequence and a MEROPS database PSSM for every protease provided by 
+  the user. Proteases are separated by a pipe symbol in the same column. The score is the sum of log2 fold enrichment compared to the background frequency of
+  aminoacids across the p4-p4' positions of the peptide.
+
 2. **Plots**: A number of folders are generated, containing plots specified.
-  - **General plots**: Volcano plots of the fold change and p-values of the peptides.
-  - **Logo plots**: Sequence logo plots of the peptides.
-  - **Heatmap plots**: Heatmap plots of the peptides.
-  - **Pathway plots**: Pathway plots of the peptides.
-  - **Enrichment plots**: Enrichment plots of the peptides.
-  
+  - **General plots**: 
+    - General plot with numbers of identified peptides and proteins, and N-termini.
+    - Clustermap of the peptide abundances across individual replicates/TMT channels.
+    - Heatmap of the peptide abundances across individual replicates/TMT channels.
+    - CV (coefficient of variation) of the peptide abundances across conditions.
+    - PCA plot of the peptide abundances across conditions.
+    - UMAP plot of the peptide abundances across conditions.
+    - Gallery of significant peptides. If a specific peptide in a protein is significant, peptides of that protein and the protein quantification is plotted.
+  - **Logo plots**: Sequence logo plots of the peptides. These logos are generated with the method the user specifies in the input arguments.
+  - **Fold change plots**: Peptide fold change distrubution plots across conditions.
+  - **Volcano plots**: Volcano plots of the peptide fold change and p-values across conditions.
+  - **Piechart plots**: Categories of peptides identified and their distribution in the dataset.
+  - **Pathway plots**: Pathway plots of the proteins and peptides identified in the dataset.
+  - **Enrichment plots**: Heatmap plots of the gene ontology terms, KEGG pathways, and other databases, enriched in the dataset as determined by gProfiler.
+
+3. **Log file**: A log file containing information about the analysis, including the arguments used, and the time it took to complete the analysis. Please include this as 
+an attachment if you contact us with bug reports, if possible.
+
 ## Extra tips
 
 If you wish to plot using specific filter requirements, we recommend performing an initial annotation on the full dataset without visualizations, filter the peptides based on your preference (that might be multiple testing corrected pvalues), delete the rows containing peptides which does not satisfy your criteria, and run CLIPPER 2.0 again.
