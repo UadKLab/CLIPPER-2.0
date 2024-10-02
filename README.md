@@ -62,7 +62,7 @@ conda install -c conda-forge pycairo
 conda install --channel conda-forge pygraphviz
 ```
 
-7. Download the Clipper 2.0 application.
+7. Download the Clipper 2.0 application (press the green button marked "Code" on the top of this page, then download the .zip file).
 
 8. From the commandline navigate to the Clipper 2.0 application (the folder with the "*requirements.txt*" file) and install dependencies with *pip*:
 
