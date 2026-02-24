@@ -891,11 +891,43 @@ class Clipper:
             values = np.log2(self.df[replicates]).T
             return values.replace([np.inf, -np.inf], np.nan)
 
-        def perform_test(test_func, column_name, column_log, vals_per_condition):
-            result = test_func(*vals_per_condition)
-            statistic, p_value = result[0], result[1]
+        def perform_test(p_value, column_name, column_log):
             self.annot[column_name] = p_value
-            self.annot[column_log] = -np.log10(p_value)
+            with np.errstate(divide="ignore", invalid="ignore"):
+                self.annot[column_log] = -np.log10(p_value)
+
+        def two_sample_pvalues(a, b):
+            pvals = np.full(a.shape[1], np.nan)
+            for i in range(a.shape[1]):
+                x = a.iloc[:, i].to_numpy(dtype=float)
+                y = b.iloc[:, i].to_numpy(dtype=float)
+                x = x[np.isfinite(x)]
+                y = y[np.isfinite(y)]
+                if len(x) == 0 or len(y) == 0:
+                    continue
+                try:
+                    pvals[i] = ttest_ind(x, y, equal_var=False)[1]
+                except Exception:
+                    continue
+            return pvals
+
+        def anova_pvalues(groups):
+            n_peptides = groups[0].shape[1]
+            pvals = np.full(n_peptides, np.nan)
+            for i in range(n_peptides):
+                samples = []
+                for group in groups:
+                    vals = group.iloc[:, i].to_numpy(dtype=float)
+                    vals = vals[np.isfinite(vals)]
+                    if len(vals) > 0:
+                        samples.append(vals)
+                if len(samples) < 2:
+                    continue
+                try:
+                    pvals[i] = f_oneway(*samples)[1]
+                except Exception:
+                    continue
+            return pvals
         
         conditions = list(self.conditions.keys())
         if len(conditions) >= 2:
@@ -909,19 +941,10 @@ class Clipper:
                     replicates.extend([column for column in self.df.columns if re.search(replicate, column) and re.search(self.patterns['quant'], column)])
                 vals_per_condition.append(get_log_values(replicates))
             if len(conditions) == 2:
-                perform_test(
-                    lambda a, b: ttest_ind(a, b, axis=0, nan_policy="omit", equal_var=False),
-                    column_name,
-                    column_log,
-                    vals_per_condition,
-                )
+                pvals = two_sample_pvalues(vals_per_condition[0], vals_per_condition[1])
             else:
-                perform_test(
-                    lambda *vals: f_oneway(*vals, axis=0, nan_policy="omit"),
-                    column_name,
-                    column_log,
-                    vals_per_condition,
-                )
+                pvals = anova_pvalues(vals_per_condition)
+            perform_test(pvals, column_name, column_log)
         
         else:
             logging.warning("-stat (condition statistics) was requested, but <2 conditions were supplied through a condition file. Please recheck conditions.")
@@ -937,12 +960,8 @@ class Clipper:
                     for replicate in self.conditions[cond]:
                         replicates.extend([column for column in self.df.columns if re.search(replicate, column) and re.search(self.patterns['quant'], column)])
                     vals_per_condition.append(get_log_values(replicates))
-                perform_test(
-                    lambda a, b: ttest_ind(a, b, axis=0, nan_policy="omit", equal_var=False),
-                    column_name,
-                    column_log,
-                    vals_per_condition,
-                )
+                pvals = two_sample_pvalues(vals_per_condition[0], vals_per_condition[1])
+                perform_test(pvals, column_name, column_log)
 
     def correct_multiple_testing(self):
 

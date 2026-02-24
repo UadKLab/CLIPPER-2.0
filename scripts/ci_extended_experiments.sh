@@ -9,8 +9,8 @@ run_experiment() {
   shift
   echo ""
   echo "=== Running ${name} ==="
-  echo "Command: python clipper/run.py $*"
-  PYTHONPATH=. python clipper/run.py "$@"
+  echo "Command: python -m clipper.run $*"
+  PYTHONPATH=. python -m clipper.run "$@"
   echo "=== ${name} completed ==="
 }
 
@@ -24,7 +24,7 @@ require_file() {
 
 require_file "tests/HUNTER_clean_100.xlsx"
 require_file "tests/cond_HUNTER.txt"
-require_file "tests/tests for paper/GluC/GluC_peptide_groups.xlsx"
+require_file "tests/tests for paper/GluC/GluC_peptide_groups_ci_1pct.xlsx"
 require_file "tests/tests for paper/GluC/cond_GluC.txt"
 
 run_experiment \
@@ -36,8 +36,7 @@ run_experiment \
 
 run_experiment \
   "GluC" \
-  -i "tests/tests for paper/GluC/GluC_peptide_groups.xlsx" \
+  -i "tests/tests for paper/GluC/GluC_peptide_groups_ci_1pct.xlsx" \
   -cf "tests/tests for paper/GluC/cond_GluC.txt" \
   -o "ci_gluc" \
   -stat -spw -sig all -vis -nx -logo all
-
