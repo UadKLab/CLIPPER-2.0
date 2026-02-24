@@ -5,6 +5,13 @@ on:
     branches: [main, master, dev]
   pull_request:
     branches: [main, master, dev]
+  workflow_dispatch:
+    inputs:
+      run_extended_experiments:
+        description: "Run HUNTER clean and GluC integration commands"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   build:
@@ -36,3 +43,8 @@ jobs:
       - name: Smoke tests
         run: |
           PYTHONPATH=. pytest -q tests/test_ci_smoke.py
+
+      - name: Extended integration experiments (optional)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.run_extended_experiments }}
+        run: |
+          bash scripts/ci_extended_experiments.sh
