@@ -11,8 +11,7 @@ from tqdm import tqdm
 import numpy as np
 import pandas as pd
 from pandas.errors import ParserError
-from scipy.stats import f_oneway, rv_histogram
-from statsmodels.stats.weightstats import ttest_ind
+from scipy.stats import f_oneway, rv_histogram, ttest_ind
 from statsmodels.stats.multitest import multipletests
 
 from . import annutils
@@ -337,11 +336,20 @@ class Clipper:
                 {self.software} is correct, and try again."
             )
 
-        if self.dropna:
-            columns = self.df.columns[
-                self.df.columns.str.contains(pat=self.patterns['quant'])
-            ]
-            self.df = self.df.dropna(subset=columns, how="all")
+    def apply_missing_value_policy(self):
+        """
+        Apply missing-value policy for quantification columns.
+
+        If --dropna is enabled, remove rows where all quantification values are missing.
+        """
+        if not self.dropna:
+            return
+
+        columns = self.df.columns[self.df.columns.str.contains(pat=self.patterns['quant'])]
+        before = len(self.df)
+        self.df = self.df.dropna(subset=columns, how="all")
+        removed = before - len(self.df)
+        logging.info(f"Dropped {removed} rows with all-NaN quantification values.")
             
     def prepare(self):
 
@@ -362,6 +370,7 @@ class Clipper:
             self.filter_df()
 
         self.sanitize()
+        self.apply_missing_value_policy()
 
     def make_folders(self):
 
@@ -884,7 +893,11 @@ class Clipper:
         The test results are stored in the dataframe.
         """
 
-        def perform_test(test_func, column_name, column_log, cols_per_condition, vals_per_condition):
+        def get_log_values(replicates):
+            values = np.log2(self.df[replicates]).T
+            return values.replace([np.inf, -np.inf], np.nan)
+
+        def perform_test(test_func, column_name, column_log, vals_per_condition):
             result = test_func(*vals_per_condition)
             statistic, p_value = result[0], result[1]
             self.annot[column_name] = p_value
@@ -892,19 +905,29 @@ class Clipper:
         
         conditions = list(self.conditions.keys())
         if len(conditions) >= 2:
-            test_func = ttest_ind if len(conditions) == 2 else f_oneway
             stat_name = f"{'Independent T-test p-value:' if len(conditions) == 2 else 'ANOVA p-value:'}"
             column_name = f"{stat_name} {' vs. '.join(conditions)}"
             column_log = f"-Log10 {column_name}"
-            cols_per_condition = []
             vals_per_condition = []
             for cond in conditions:
                 replicates = []
                 for replicate in self.conditions[cond]:
                     replicates.extend([column for column in self.df.columns if re.search(replicate, column) and re.search(self.patterns['quant'], column)])
-                cols_per_condition.append(replicates)
-                vals_per_condition.append(np.log2(self.df[replicates]).T)
-            perform_test(test_func, column_name, column_log, cols_per_condition, vals_per_condition)
+                vals_per_condition.append(get_log_values(replicates))
+            if len(conditions) == 2:
+                perform_test(
+                    lambda a, b: ttest_ind(a, b, axis=0, nan_policy="omit", equal_var=False),
+                    column_name,
+                    column_log,
+                    vals_per_condition,
+                )
+            else:
+                perform_test(
+                    lambda *vals: f_oneway(*vals, axis=0, nan_policy="omit"),
+                    column_name,
+                    column_log,
+                    vals_per_condition,
+                )
         
         else:
             logging.warning("-stat (condition statistics) was requested, but <2 conditions were supplied through a condition file. Please recheck conditions.")
@@ -914,15 +937,18 @@ class Clipper:
                 stat_name = "Independent T-test p-value:"
                 column_name = f"{stat_name} {pair[0]} vs. {pair[1]}"
                 column_log = f"-Log10 {column_name}"
-                cols_per_condition = []
                 vals_per_condition = []
                 for cond in pair:
                     replicates = []
                     for replicate in self.conditions[cond]:
                         replicates.extend([column for column in self.df.columns if re.search(replicate, column) and re.search(self.patterns['quant'], column)])
-                    cols_per_condition.append(replicates)
-                    vals_per_condition.append(np.log2(self.df[replicates]).T)
-                perform_test(ttest_ind, column_name, column_log, cols_per_condition, vals_per_condition)
+                    vals_per_condition.append(get_log_values(replicates))
+                perform_test(
+                    lambda a, b: ttest_ind(a, b, axis=0, nan_policy="omit", equal_var=False),
+                    column_name,
+                    column_log,
+                    vals_per_condition,
+                )
 
     def correct_multiple_testing(self):
 
