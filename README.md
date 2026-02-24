@@ -267,3 +267,23 @@ When repeatedly running the same file, for example if you wish to test different
 </p>
 
 We hope you find CLIPPER 2.0 useful for your research. Feel free to contact us for any questions, bug reports, or feature requests (mails konka@dtu.dk and alemol@dtu.dk).
+
+## Citation
+
+```bibtex
+@article{kalogeropoulos_clipper_2024,
+	title = {{CLIPPER} 2.0: {Peptide}-{Level} {Annotation} and {Data} {Analysis} for {Positional} {Proteomics}},
+	volume = {23},
+	issn = {1535-9476},
+	url = {https://doi.org/10.1016/j.mcpro.2024.100781},
+	doi = {10.1016/j.mcpro.2024.100781},
+	number = {6},
+	urldate = {2026-02-24},
+	journal = {Molecular \& Cellular Proteomics},
+	publisher = {Elsevier},
+	author = {Kalogeropoulos, Konstantinos and Moldt Haack, Aleksander and Madzharova, Elizabeta and Di Lorenzo, Antea and Hanna, Rawad and Schoof, Erwin M. and auf dem Keller, Ulrich},
+	month = jun,
+	year = {2024},
+	annote = {doi: 10.1016/j.mcpro.2024.100781},
+}
+```
