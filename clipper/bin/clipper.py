@@ -3,10 +3,8 @@ import re
 import time
 import logging
 import concurrent.futures
-from ast import literal_eval
 from itertools import combinations, permutations
 
-from datetime import datetime
 from pathlib import Path
 from tqdm import tqdm
 
@@ -22,6 +20,7 @@ from .entry import Entry
 from .logo import create_logo_helper
 from .visualize import Visualizer
 from . import protease_prediction as pp
+from . import structure as structure_utils
 from .globals import *
 
 class Clipper:
@@ -702,7 +701,7 @@ class Clipper:
         # go here
         first_row_is_nan = True
         while first_row_is_nan:
-            if self.df.loc[0, patterns['acc']] is np.nan:
+            if pd.isna(self.df.loc[0, patterns['acc']]):
                 self.df = self.df.drop([0]).reset_index(drop=True)
                 logging.warning("Removed the current first row of the input file as the accession was not available.")
             else:
@@ -781,10 +780,10 @@ class Clipper:
             logging.critical("Invalid software input. Exiting with code 4.")
             raise TypeError(f"Invalid software input. Please provide a valid software format and try again.")
         
-        print(f'\n{datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[0:-3]} [INFO] The column name patterns which were detected are:')
-        for pattern, value in patterns.items():
-            print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[0:-3]} [INFO] - {pattern}: {value}')
-        print("")
+        logging.info("Detected column name patterns:")
+        for pattern in sorted(patterns):
+            logging.info(f"- {pattern}: {patterns[pattern]}")
+        logging.info("")
 
         return patterns
 
@@ -1197,88 +1196,46 @@ class Clipper:
         """
 
         if self.available_models is None:
-            available_models = annutils.read_alphafold_accessions(self.datafolder / self.alphafold_models_filename)
-            self.available_models = available_models
+            self.available_models = structure_utils.load_available_models(
+                self.datafolder / self.alphafold_models_filename
+            )
 
-        self.annot[f"secondary_structure p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"] = np.nan
-        self.annot[f"solvent_accessibility p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"] = np.nan
+        ss_col, sa_col = structure_utils.initialize_structure_columns(
+            self.annot, self.cleavagesitesize
+        )
 
         if self.calcstructure == "all":
-            # Create a dictionary where each accession is a key and the value is a list of tuples
-            # Each tuple contains the index of the cleavage site in the annot dataframe and the cleavage site position
-
-            acc_cleavage_sites = {}
-            for i in range(len(self.annot)):
-                # get the accession and cleavage site
-                acc = self.annot.loc[i, "query_accession"]
-                cleavage_site = self.annot.loc[i, "p1_position"]
-
-                # if the cleavage site is not nan, add it to the dictionary
-                if float(cleavage_site).is_integer():
-                    # Append the index and cleavage site to the list of the corresponding accession
-                    acc_cleavage_sites.setdefault(acc, []).append((i, cleavage_site))
-
-            # get the secondary structure and solvent accessibility of all cleavage sites
-
-            structure_tmp_filepath = self.temp_folder / "structure_properties.txt"
-            structure_properties = annutils.get_structure_properties(acc_cleavage_sites, structure_tmp_filepath, self.pymol_verbose, self.available_models)
-
-            with open(structure_tmp_filepath, 'r') as f:
-                lines = f.readlines()[0]
-                structure_properties = literal_eval(lines)
-            os.remove(structure_tmp_filepath)
-
-            # assign to the annotation dataframe
-            for (acc, cleavage_site), (index, ss, sa) in structure_properties.items():
-                self.annot.loc[index, f"secondary_structure p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"] = ss
-                self.annot.loc[index, f"solvent_accessibility p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"] = sa
+            acc_cleavage_sites = structure_utils.collect_cleavage_sites(self.annot)
+            structure_properties = structure_utils.calculate_structure_properties(
+                acc_cleavage_sites,
+                self.temp_folder,
+                self.pymol_verbose,
+                self.available_models,
+            )
+            structure_utils.apply_structure_properties(
+                self.annot,
+                structure_properties,
+                ss_col,
+                sa_col,
+                only_when_missing=False,
+            )
 
         elif self.calcstructure == "sig":
-            cols = []
             if len(self.conditions) > 1:
                 if self.stat:
-                    if self.pairwise or len(self.conditions) == 2:
-                        conditions_iter = combinations(self.conditions.keys(), 2)
-                        for pair in conditions_iter:
-                            if self.multipletesting:
-                                column_name = f"Corrected Independent T-test p-value: {pair[0]} vs. {pair[1]}"
-                            else:
-                                column_name = f"Independent T-test p-value: {pair[0]} vs. {pair[1]}"
-                            cols.append(column_name)
-                    else:
-                        column_name = "ANOVA p-value: " + " vs. ".join(self.conditions.keys())
-                        cols.append(column_name)
-
-                    # iterate over all columns and entries in the dataframe
-                    for column_name in cols:
-                        subframe = self.annot[self.annot[column_name] <= self.alpha]
-                        
-                        acc_cleavage_sites = {}
-                        for i, row in subframe.iterrows():  # use .iterrows() to keep track of the original index
-                            # get the accession and cleavage site
-                            acc = row["query_accession"]
-                            cleavage_site = row["p1_position"]
-
-                            # if the cleavage site is not nan, add it to the dictionary
-                            if float(cleavage_site).is_integer():
-                                # Append the original index and cleavage site to the list of the corresponding accession
-                                acc_cleavage_sites.setdefault(acc, []).append((i, cleavage_site))
-
-                        # get the secondary structure and solvent accessibility of all cleavage sites
-                        structure_tmp_filepath = self.temp_folder / "structure_properties.txt"
-                        structure_properties = annutils.get_structure_properties(acc_cleavage_sites, structure_tmp_filepath, self.pymol_verbose, self.available_models)
-
-                        with open(structure_tmp_filepath, 'r') as f:
-                            lines = f.readlines()[0]
-                            structure_properties = literal_eval(lines)
-                        os.remove(structure_tmp_filepath)
-
-                        for (acc, cleavage_site), (index, ss, sa) in structure_properties.items():
-                            # if the cleavage site is not nan (has not been annotated in previous iterations), annotate
-                            if isinstance(cleavage_site, int) and pd.isnull(self.annot.loc[i, f"secondary_structure p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"]) and pd.isnull(self.annot.loc[i, f"solvent_accessibility p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"]):
-                                self.annot.loc[index, f"secondary_structure p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"] = ss
-                                self.annot.loc[index, f"solvent_accessibility p{self.cleavagesitesize}_p{self.cleavagesitesize}prime"] = sa
-
+                    cols = structure_utils.build_stat_columns(
+                        self.conditions, self.pairwise, self.multipletesting
+                    )
+                    structure_utils.annotate_significant_structure(
+                        self.annot,
+                        cols,
+                        self.alpha,
+                        self.temp_folder,
+                        self.pymol_verbose,
+                        self.available_models,
+                        ss_col,
+                        sa_col,
+                    )
                 else:
                     logging.warning("cannot do structure calculations on significant peptides, as no statistics has been done. Please consider adding the -stat flag to the query!")
             else:
@@ -1337,8 +1294,9 @@ class Clipper:
             
             if self.stat and self.cleavagevis and (self.pairwise or len(self.conditions) == 2):
                 if self.available_models is None:
-                    available_models = annutils.read_alphafold_accessions(self.datafolder / self.alphafold_models_filename)
-                    self.available_models = available_models
+                    self.available_models = structure_utils.load_available_models(
+                        self.datafolder / self.alphafold_models_filename
+                    )
 
                 logging.info("Starting protein plotting...")
                 if self.nomerops is False:
@@ -1421,7 +1379,7 @@ class Clipper:
                         data = self.annot[self.annot[column] == "significant low"]
                         self.figures[f"Logo {comparison} low"] = create_logo_helper(data, comparison, self.pseudocounts, self.logo, self.cleavagesitesize)
 
-                    logging.info("Created logo plots using peptides with the highest and lowest percentile (deafault 5%) abundance fold change between conditions")
+                    logging.info("Created logo plots using peptides with the highest and lowest percentile (default 5%) abundance fold change between conditions")
 
             except KeyError as err:
                 logging.debug(f'ERROR in create_logos(): {err}')
@@ -1429,7 +1387,7 @@ class Clipper:
         elif len(self.conditions) == 1:
             condition = list(self.conditions.keys())[0]
             self.figures[f"Logo {condition}"] = create_logo_helper(self.annot, condition, self.pseudocounts, self.logo, self.cleavagesitesize)
-            logging.info("created logo plots with all provided peptides, as statistics is not possible with a single condition")
+            logging.info("Created logo plots with all provided peptides, as statistics is not possible with a single condition")
 
     def write_files(self):
 

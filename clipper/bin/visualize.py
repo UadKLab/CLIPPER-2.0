@@ -5,6 +5,7 @@ import gzip
 import logging
 import warnings
 import subprocess
+from numbers import Integral
 from pathlib import Path
 
 warnings.filterwarnings('ignore') # for numba deprecation warnings
@@ -15,7 +16,13 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from sklearn.decomposition import PCA
-from umap import UMAP
+try:
+    from umap import UMAP
+except Exception as err:
+    UMAP = None
+    _UMAP_IMPORT_ERROR = err
+else:
+    _UMAP_IMPORT_ERROR = None
 
 import matplotlib.pyplot as plt
 import matplotlib.colors as colors
@@ -644,6 +651,10 @@ class Visualizer:
             dict: A dictionary with the key "UMAP" and the value is the UMAP figure.
         """
 
+        if UMAP is None:
+            logging.warning(f"UMAP visualization skipped because umap-learn could not be imported: {_UMAP_IMPORT_ERROR}")
+            return None
+
         # Get data and perform UMAP on quantification columns
         data_columns = self.df.columns[self.df.columns.str.contains(self.patterns['quant'])]
         
@@ -772,7 +783,7 @@ class Visualizer:
                         fig_name = cond.replace('/', '_') + '_high_' + source
                         figures[fig_name] = fig
                 else:
-                    logging.info(f'No significant peptides with a cutoff value <{alpha} for conditions {col_name}. No functional enrichment plots will be made for this comparison.')
+                    logging.info(f'No significant peptides with a cutoff value <{alpha} for conditions {cond}. No functional enrichment plots will be made for this comparison.')
 
         for col in cols:
             cond = col.split(":")[1].strip()
@@ -788,7 +799,7 @@ class Visualizer:
                         fig_name = cond.replace('/', '_') + '_low_' + source
                         figures[fig_name] = fig
                 else:
-                    logging.info(f'No significant peptides with a cutoff value <{alpha} for conditions {col_name}. No functional enrichment plots will be made for this comparison.')
+                    logging.info(f'No significant peptides with a cutoff value <{alpha} for conditions {cond}. No functional enrichment plots will be made for this comparison.')
 
         return figures
 
@@ -971,7 +982,7 @@ def extract_protein_features(acc, record, merops, subframe):
             start = feature.location.start.position
             end = feature.location.end.position
 
-            if isinstance(start, int) and isinstance(end, int):
+            if isinstance(start, Integral) and isinstance(end, Integral):
                 gf = GraphicFeature(
                     start=feature.location.start.position,
                     end=feature.location.end.position,
@@ -1144,7 +1155,7 @@ def plot_protein_figure(pp, subframe, acc, col, col_ID, acc_length, merops, alph
         peptide = row['query_sequence']
         start, end = row['start_pep'], row['end_pep']
 
-        if isinstance(start, int) and isinstance(end, int): 
+        if isinstance(start, Integral) and isinstance(end, Integral):
             color = cmap(norm(row[col_fold]))
 
             f = SeqFeature(FeatureLocation(start, end), type="peptide")

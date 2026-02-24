@@ -1,4 +1,5 @@
 # CLIPPER 2.0
+[![CI](https://github.com/UadKLab/CLIPPER-2.0/actions/workflows/ci.yml/badge.svg)](https://github.com/UadKLab/CLIPPER-2.0/actions/workflows/ci.yml)
 
 <p align="center">
   <img src="img/CLIPPER_logo.png">

@@ -97,7 +97,7 @@ def initialize_arguments():
 
     parser = ArgumentParser(
         prog="CLIPPER 2.0",
-        description="Peptide annotation and analysis of proteomics data utilizing databases and visulization tools",
+        description="Peptide annotation and analysis of proteomics data utilizing databases and visualization tools",
         epilog="Not extensively tested, this tool is still in beta version. Contact konka@dtu.dk or alemol@dtu.dk for bug reports and requests.",
         formatter_class=HelpFormatter,
     )
@@ -437,19 +437,25 @@ def initialize(arguments):
 
     write_terminal_headers('INITIALIZING CLIPPER 2.0')
 
-    print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[0:-3]} [INFO] The arguments you have provided are:')
-    for argument, value in arguments.items():
-        print(f'{datetime.now().strftime("%Y-%m-%d %H:%M:%S,%f")[0:-3]} [INFO] - {argument}: {value}')
-    print("")
+    logging.info("Arguments provided:")
+    for argument in sorted(arguments):
+        logging.info(f"- {argument}: {arguments[argument]}")
+    logging.info("")
 
     arguments["timestamp"] = timestamp
     arguments["logfile"] = logfile
+    arguments.setdefault("calcstructure", None)
+    arguments.setdefault("pathway", False)
+    arguments.setdefault("enrichment", False)
+    arguments.setdefault("logo_fc", None)
+    arguments.setdefault("logo", None)
+    arguments.setdefault("cleavagevis", None)
 
     args_ok = True
     warnings = []
 
     if arguments['stat'] and not arguments["conditionfile"]:
-        warning = 'Condition statistics was requested (-stat argument was supplied) but no condition file is given. Stats cannot be done, please add a condition file for propper function.'
+        warning = 'Condition statistics was requested (-stat argument was supplied) but no condition file is given. Stats cannot be done, please add a condition file for proper function.'
         warnings.append(warning)
         args_ok = False
 
@@ -495,7 +501,7 @@ def initialize(arguments):
         if cores == 'max':
             cores = max_cores
         if cores > 16:
-            logging.warning(f"The number of cores provided to --cores was {cores}, and {max_cores} cores were detected. However CLIPPER is currently capped at 16 cores on larger systems because.")
+            logging.warning(f"The number of cores provided to --cores was {cores}, and {max_cores} cores were detected. However CLIPPER is currently capped at 16 cores on larger systems.")
         else:
             try:
                 cores = int(cores)

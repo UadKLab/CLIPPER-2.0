@@ -3,9 +3,62 @@ import time
 import logging
 import pandas as pd
 from datetime import timedelta
+from pathlib import Path
 
-from bin.clipper import Clipper
-from bin.annutils import initialize, initialize_arguments, write_terminal_headers
+# Use a writable cache/config directory to avoid Matplotlib startup warnings.
+if "MPLCONFIGDIR" not in os.environ:
+    os.environ["MPLCONFIGDIR"] = "/tmp/matplotlib"
+
+try:
+    from .bin.clipper import Clipper
+    from .bin.annutils import initialize, initialize_arguments, write_terminal_headers
+except ImportError:
+    from bin.clipper import Clipper
+    from bin.annutils import initialize, initialize_arguments, write_terminal_headers
+
+
+def _normalize_args(args):
+    """Backwards-compatible argument normalization for CLI, web, and tests."""
+    normalized = dict(args)
+
+    # Legacy alias support used by older tests/config.
+    if "output_filetype" not in normalized and "outfile_type" in normalized:
+        normalized["output_filetype"] = normalized["outfile_type"]
+    if "stat_pairwise" not in normalized and "spw" in normalized:
+        normalized["stat_pairwise"] = normalized["spw"]
+
+    defaults = {
+        "alpha": 0.05,
+        "fillna": None,
+        "calcstructure": None,
+        "proteasefile": None,
+        "significance": None,
+        "multipletesting": False,
+        "multipletestingmethod": "fdr_bh",
+        "logo_fc": 3,
+        "volcano_foldchange": 1.5,
+        "cleavagesitesize": 4,
+        "cleavagevis": None,
+        "enrichment": False,
+        "pathway": False,
+        "output_name": None,
+        "output_filetype": "xlsx",
+        "pymol_verbose": False,
+        "threadingcores": "max",
+    }
+    for key, value in defaults.items():
+        normalized.setdefault(key, value)
+
+    base_dir = Path(__file__).resolve().parent
+    for key in ("infile", "conditionfile", "proteasefile"):
+        value = normalized.get(key)
+        if not value or Path(value).exists():
+            continue
+        candidate = (base_dir / value).resolve()
+        if candidate.exists():
+            normalized[key] = str(candidate)
+
+    return normalized
 
 
 def main(args=None):
@@ -23,6 +76,8 @@ def main(args=None):
     # If arguments are not provided, use the default values from initialize()
     if args is None:
         args = initialize_arguments()
+    else:
+        args = _normalize_args(args)
 
     args = initialize(args)
 
