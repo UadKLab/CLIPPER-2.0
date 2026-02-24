@@ -377,36 +377,29 @@ class Clipper:
         """
         Creates necessary output folders in the specified directory.
         """
-        if not os.path.exists(self.outfolder):
-            os.mkdir(self.outfolder)
-        if not os.path.exists(self.temp_folder):
-            os.mkdir(self.temp_folder)
+        def ensure_dir(path):
+            os.makedirs(path, exist_ok=True)
+
+        ensure_dir(self.outfolder)
+        ensure_dir(self.temp_folder)
 
         if self.plot:
-            if not os.path.exists(self.general_folder):
-                os.mkdir(self.general_folder)
-            if not os.path.exists(self.fold_change_folder):
-                os.mkdir(self.fold_change_folder)
-            if not os.path.exists(self.volcano_folder):
-                os.mkdir(self.volcano_folder)
-            if not os.path.exists(self.piechart_folder):
-                os.mkdir(self.piechart_folder)
+            ensure_dir(self.general_folder)
+            ensure_dir(self.fold_change_folder)
+            ensure_dir(self.volcano_folder)
+            ensure_dir(self.piechart_folder)
             if self.stat:
                 if self.cleavagevis in ['seq', 'both']:
-                    if not os.path.exists(self.protein_folder):
-                        os.mkdir(self.protein_folder)
+                    ensure_dir(self.protein_folder)
                 elif self.cleavagevis is not None:
                     logging.warning(f"-clvis argument '{self.cleavagevis}' is unknown, falling back to 'None'")
                     self.cleavagevis = None
                 if self.logo:
-                    if not os.path.exists(self.logo_folder):
-                        os.mkdir(self.logo_folder)
+                    ensure_dir(self.logo_folder)
                 if self.enrichment:
-                    if not os.path.exists(self.enrichment_folder):
-                        os.mkdir(self.enrichment_folder)
+                    ensure_dir(self.enrichment_folder)
                 if self.pathway:
-                    if not os.path.exists(self.pathway_folder):
-                        os.mkdir(self.pathway_folder)
+                    ensure_dir(self.pathway_folder)
 
     def read_condition_file(self):
             
