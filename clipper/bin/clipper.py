@@ -127,8 +127,9 @@ class Clipper:
                             'model not available': []}
 
         self.basefolder = Path.cwd().absolute()
+        self.package_root = Path(__file__).resolve().parents[1]
         self.resultfolder = self.basefolder / self.result_folder_name
-        self.datafolder = self.basefolder / self.data_folder_name
+        self.datafolder = self.package_root / self.data_folder_name
 
         logging.info("Startup complete!\n")
 
