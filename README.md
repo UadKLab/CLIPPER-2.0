@@ -1,5 +1,6 @@
 # CLIPPER 2.0
 [![CI (dev)](https://github.com/UadKLab/CLIPPER-2.0/actions/workflows/ci.yml/badge.svg?branch=dev)](https://github.com/UadKLab/CLIPPER-2.0/actions/workflows/ci.yml)
+[![Extended CI (dev)](https://github.com/UadKLab/CLIPPER-2.0/actions/workflows/extended-ci.yml/badge.svg?branch=dev)](https://github.com/UadKLab/CLIPPER-2.0/actions/workflows/extended-ci.yml)
 
 <p align="center">
   <img src="img/CLIPPER_logo.png">
