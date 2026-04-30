@@ -695,6 +695,10 @@ class Clipper:
         patterns = {}
 
         patterns['acc'] = "Master Protein Accessions"
+        if "Modifications" not in self.df.columns:
+            self.df["Modifications"] = ""
+        else:
+            self.df["Modifications"] = self.df["Modifications"].fillna("").astype(str)
         patterns['mod'] = "Modifications"
         patterns['nterm'] = r"\[N-Term\]"
         patterns['seq'] = "Sequence"
@@ -712,15 +716,17 @@ class Clipper:
 
         try:
             annutils.parse_acc(self.df.loc[0, patterns['acc']])
-            self.df.loc[0, patterns['seq']]
+            sequence_value = self.df.loc[0, patterns['seq']]
+            if pd.isna(sequence_value) or str(sequence_value).strip() == "":
+                raise KeyError(patterns['seq'])
         except KeyError:
             try:
-                # if sequence column is not present, check if modifications column is present
                 annutils.parse_acc(self.df.loc[0, patterns['acc']])
                 patterns['seq'] = "Annotated Sequence"
-                annutils.parse_sequence(self.df.loc[0, patterns['mod']])
-                patterns['amino'] = "\.[A-Z]*(B|J|O|U|X|Z)[A-Z]*\."
-            except KeyError:
+                if annutils.parse_sequence(self.df.loc[0, patterns['seq']]) is None:
+                    raise TypeError("Annotated Sequence could not be parsed.")
+                patterns['amino'] = r"\.[A-Z]*(B|J|O|U|X|Z)[A-Z]*\."
+            except (KeyError, TypeError):
                 logging.critical("Invalid input. Exiting with code 4.")
                 raise TypeError(
                     f"Invalid input. Please make sure input \
